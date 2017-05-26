@@ -1,0 +1,1021 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[docs-1.9]]></title><description><![CDATA[docs-1.9]]></description><link>https://dcos.io/docs/1.9/</link><image><url>/assets/images/rss-logo.png</url><title>docs-1.9</title><link>https://dcos.io/docs/1.9/</link></image><generator>metalsmith-feed</generator><lastBuildDate>Fri, 31 Mar 2017 18:24:35 GMT</lastBuildDate><atom:link href="https://dcos.io/docs/1.9/rss.xml" rel="self" type="application/rss+xml"/><item><title><![CDATA[Log Management with Splunk]]></title><description><![CDATA[<p>You can pipe system and application logs from a DC/OS cluster to your existing Splunk server.</p>
+<p>These instructions are based on CoreOS and might differ substantially from other Linux distributions. This document does not explain how to setup and configure a Splunk server.</p>
+<p><strong>Prerequisites</strong></p>
+<ul>
+<li>An existing Splunk installation that can ingest data for indexing.</li>
+<li>All DC/OS nodes must be able to connect to your Splunk indexer via HTTP or HTTPS. (See Splunk’s documentation for instructions on enabling HTTPS.)</li>
+<li>The <code>ulimit</code> of open files must be set to <code>unlimited</code> for your user with root access.</li>
+</ul>
+<h1 id="step-1-all-nodes">Step 1: All Nodes</h1>
+<p>For all nodes in your DC/OS cluster:</p>
+<ol>
+<li>Install Splunk’s <a href="http://www.splunk.com/en_us/download/universal-forwarder.html">universal forwarder</a>. Splunk provides packages and installation instructions for most platforms.</li>
+<li>Make sure the forwarder has the credentials it needs to send data to the indexer. See Splunk’s documentation for details.</li>
+<li>Start the forwarder.</li>
+</ol>
+<h1 id="step-2-master-nodes">Step 2: Master Nodes</h1>
+<p>For each Master node in your DC/OS cluster:</p>
+<ol>
+<li><p>Create a script <code>$SPLUNK_HOME/bin/scripts/journald-master.sh</code> that will obtain the Mesos master logs from <code>journald</code>:</p>
+<pre><code>#!/bin/sh
+
+exec journalctl --since=now -f          \
+    -u dcos-3dt.service                 \
+    -u dcos-logrotate-master.timer      \
+    -u dcos-adminrouter-reload.service  \
+    -u dcos-marathon.service            \
+    -u dcos-adminrouter-reload.timer    \
+    -u dcos-mesos-dns.service           \
+    -u dcos-adminrouter.service         \
+    -u dcos-mesos-master.service        \
+    -u dcos-cfn-signal.service          \
+    -u dcos-metronome.service           \
+    -u dcos-cosmos.service              \
+    -u dcos-minuteman.service           \
+    -u dcos-download.service            \
+    -u dcos-navstar.service             \
+    -u dcos-epmd.service                \
+    -u dcos-oauth.service               \
+    -u dcos-exhibitor.service           \
+    -u dcos-setup.service               \
+    -u dcos-gen-resolvconf.service      \
+    -u dcos-signal.service              \
+    -u dcos-gen-resolvconf.timer        \
+    -u dcos-signal.timer                \
+    -u dcos-history.service             \
+    -u dcos-spartan-watchdog.service    \
+    -u dcos-link-env.service            \
+    -u dcos-spartan-watchdog.timer      \
+    -u dcos-logrotate-master.service    \
+    -u dcos-spartan.service
+</code></pre></li>
+<li><p>Make the script executable:</p>
+<pre><code>chmod +x &quot;$SPLUNK_HOME/bin/scripts/journald-master.sh&quot;
+</code></pre></li>
+<li><p>Add the script as an input to the forwarder:</p>
+<pre><code>&quot;$SPLUNK_HOME/bin/splunk&quot; add exec \
+    -source &quot;$SPLUNK_HOME/bin/scripts/journald-master.sh&quot; \
+    -interval 0
+</code></pre></li>
+</ol>
+<h1 id="step-3-agent-nodes">Step 3: Agent Nodes</h1>
+<p>For each agent node in your DC/OS cluster:</p>
+<ol>
+<li><p>Create a script <code>$SPLUNK_HOME/bin/scripts/journald-agent.sh</code> that will obtain the Mesos agent logs from <code>journald</code>:</p>
+<pre><code>#!/bin/sh
+
+    journalctl --since=&quot;now&quot; -f                 \
+        -u dcos-ddt.service                     \
+        -u dcos-epmd.service                    \
+        -u dcos-gen-resolvconf.service          \
+        -u dcos-logrotate.service               \
+        -u dcos-mesos-slave.service             \
+        -u dcos-mesos-slave-public.service      \
+        -u dcos-minuteman.service               \
+        -u dcos-spartan.service                 \
+        -u dcos-spartan-watchdog.service        \
+        -u dcos-vol-discovery-priv-agent.service
+</code></pre></li>
+<li><p>Make the script executable:</p>
+<pre><code>chmod +x &quot;$SPLUNK_HOME/bin/scripts/journald-agent.sh&quot;
+</code></pre></li>
+<li><p>Add the script as an input to the forwarder:</p>
+<pre><code>&quot;$SPLUNK_HOME/bin/splunk&quot; add exec \
+    -source &quot;$SPLUNK_HOME/bin/scripts/journald-agent.sh&quot; \
+    -interval 0
+</code></pre></li>
+<li><p>Add the task logs as inputs to the forwarder:</p>
+<pre><code>&quot;$SPLUNK_HOME/bin/splunk&quot; add monitor &#39;/var/lib/mesos/slave&#39; \
+    -whitelist &#39;/stdout$|/stderr$&#39;
+</code></pre></li>
+</ol>
+<h1 id="known-issue">Known Issue</h1>
+<ul>
+<li>The agent node Splunk forwarder configuration expects tasks to write logs to <code>stdout</code> and <code>stderr</code>. Some DC/OS services, including Cassandra and Kafka, do not write logs to <code>stdout</code> and <code>stderr</code>. If you want to log these services, you must customize your agent node Splunk forwarder configuration.</li>
+</ul>
+<h1 id="what-s-next">What’s Next</h1>
+<p>For details on how to filter your logs with Splunk, see <a href="../filter-splunk/">Filtering DC/OS logs with Splunk</a>.</p>
+]]></description><link>https://dcos.io/docs/1.9/administration/logging/aggregating/splunk</link><guid isPermaLink="true">https://dcos.io/docs/1.9/administration/logging/aggregating/splunk</guid></item><item><title><![CDATA[DC/OS Documentation]]></title><description><![CDATA[<p>Welcome to the DC/OS documentation. The DC/OS documentation can help you set up, learn about the system, and get your applications and workloads running on DC/OS.</p>
+]]></description><link>https://dcos.io/docs/1.9/</link><guid isPermaLink="true">https://dcos.io/docs/1.9/</guid></item><item><title><![CDATA[Component Management]]></title><description><![CDATA[<p>The component management API controls installation and management of DC/OS component services.</p>
+<p>The component management API is not designed to be used by operators or users of DC/OS directly but rather is orchestrated by the DC/OS installer during install, upgrade, and uninstall.</p>
+<h2 id="component-package-manager">Component Package Manager</h2>
+<p>The DC/OS Component Package Manager (Pkgpanda) implements the component management API and runs on all DC/OS nodes.</p>
+<p><a href="https://github.com/airdata/tree/master/pkgpanda">Pkgpanda</a> consists of two parts: a package builder and a package manager.</p>
+<ul>
+<li>The <strong>package builder</strong> builds and bundles component packages from source code and pre-compiled artifacts as part of the DC/OS release building process.</li>
+<li>The <strong>package manager</strong> is included as part of DC/OS an runs on each node, managing the installed and activated component packages on that node.</li>
+</ul>
+<p>Component packages built by the package builder are distributed as part of the DC/OS installer for each release. The installer ships the component packages to each node and orchestrates the component management API to install them. Generally these component packages each contain one or more systemd service definitions, binaries, and configuration files.</p>
+<h2 id="component-health">Component health</h2>
+<p>Component health is monitored by the DC/OS Diagnostics (3DT) component. For more information about component monitoring, see <a href="/docs/1.9/administration/monitoring/">Monitoring</a>.</p>
+<h2 id="component-logs">Component logs</h2>
+<p>Component logs are sent to journald and exposed by the DC/OS Log component. For more infromation about component logs, see <a href="/docs/1.9/administration/logging/">Logging</a>.</p>
+<h2 id="routes">Routes</h2>
+<p>The component management API is exposed through Admin Router and Admin Router Agent under the <code>/pkgpanda/</code> path on all nodes.</p>
+<h2 id="resources">Resources</h2>
+<div class="swagger-section">
+  <div id="message-bar" class="swagger-ui-wrap message-success" data-sw-translate=""></div>
+  <div id="swagger-ui-container" class="swagger-ui-wrap" data-api="/docs/1.9/api/pkgpanda.yaml">
+
+  <div class="info" id="api_info">
+    <div class="info_title">Loading docs…</div>
+  <div class="info_description markdown"></div>
+</div>
+]]></description><link>https://dcos.io/docs/1.9/administration/component-management</link><guid isPermaLink="true">https://dcos.io/docs/1.9/administration/component-management</guid></item><item><title><![CDATA[Frequently Asked Questions]]></title><description><![CDATA[<h2 id="q-can-i-install-dc-os-on-an-already-running-mesos-cluster-">Q. Can I install DC/OS on an already running Mesos cluster?</h2>
+<p>We recommend starting with a fresh cluster to ensure all defaults are set to expected values. This prevents unexpected conditions related to mismatched versions and configurations.</p>
+<h2 id="q-what-are-the-os-requirements-of-dc-os-">Q. What are the OS requirements of DC/OS?</h2>
+<p>See the <a href="../installing/custom/system-requirements/">system requirements</a>.</p>
+<h2 id="q-does-dc-os-install-zookeeper-or-can-i-use-my-own-zookeeper-quorum-">Q. Does DC/OS install ZooKeeper, or can I use my own ZooKeeper quorum?</h2>
+<p>DC/OS runs its own ZooKeeper supervised by Exhibitor and systemd, but users are able to create their own ZooKeeper quorums as well. The ZooKeeper quorum installed by default will be available at <code>master.mesos:[2181|2888|3888]</code>.</p>
+<h2 id="q-is-it-necessary-to-maintain-a-bootstrap-node-after-the-cluster-is-created-">Q. Is it necessary to maintain a bootstrap node after the cluster is created?</h2>
+<p>If you specify an Exhibitor storage backend type other than <code>exhibitor_storage_backend: static</code> in your cluster configuration <a href="/docs/1.9/administration/installing/custom/configuration-parameters/">file</a>, you must maintain the external storage for the lifetime of your cluster to facilitate leader elections. If your cluster is mission critical, you should harden your external storage by using S3 or running the bootstrap ZooKeeper as a quorum. Interruptions of service from the external storage can be tolerated, but permanent loss of state can lead to unexpected conditions.</p>
+<h2 id="q-how-to-add-mesos-attributes-to-nodes-in-order-to-use-marathon-constraints-">Q. How to add Mesos attributes to nodes in order to use Marathon constraints?</h2>
+<p>In DC/OS, add the line <code>MESOS_ATTRIBUTES=&lt;key&gt;:&lt;value&gt;</code> to the file <code>/var/lib/dcos/mesos-slave-common</code> (it may need to be created) for each attribute you’d like to add. More information can be found <a href="http://mesos.apache.org/documentation/latest/attributes-resources/">via the Mesos doc</a>.</p>
+<h2 id="q-how-do-i-gracefully-shut-down-an-agent-">Q. How do I gracefully shut down an agent?</h2>
+<ul>
+<li><p>_To gracefully kill an agent node’s Mesos process and allow systemd to restart it, use the following command. <em>Note: If Auto Scaling Groups are in use, the node will be replaced automatically</em>:</p>
+<pre><code class="lang-bash">  sudo systemctl kill -s SIGUSR1 dcos-mesos-slave
+</code></pre>
+</li>
+<li><p><em>For a public agent:</em></p>
+<pre><code class="lang-bash">  sudo systemctl kill -s SIGUSR1 dcos-mesos-slave-public
+</code></pre>
+</li>
+<li><p>To gracefully kill the process and prevent systemd from restarting it, add a <code>stop</code> command:</p>
+<pre><code class="lang-bash">  sudo systemctl kill -s SIGUSR1 dcos-mesos-slave &amp;&amp; sudo systemctl stop dcos-mesos-slave
+</code></pre>
+</li>
+<li><p><em>For a public agent:</em></p>
+<pre><code class="lang-bash">  sudo systemctl kill -s SIGUSR1 dcos-mesos-slave-public &amp;&amp; sudo systemctl stop dcos-mesos-slave-public
+</code></pre>
+</li>
+</ul>
+]]></description><link>https://dcos.io/docs/1.9/administration/faq</link><guid isPermaLink="true">https://dcos.io/docs/1.9/administration/faq</guid></item><item><title><![CDATA[Administration]]></title><description><![CDATA[<p>The administration topics help you set up, administer, and manage your DC/OS cluster.</p>
+]]></description><link>https://dcos.io/docs/1.9/administration/</link><guid isPermaLink="true">https://dcos.io/docs/1.9/administration/</guid></item><item><title><![CDATA[Finding a Public Agent IP]]></title><description><![CDATA[<p>After you have installed DC/OS with a public agent node declared, you can navigate to the public IP address of your public agent node.</p>
+<p><strong>Prerequisites</strong></p>
+<ul>
+<li>DC/OS is installed with at least 1 master and <a href="/docs/1.9/overview/concepts/#public">public agent</a> node</li>
+<li>DC/OS <a href="/docs/1.9/usage/cli/">CLI</a> 0.4.6 or later</li>
+<li><a href="https://github.com/stedolan/jq/wiki/Installation">jq</a></li>
+<li><a href="/docs/1.9/administration/access-node/sshcluster/">SSH</a> configured</li>
+</ul>
+<p>You can find your public agent IP by running this command from your terminal. This command SSHs to your cluster to obtain cluster information and then queries <a href="https://ifconfig.co/">ifconfig.co</a> to determine your public IP address.</p>
+<pre><code>for id in $(dcos node --json | jq --raw-output &#39;.[] | select(.attributes.public_ip == &quot;true&quot;) | .id&#39;); do dcos node ssh --option StrictHostKeyChecking=no --option LogLevel=quiet --master-proxy --mesos-id=$id &quot;curl -s ifconfig.co&quot; ; done 2&gt;/dev/null
+</code></pre><p>Here is an example where the public IP address is <code>52.39.29.79</code>:</p>
+<pre><code>for id in $(dcos node --json | jq --raw-output &#39;.[] | select(.attributes.public_ip == &quot;true&quot;) | .id&#39;); do dcos node ssh --option StrictHostKeyChecking=no --option LogLevel=quiet --master-proxy --mesos-id=$id &quot;curl -s ifconfig.co&quot; ; done 2&gt;/dev/null
+52.39.29.79
+</code></pre>]]></description><link>https://dcos.io/docs/1.9/administration/locate-public-agent</link><guid isPermaLink="true">https://dcos.io/docs/1.9/administration/locate-public-agent</guid></item><item><title><![CDATA[Managing AWS]]></title><description><![CDATA[<h2 id="scaling-an-aws-cluster">Scaling an AWS cluster</h2>
+<p>The DC/OS AWS CloudFormation template is optimized to run DC/OS, but you might want to change the number of agent nodes based on your needs.</p>
+<p><strong>Important:</strong> Scaling down your AWS cluster could result in data loss. It is recommended that you scale down by 1 node at a time, letting the DC/OS service recover. For example, if you are running a DC/OS service and you scale down from 10 to 5 nodes, this could result in losing all the instances of your service.</p>
+<p>To change the number of agent nodes with AWS:</p>
+<ol>
+<li>From <a href="https://console.aws.amazon.com/cloudformation/home">AWS CloudFormation Management</a> page, select your DC/OS cluster and click <strong>Update Stack</strong>.</li>
+<li>Click through to the <strong>Specify Parameters</strong> page, and you can specify new values for the <strong>PublicSlaveInstanceCount</strong> and <strong>SlaveInstanceCount</strong>.</li>
+<li>On the <strong>Options</strong> page, accept the defaults and click <strong>Next</strong>. <strong>Tip:</strong> You can choose whether to rollback on failure. By default this option is set to <strong>Yes</strong>.</li>
+<li>On the <strong>Review</strong> page, check the acknowledgement box and then click <strong>Create</strong>.</li>
+</ol>
+<p>Your new machines will take a few minutes to initialize; you can watch them in the EC2 console. The DC/OS web interface will update as soon as the new nodes register.</p>
+<!-- ## Upgrading
+
+See the upgrade [documentation](/docs/1.9/administration/installing/cloud/aws/upgrading/). -->
+]]></description><link>https://dcos.io/docs/1.9/administration/managing-aws</link><guid isPermaLink="true">https://dcos.io/docs/1.9/administration/managing-aws</guid></item><item><title><![CDATA[Release Notes]]></title><description><![CDATA[<p>See the DC/OS <a href="https://dcos.io/releases/">releases page</a>.</p>
+]]></description><link>https://dcos.io/docs/1.9/administration/release-notes</link><guid isPermaLink="true">https://dcos.io/docs/1.9/administration/release-notes</guid></item><item><title><![CDATA[Removing an Agent]]></title><description><![CDATA[<p>To shut down and safely remove an agent node follow these steps.</p>
+<ol>
+<li><a href="/docs/1.9/administration/access-node/sshcluster/">SSH</a> to the agent node that you want to remove.</li>
+<li><p>Run this command to explicitly de-register and cleanly shut down tasks:</p>
+<pre><code class="lang-bash">systemctl kill -s SIGUSR1 dcos-mesos-slave
+</code></pre>
+</li>
+</ol>
+<p>If an agent is already shut down, go to the Mesos <code>/machine/down</code> <a href="http://mesos.apache.org/documentation/latest/endpoints/master/machine/down/">endpoint</a> and <a href="https://github.com/apache/mesos/blob/master/docs/maintenance.md#starting-maintenance">instruct</a> Mesos that it is dead and not just gone because of a network partition.</p>
+]]></description><link>https://dcos.io/docs/1.9/administration/remove-agent</link><guid isPermaLink="true">https://dcos.io/docs/1.9/administration/remove-agent</guid></item><item><title><![CDATA[Securing Your Cluster]]></title><description><![CDATA[<p>This topic discusses the security features in DC/OS and
+best practices for deploying DC/OS securely.</p>
+<h2 id="general-security-concepts">General security concepts</h2>
+<p>DC/OS is based on a Linux kernel and userspace. The same best practices for
+securing any Linux system apply to securing DC/OS, including setting correct
+file permissions, restricting root and normal user accounts, protecting
+network interfaces with iptables or other firewalls, and regularly applying
+updates from the Linux distribution used with DC/OS to ensure that system
+libraries, utilities and core services like systemd and OpenSSH are secure.</p>
+<h2 id="security-zones">Security Zones</h2>
+<p>At the highest level we can distinguish three security zones in a DC/OS
+deployment, namely the admin, private, and public security zones.</p>
+<h3 id="admin-zone">Admin zone</h3>
+<p>The <strong>admin</strong> zone is accessible via HTTP/HTTPS and SSH connections, and
+provides access to the master nodes. It also provides reverse proxy access to
+the other nodes in the cluster via URL routing. For security, the DC/OS cloud
+template allows configuring a whitelist so that only specific IP address
+ranges are permitted to access the admin zone.</p>
+<h4 id="steps-for-securing-admin-router">Steps for Securing Admin Router</h4>
+<p>By default, Admin Router will permit unencrypted HTTP traffic. This is not
+considered secure, and you must provide a valid TLS certificate and redirect
+all HTTP traffic to HTTPS in order to properly secure access to your cluster.</p>
+<p>After you have a valid TLS certificate, install the certificate on each master.
+Copy the certificate and private key to a well known location, such as under
+<code>/etc/ssl/certs</code>. </p>
+<p>If you run HAProxy in front of Admin Router, you should secure the communication between them. For information about securing your communication, see the <a href="/docs/1.9/administration/tls-ssl/haproxy-adminrouter/">documentation</a>.</p>
+<h3 id="private-zone">Private zone</h3>
+<p>The <strong>private</strong> zone is a non-routable network that is only accessible from
+the admin zone or through the edge router from the public zone. Deployed
+services are run in the private zone. This zone is where the majority of agent
+nodes are run.</p>
+<h3 id="public-zone">Public zone</h3>
+<p>The optional <strong>public</strong> zone is where publicly accessible applications are
+run. Generally, only a small number of agent nodes are run in this zone. The
+edge router forwards traffic to applications running in the private zone.</p>
+<p>The agent nodes in the public zone are labeled with a special role so that
+only specific tasks can be scheduled here. These agent nodes have both public
+and private IP addresses and only specific ports should be open in their
+iptables firewall.</p>
+<p>By default, when using the cloud-based installers such as the AWS
+CloudFormation templates, a large number of ports are exposed to the Internet
+for the public zone. In production systems, it is unlikely that you would
+expose all of these ports. It’s recommended that you close all ports except
+80 and 443 (for HTTP/HTTPS traffic) and use
+<a href="/docs/1.9/usage/service-discovery/marathon-lb/">Marathon-LB</a> with HTTPS for
+managing ingress traffic.</p>
+<h3 id="typical-aws-deployment">Typical AWS deployment</h3>
+<p>A typical AWS deployment including AWS Load Balancers is shown below:</p>
+<p><img src="../img/security-zones.jpg" alt="Security Zones"></p>
+<h2 id="admin-router">Admin Router</h2>
+<p>Access to the admin zone is controlled by the Admin Router.</p>
+<p>HTTP requests incoming to your DC/OS cluster are proxied through the Admin
+Router (using <a href="http://nginx.org">Nginx</a> with
+<a href="https://openresty.org">OpenResty</a> at its core). The Admin Router denies
+access to most HTTP endpoints for unauthenticated requests. In order for a
+request to be authenticated, it needs to present a valid authentication token
+in its Authorization header. A token can be obtained by going through the
+authentication flow, as described in the next section.</p>
+<p>Authenticated users are authorized to perform arbitrary actions in their
+cluster. That is, there is currently no fine-grained access control in DC/OS
+besides having access or not having access to services.</p>
+<p>See the <a href="/docs/1.9/administration/id-and-access-mgt/">Security Administrator’s Guide</a> for more information.</p>
+]]></description><link>https://dcos.io/docs/1.9/administration/securing-your-cluster</link><guid isPermaLink="true">https://dcos.io/docs/1.9/administration/securing-your-cluster</guid></item><item><title><![CDATA[Upgrading]]></title><description><![CDATA[<h2 id="summary">Summary</h2>
+<p>This document provides instructions for upgrading a DC/OS cluster from version 1.8 to 1.9. If this upgrade is performed on a supported OS with all prerequisites fulfilled, this upgrade <em>should</em> preserve the state of running tasks on the cluster.  This document reuses portions of the <a href="/docs/1.9/administration/installing/custom/advanced/">Advanced DC/OS Installation Guide</a>.</p>
+<p><strong>Important:</strong></p>
+<ul>
+<li>Review the <a href="https://dcos.io/releases/">release notes</a> before upgrading DC/OS.</li>
+<li>The Advanced Installation method is the <em>only</em> recommended upgrade path for DC/OS. It is recommended that you familiarize yourself with the <a href="/docs/1.9/administration/installing/custom/advanced/">Advanced DC/OS Installation Guide</a> before proceeding.</li>
+<li>The <a href="/docs/1.9/usage/service-discovery/load-balancing-vips/virtual-ip-addresses/">VIP features</a>, added in DC/OS 1.8, require that ports 32768 - 65535 are open between all agent and master nodes for both TCP and UDP.</li>
+<li>Virtual networks require minimum Docker version 1.11. For more information, see the <a href="/docs/1.9/administration/virtual-networks/">documentation</a>.</li>
+<li>The DC/OS UI and APIs may be inconsistent or unavailable while masters are being upgraded. Avoid using them until all masters have been upgraded and have rejoined the cluster. You can monitor the health of a master during an upgrade by watching Exhibitor on port 8181.</li>
+<li>Task history in the Mesos UI will not persist through the upgrade.</li>
+</ul>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>Mesos, Mesos Frameworks, Marathon, Docker and all running tasks in the cluster should be stable and in a known healthy state.</li>
+<li>For Mesos compatibility reasons, we recommend upgrading any running Marathon-on-Marathon instances on DC/OS 1.8 to Marathon version 1.3.5 before upgrading to DC/OS 1.9.</li>
+<li>You must have access to copies of the config files used with DC/OS 1.8: <code>config.yaml</code> and <code>ip-detect</code>.</li>
+<li>You must be using systemd 218 or newer to maintain task state.</li>
+<li>All hosts (masters and agents) must be able to communicate with all other hosts on all ports, for both TCP and UDP.</li>
+<li>In CentOS or RedHat, install IP sets with this command (used in some IP detect scripts): <code>sudo yum install -y ipset</code></li>
+<li>You must be familiar with using <code>systemctl</code> and <code>journalctl</code> command line tools to review and monitor service status. Troubleshooting notes can be found at the end of this <a href="#troubleshooting">document</a>.</li>
+<li>You must be familiar with the <a href="/docs/1.9/administration/installing/custom/advanced/">Advanced DC/OS Installation Guide</a>.</li>
+<li>You should take a snapshot of ZooKeeper prior to upgrading. Marathon supports rollbacks, but does not support downgrades.</li>
+<li>The full DC/OS version string that you are upgrading from.<ul>
+<li>In 1.8 this can be found in the lower left corner of the DC/OS UI when screen is maximized.</li>
+<li>In 1.9 this can be found under the Cluster menu.</li>
+</ul>
+</li>
+</ul>
+<h2 id="supported-upgrade-paths">Supported Upgrade Paths</h2>
+<ul>
+<li>1.8.latest =&gt; 1.9.latest</li>
+<li>1.9.x =&gt; 1.9.(x+1)</li>
+<li>1.9.x =&gt; 1.9.x (for configuration changes)</li>
+</ul>
+<h2 id="instructions">Instructions</h2>
+<h3 id="bootstrap-nodes">Bootstrap Nodes</h3>
+<ol>
+<li><p>Copy and update the DC/OS 1.8 <code>config.yaml</code> and <code>ip-detect</code> files to a new, clean folder on your bootstrap node.</p>
+<p><strong>Important:</strong></p>
+<ul>
+<li>You cannot change the <code>exhibitor_zk_backend</code> setting during an upgrade.</li>
+<li>The syntax of the DC/OS 1.9 <code>config.yaml</code> differs from that of DC/OS 1.8. For a detailed description of the 1.9 <code>config.yaml</code> syntax and parameters, see the <a href="/docs/1.9/administration/installing/custom/configuration-parameters/">documentation</a>.</li>
+</ul>
+</li>
+<li><p>After you have converted your 1.8 <code>config.yaml</code> into the 1.9 <code>config.yaml</code> format, you can build your installer package:</p>
+<ol>
+<li>Download the file <code>dcos_generate_config.sh</code>.</li>
+<li>Generate the installation files. Replace <code>&lt;installed_cluster_version&gt;</code> in the below command with the DC/OS version currently running on the cluster you intend to upgrade, for example <code>1.8.8</code>.<pre><code class="lang-bash">dcos_generate_config.sh --generate-node-upgrade-script &lt;installed_cluster_version&gt;
+</code></pre>
+</li>
+<li>The command in the previous step will produce a URL in the last line of its output, prefixed with <code>Node upgrade script URL:</code>. Record this URL for use in later steps. It will be referred to in this document as the “Node upgrade script URL”.</li>
+<li>Run the <a href="/docs/1.9/administration/installing/custom/advanced/">nginx</a> container to serve the installation files.</li>
+</ol>
+</li>
+</ol>
+<h3 id="dc-os-masters">DC/OS Masters</h3>
+<p>Proceed with upgrading every master node one-at-a-time in any order using the following procedure. When you complete each upgrade, monitor the Mesos master metrics to ensure the node has rejoined the cluster and completed reconciliation.</p>
+<ol>
+<li><p>Download and run the node upgrade script:</p>
+<pre><code class="lang-bash">curl -O &lt;Node upgrade script URL&gt;
+sudo bash ./dcos_node_upgrade.sh
+</code></pre>
+</li>
+<li><p>Verify that the upgrade script succeeded and exited with the status code <code>0</code>:</p>
+<pre><code class="lang-bash">echo $?
+0
+</code></pre>
+</li>
+<li><p>Validate the upgrade:</p>
+<ul>
+<li>Monitor the Exhibitor UI to confirm that the Master rejoins the ZooKeeper quorum successfully (the status indicator will turn green).  The Exhibitor UI is available at <code>http://&lt;dcos_master&gt;:8181/</code>.</li>
+<li>Verify that <code>curl http://&lt;dcos_master_private_ip&gt;:5050/metrics/snapshot</code> has the metric <code>registrar/log/recovered</code> with a value of <code>1</code>.</li>
+<li>Verify that <code>http://&lt;dcos_master&gt;/mesos</code> indicates that the upgraded master is running Mesos 1.2.0.</li>
+</ul>
+</li>
+</ol>
+<h3 id="dc-os-agents">DC/OS Agents</h3>
+<p>Proceed with upgrading every agent in any order. Agent upgrades can be parallelized with a few caveats. During an upgrade the Mesos agent will go offline briefly (tasks will continue to run) and load on the Master nodes will increase slightly and proportional to the number of Agents rejoining the cluster. For maximum service availability it is recommended to upgrade Agents one at a time and only perform parallel upgrades if the larger upgrade batch size has been well tested with the same workload.</p>
+<h3 id="on-all-dc-os-agents-">On all DC/OS Agents:</h3>
+<ol>
+<li><p>Download and run the node upgrade script:</p>
+<pre><code class="lang-bash">curl -O &lt;Node upgrade script URL&gt;
+sudo bash dcos_node_upgrade.sh
+</code></pre>
+</li>
+<li><p>Verify that the upgrade script succeeded and exited with the status code <code>0</code>:</p>
+<pre><code class="lang-bash">echo $?
+0
+</code></pre>
+</li>
+<li><p>Validate the upgrade:</p>
+<ul>
+<li>Verify that <code>curl http://&lt;dcos_agent_private_ip&gt;:5051/metrics/snapshot</code> has the metric <code>slave/registered</code> with a value of <code>1</code>.</li>
+<li>Monitor the Mesos UI to verify that the upgraded node rejoins the DC/OS cluster and that tasks are reconciled (<code>http://&lt;dcos_master&gt;/mesos</code>).</li>
+</ul>
+</li>
+</ol>
+<h2 id="-a-name-troubleshooting-a-troubleshooting-recommendations"><a name="troubleshooting"></a>Troubleshooting Recommendations</h2>
+<p>The following commands should provide insight into upgrade issues:</p>
+<h3 id="on-all-cluster-nodes">On All Cluster Nodes</h3>
+<pre><code class="lang-bash">sudo journalctl -u dcos-download
+sudo journalctl -u dcos-spartan
+sudo systemctl | grep dcos
+</code></pre>
+<h3 id="on-dc-os-masters">On DC/OS Masters</h3>
+<pre><code class="lang-bash">sudo journalctl -u dcos-exhibitor
+less /var/lib/dcos/exhibitor/zookeeper/zookeeper.out
+sudo journalctl -u dcos-mesos-dns
+sudo journalctl -u dcos-mesos-master
+</code></pre>
+<h3 id="on-dc-os-agents">On DC/OS Agents</h3>
+<pre><code class="lang-bash">sudo journalctl -u dcos-mesos-slave
+</code></pre>
+<h2 id="notes-">Notes:</h2>
+<ul>
+<li>Packages available in the DC/OS 1.9 Universe are newer than those in the DC/OS 1.8 Universe. Services are not automatically upgraded when DC/OS 1.9 is installed because not all DC/OS services have upgrade paths that will preserve existing state.</li>
+</ul>
+]]></description><link>https://dcos.io/docs/1.9/administration/upgrading</link><guid isPermaLink="true">https://dcos.io/docs/1.9/administration/upgrading</guid></item><item><title><![CDATA[Cluster Access]]></title><description><![CDATA[<p>You can get the cluster URL by using the following methods:</p>
+<ul>
+<li>Log into the DC/OS GUI and copy the scheme and domain name from the browser address bar.</li>
+<li>Log into the DC/OS CLI and type <code>dcos config show core.dcos_url</code> to get the cluster URL.</li>
+</ul>
+<h2 id="api-ports">API ports</h2>
+<p>On the master nodes, Admin Router is accessible through standard ports: <code>80</code> (HTTP) and <code>443</code> (HTTPS, if enabled).</p>
+<p>On the agent nodes, Admin Router Agent is accessible through port <code>61001</code> (HTTP).</p>
+<h2 id="agent-node-access">Agent node access</h2>
+<p>You can find the hostname of a specific agent node by using the following methods:</p>
+<ul>
+<li>Log into the DC/OS GUI, navigate to the Nodes page, and copy the hostname of the desired node.</li>
+<li>Log into the DC/OS CLI, list the nodes with <code>dcos node</code>, and copy the hostname of the desired node.</li>
+</ul>
+<p>To determine which agents are public agents, see <a href="/docs/1.9/administration/locate-public-agent/">Finding a Public Agent IP</a>.</p>
+<h2 id="ingress">Ingress</h2>
+<p>In most production deployments, administrative access to the cluster should be routed through an external proxy to the DC/OS master nodes, distributing traffic load between the master nodes. For example, the default AWS templates configure an AWS Elastic Load Balancer.</p>
+<p>Master nodes and private agent nodes are usually not publicly accessible. For security reasons, ingress to these nodes should be controlled by a router or firewall. To manage the cluster, administrators and operators should use a VPN server inside the firewall, on the same networks as the DC/OS nodes. Using VPN ensures that you can securely access the nodes directly from your workstation.</p>
+<p>Public agent nodes are usually publicly accessible. <a href="/docs/1.9/usage/service-discovery/marathon-lb/">Marathon-LB</a> running on the public agent nodes can serve as reverse proxy and load balancer to applications running on the private agent nodes. For additional security, use external load balancing, either to intermediate load balancers, applications on the public nodes, or directly to applications on the private nodes. If you want to allow public access to the public nodes, you should configure firewalls to block access to all ports except those required for your applications.</p>
+<p>In development or local deployments, you usually have direct access to the nodes by IP.</p>
+<p>For more information, see <a href="/docs/1.9/administration/securing-your-cluster/">Securing Your Cluster</a>.</p>
+]]></description><link>https://dcos.io/docs/1.9/api/access</link><guid isPermaLink="true">https://dcos.io/docs/1.9/api/access</guid></item><item><title><![CDATA[Agent Routes]]></title><description><![CDATA[<p>Admin Router Agent runs on DC/OS agent nodes and exposes the following API routes.</p>
+<p>Admin Router Agent listens on port <code>61001</code> (HTTP).</p>
+<p>For more detail about how API routing works, see <a href="/docs/1.9/api/">DC/OS API Reference</a>.</p>
+<p><br/></p>
+<div id="html-include" class="html-include" data-api="/docs/1.9/api/nginx.agent.html" data-init="NgindoxInit">
+    <div class="info" id="api_info">
+        <div class="info_title">Loading docs…</div>
+    <div class="info_description markdown"></div>
+</div>
+]]></description><link>https://dcos.io/docs/1.9/api/agent-routes</link><guid isPermaLink="true">https://dcos.io/docs/1.9/api/agent-routes</guid></item><item><title><![CDATA[DC/OS API Reference]]></title><description><![CDATA[<p>The DC/OS API is a collection of routes backed by <a href="/docs/1.9/overview/architecture/components/">DC/OS components</a> that are made available through an API gateway called the <a href="/docs/1.9/overview/architecture/components/#admin-router">Admin Router</a>.</p>
+<h2 id="admin-router">Admin Router</h2>
+<p>Admin Router is an API gateway built on top of NGINX.</p>
+<p>Admin Router exposes several types of routes:</p>
+<ul>
+<li><strong>Proxy Routes</strong> retrieve resources from another URL.</li>
+<li><strong>File Routes</strong> retrieve static files.</li>
+<li><strong>Lua Routes</strong> execute Lua code to generate responses.</li>
+<li><strong>Redirect Routes</strong> redirect to another URL.</li>
+<li><strong>Rewrite Routes</strong> translate routes into other routes.</li>
+</ul>
+<p>Admin Router uses these route types to accomplish these primary goals:</p>
+<ul>
+<li>Present a unified control plane for the DC/OS API</li>
+<li>Proxy API requests to component services on master and agent nodes</li>
+<li>Enforce user authentication</li>
+<li>Serve up the DC/OS GUI</li>
+</ul>
+<h2 id="cluster-access">Cluster Access</h2>
+<p>To determine the URL of your cluster, see <a href="/docs/1.9/api/access/">Cluster Access</a>.</p>
+<h2 id="route-usage">Route Usage</h2>
+<ul>
+<li><p>To determine the full URL of a API resource through a <strong>proxy route</strong>, join the cluster URL, route path, and backend component resource path.</p>
+<pre><code class="lang-bash">  ${cluster-url}/${route}/${component-resource-path}
+</code></pre>
+<p>  For example, get the Mesos version from: <code>https://dcos.example.com/mesos/version</code></p>
+</li>
+<li><p><strong>File routes</strong> have no backend component, but may serve a directory of files or a single file. So for file routes, specify the file path instead of the backend component resource path.</p>
+<pre><code class="lang-bash">  ${cluster-url}/${route}/${file-path}
+</code></pre>
+<p>  For example, get the DC/OS version of the cluster from: <code>https://dcos.example.com/dcos-metadata/dcos-version.json</code></p>
+</li>
+<li><p><strong>Lua routes</strong> immediately execute code in Admin Router without proxying to an external backend component. So for Lua routes, no path is required after the route.</p>
+<pre><code class="lang-bash">   ${cluster-url}/${route}
+</code></pre>
+<p>   For example, get the public IP of the master node and cluster ID from: <code>https://dcos.example.com/metadata</code></p>
+</li>
+<li><p><strong>Rewrite and redirect routes</strong> may pass through one or more other URLs or routes before returning a resource. So for those routes, follow the chain of URLs and routes to find the endpoint. The resource path will depend on the final endpoint.</p>
+<p>  Most rewrites and redirects terminate in another DC/OS API route, with the notable exception of <code>/login</code>, which uses OpenID Connect to authorize with an external identity provider and then redirects back to the DC/OS API.</p>
+</li>
+</ul>
+<h2 id="versioning">Versioning</h2>
+<p>API versioning in DC/OS is delegated to each individual route or backend component.</p>
+<p>Some components use <strong>URL versioning</strong> with a path prefix, like <code>/v2/</code>, between the route and the resource path.</p>
+<p>Other components version their API by <strong>content negotiation</strong> using HTTP headers.</p>
+<p>To determine which method to use, see the specific backend component’s API reference documentation.</p>
+<h2 id="authentication">Authentication</h2>
+<p>Some routes are unauthenticated, but most require an authentication token.</p>
+<p>For details on how to obtain and use an authentication token, see <a href="/docs/1.9/administration/id-and-access-mgt/iam-api/">Authentication HTTP API Endpoint</a>.</p>
+<h2 id="route-topology">Route Topology</h2>
+<p>There are two varieties of Admin Router:</p>
+<ul>
+<li><p><strong>Admin Router Master</strong> runs on each master node and serves as the primary API gateway for interaction with DC/OS components.</p>
+<p>See <a href="/docs/1.9/api/master-routes/">Master Routes</a> for a list of routes available on master nodes.</p>
+</li>
+<li><p><strong>Admin Router Agent</strong> runs on each agent node and provides routes for monitoring, debugging, and administration.</p>
+<p>Some agent routes, like logs and metrics, are proxied through the master Admin Router to allow external access.
+Other routes, like component management, are for internal use only.</p>
+<p>See <a href="/docs/1.9/api/agent-routes/">Agent Routes</a> for a list of routes available on agent nodes.</p>
+</li>
+</ul>
+<p><img src="/docs/1.9/api/img/dcos-api-routing.png" alt="DC/OS API Routing"></p>
+]]></description><link>https://dcos.io/docs/1.9/api/</link><guid isPermaLink="true">https://dcos.io/docs/1.9/api/</guid></item><item><title><![CDATA[Master Routes]]></title><description><![CDATA[<p>Admin Router runs on DC/OS master nodes and exposes the following API routes.</p>
+<p>Admin Router listens on port <code>80</code> (HTTP) and <code>443</code> (HTTPS).</p>
+<p>For more detail about how API routing works, see <a href="/docs/1.9/api/">DC/OS API Reference</a>.</p>
+<p><br/></p>
+<div id="html-include" class="html-include" data-api="/docs/1.9/api/nginx.master.html" data-init="NgindoxInit">
+    <div class="info" id="api_info">
+        <div class="info_title">Loading docs…</div>
+    <div class="info_description markdown"></div>
+</div>
+]]></description><link>https://dcos.io/docs/1.9/api/master-routes</link><guid isPermaLink="true">https://dcos.io/docs/1.9/api/master-routes</guid></item><item><title><![CDATA[Development of DC/OS Services]]></title><description><![CDATA[<h2 id="-a-name-universe-a-package-repositories"><a name="universe"></a>Package Repositories</h2>
+<p>In DC/OS, the <a href="http://mesosphere.github.io/universe/">Universe</a> contains packages that are installable as services in a cluster. Everyone is welcome and encouraged to submit a package to Universe. Some packages are “selected” by Mesosphere and are identified as such in the DC/OS UI and DC/OS CLI.</p>
+<p>All services in the Universe are required to meet a standard as defined by the DC/OS project team. For details on publishing a release of a DC/OS service, see <a href="http://mesosphere.github.io/universe/#publish-a-package-1">Publish a Package</a> in the Universe documentation.</p>
+<p>For detailed information about the JSON files of a package, see the <a href="http://mesosphere.github.io/universe/">Universe</a> docs.</p>
+<h2 id="-a-name-dcos-integration-a-dc-os-integration"><a name="dcos-integration"></a>DC/OS Integration</h2>
+<p>When creating DC/OS Service there are several integration points that can be leveraged. The sections below provide detailed explanations on how to integrate with each respective component.</p>
+<h3 id="-a-name-adminrouter-a-admin-router"><a name="adminrouter"></a>Admin Router</h3>
+<p>When a DC/OS Service is installed and ran on DC/OS, the service is generally deployed on a <a href="/docs/1.9/administration/securing-your-cluster/">private agent node</a>. In order to allow users to access a running instance of the service, Admin Router can functions as a reverse proxy for the DC/OS Service.</p>
+<p>Admin Router currently supports only one reverse proxy destination.</p>
+<h4 id="service-endpoints">Service Endpoints</h4>
+<p>Admin Router allows marathon tasks to define custom service UI and HTTP endpoints, which are made available as <code>/service/&lt;service-name&gt;</code>. Set the following marathon task labels to enable this:</p>
+<pre><code>&quot;labels&quot;: {
+    &quot;DCOS_SERVICE_NAME&quot;: &quot;&lt;service-name&gt;&quot;,
+    &quot;DCOS_SERVICE_PORT_INDEX&quot;: &quot;0&quot;,
+    &quot;DCOS_SERVICE_SCHEME&quot;: &quot;http&quot;
+  }
+</code></pre><p>In this case, <code>http://&lt;dcos-cluster&gt;/service/&lt;service-name&gt;</code> would be forwarded to the host running the task using the first port allocated to the task.</p>
+<p>In order for the forwarding to work reliably across task failures, we recommend co-locating the endpoints with the task. This way, if the task is restarted on another host and with different ports, Admin Router will pick up the new labels and update the routing. <strong>Note:</strong> Due to caching, there can be an up to 30-second delay before the new routing is working.</p>
+<p>We recommend having only a single task setting these labels for a given service name. If multiple task instances have the same service name label, Admin Router will pick one of the task instances deterministically, but this might make debugging issues more difficult.</p>
+<p>Since the paths to resources for clients connecting to Admin Router will differ from those paths the service actually has, ensure the service is configured to run behind a proxy. This often means relative paths are preferred to absolute paths. In particular, resources expected to be used by a UI should be verified to work through a proxy.</p>
+<p>Tasks running in nested <a href="https://mesosphere.github.io/marathon/docs/application-groups.html">marathon app groups</a> will be available only using their service name (i.e., <code>/service/&lt;service-name&gt;</code>), not by the marathon app group name (i.e., <code>/service/app-group/&lt;service-name&gt;</code>).</p>
+<h3 id="-a-name-dcos-ui-a-dc-os-ui"><a name="dcos-ui"></a>DC/OS UI</h3>
+<p>Service health check information can be surfaced in the DC/OS services UI tab by:</p>
+<ol>
+<li><p>Defining one or more healthChecks in the Service’s Marathon template, for example:</p>
+<pre><code> &quot;healthChecks&quot;: [
+     {
+         &quot;path&quot;: &quot;/&quot;,
+         &quot;portIndex&quot;: 1,
+         &quot;protocol&quot;: &quot;HTTP&quot;,
+         &quot;gracePeriodSeconds&quot;: 5,
+         &quot;intervalSeconds&quot;: 60,
+         &quot;timeoutSeconds&quot;: 10,
+         &quot;maxConsecutiveFailures&quot;: 3
+     }
+ ]
+</code></pre></li>
+<li><p>Defining the label <code>DCOS_PACKAGE_FRAMEWORK_NAME</code> in the Service’s Marathon template, with the same value that will be used when the framework registers with Mesos. For example:</p>
+<pre><code>  &quot;labels&quot;: {
+     &quot;DCOS_PACKAGE_FRAMEWORK_NAME&quot;: &quot;unicorn&quot;
+   }
+</code></pre></li>
+<li><p>Setting <code>.framework</code> to true in <code>package.json</code></p>
+</li>
+</ol>
+<h3 id="-a-name-cli-subcommand-a-cli-subcommand"><a name="cli-subcommand"></a>CLI Subcommand</h3>
+<p>If you would like to publish a DC/OS CLI Subcommand for use with your service it is common to have the Subcommand communicate with the running Service by sending HTTP requests through Admin Router to the Service.</p>
+<p>See <a href="https://github.com/mesosphere/dcos-helloworld">dcos-helloworld</a> for an example on how to develop a CLI Subcommand.</p>
+<h2 id="package-guidelines">Package Guidelines</h2>
+<p>The following are a set of guidelines that should be considered when creating a DC/OS Package.</p>
+<h3 id="-package-json-"><code>package.json</code></h3>
+<ul>
+<li>Focus the description on the service. Assume that all users are familiar with DC/OS and Mesos.</li>
+<li>The <code>tags</code> parameter is used for user searches (<code>dcos package search &lt;criteria&gt;</code>). Add tags that distinguish the service in some way. Avoid the following terms: Mesos, Mesosphere, DC/OS, and datacenter. For example, the unicorns service could have: <code>&quot;tags&quot;: [&quot;rainbows&quot;, &quot;mythical&quot;]</code>.</li>
+<li>The <code>preInstallNotes</code> parameter gives the user information they’ll need before starting the installation process. For example, you could explain what the resource requirements are for the service: <code>&quot;preInstallNotes&quot;: &quot;Unicorns take 7 nodes with 1 core each and 1TB of ram.&quot;</code></li>
+<li>The <code>postInstallNotes</code> parameter gives the user information they’ll need after the installation. Focus on providing a documentation URL, a tutorial, or both. For example: <code>&quot;postInstallNotes&quot;: &quot;Thank you for installing the Unicorn service.\n\n\tDocumentation: http://&lt;service-url&gt;\n\tIssues: https://github.com/&quot;</code></li>
+<li>The <code>postUninstallNotes</code> parameter gives the user information they’ll need after an uninstall. For example, further cleanup before reinstalling again and a link to the details. A common issue is cleaning up ZooKeeper entries. For example: <code>postUninstallNotes&quot;: &quot;The Unicorn DC/OS Service has been uninstalled and will no longer run.\nPlease follow the instructions at http://&lt;service-URL&gt; to clean up any persisted state&quot; }</code></li>
+</ul>
+]]></description><link>https://dcos.io/docs/1.9/development/</link><guid isPermaLink="true">https://dcos.io/docs/1.9/development/</guid></item><item><title><![CDATA[Concepts]]></title><description><![CDATA[<h1 id="-a-name-dcos-concepts-a-dc-os-concepts"><a name="dcos-concepts"></a>DC/OS Concepts</h1>
+<p>DC/OS is made up of many open source components, several of which existed before DC/OS. The terms used in this document may be similar to pre-existing terms that you are familiar with, however, they might be used in a different way with DC/OS.</p>
+<ul>
+<li><a href="#dcos">DC/OS</a></li>
+<li><a href="#dcos-gui">DC/OS GUI</a></li>
+<li><a href="#dcos-cli">DC/OS CLI</a></li>
+<li><a href="#dcos-cluster">Cluster</a></li>
+<li><a href="#network">Network</a><ul>
+<li><a href="#infrastructure-network">Infrastructure Network</a></li>
+<li><a href="#dcos-virtual-network">Virtual Network</a></li>
+</ul>
+</li>
+<li><a href="#dcos-node">Node</a><ul>
+<li><a href="#dcos-master-node">Master Node</a></li>
+<li><a href="#dcos-agent-node">Agent Node</a><ul>
+<li><a href="#private-agent-node">Private Agent Node</a></li>
+<li><a href="#public-agent-node">Public Agent Node</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#host-operating-system">Host Operating System</a></li>
+<li><a href="#bootstrap-machine">Bootstrap Machine</a></li>
+<li><a href="#dcos-service">Service</a><ul>
+<li><a href="#marathon-service">Marathon Service</a></li>
+<li><a href="#systemd-service">Systemd Service</a></li>
+<li><a href="#system-service">System Service</a></li>
+<li><a href="#user-service">User Service</a></li>
+</ul>
+</li>
+<li><a href="#dcos-service-group">Service Group</a></li>
+<li><a href="#dcos-job">Job</a></li>
+<li><a href="#dcos-scheduler">Scheduler</a></li>
+<li><a href="#dcos-scheduler-service">Scheduler Service</a></li>
+<li><a href="#dcos-component">Component</a></li>
+<li><a href="#dcos-package">Package</a></li>
+<li><a href="#dcos-package-manager">Package Manager</a></li>
+<li><a href="#dcos-package-registry">Package Registry</a></li>
+<li><a href="#mesosphere-universe">Mesosphere Universe</a></li>
+<li><a href="#container-registry">Container-Registry</a></li>
+<li><a href="#cloud-template">Cloud Template</a></li>
+</ul>
+<h3 id="-a-name-dcos-a-dc-os"><a name="dcos"></a>DC/OS</h3>
+<p>DC/OS is a <a href="https://en.wikipedia.org/wiki/Distributed_operating_system">distributed operating system</a> for the datacenter.</p>
+<ul>
+<li>Unlike traditional distributed operating systems, DC/OS is also a container platform that manages containerized tasks based on native executables or container images, like <a href="https://docs.docker.com/engine/tutorials/dockerimages/">Docker images</a>.</li>
+<li>Unlike traditional <a href="https://en.wikipedia.org/wiki/Operating_system">operating systems</a>, DC/OS runs on a <a href="#cluster">cluster of nodes</a>, instead of a single machine. Each DC/OS node also has a <a href="#host-operating-system">host operating system</a> that manages the underlying machine.</li>
+<li>DC/OS is made up of many components, most notably a distributed systems kernel (<a href="#mesos">Mesos</a>) and a container orchestration engine (<a href="#marathon">Marathon</a>).</li>
+<li>Prior to version 1.6, DC/OS was known as The Datacenter Operating System (DCOS). With version 1.6 the platform was renamed to DC/OS and open sourced.</li>
+<li>While DC/OS itself is open source, premium distributions like <a href="https://mesosphere.com/product/">Mesosphere Enterprise DC/OS</a> may include additional closed-source components and features (e.g. multitenancy, fine-grained permissions, secrets management, and end-to-end encryption).</li>
+</ul>
+<h3 id="-a-name-dcos-gui-a-dc-os-gui"><a name="dcos-gui"></a>DC/OS GUI</h3>
+<p>The <a href="/docs/1.9/usage/webinterface/">DC/OS graphical user interface (GUI)</a> is an interface for remotely controlling and managing a DC/OS cluster from a web browser. The GUI is also sometimes called the DC/OS UI or DC/OS web interface.</p>
+<h3 id="-a-name-dcos-cli-a-dc-os-cli"><a name="dcos-cli"></a>DC/OS CLI</h3>
+<p>The <a href="/docs/1.9/usage/cli/">DC/OS command line interface (CLI)</a> is an interface for remotely controlling and managing a DC/OS cluster from a terminal.</p>
+<h3 id="-a-name-dcos-cluster-a-cluster"><a name="dcos-cluster"></a>Cluster</h3>
+<p>A DC/OS cluster is a set of networked DC/OS nodes with a quorum of master nodes and any number of public and/or private agent nodes.</p>
+<h3 id="-a-name-network-a-network"><a name="network"></a>Network</h3>
+<p>DC/OS has two types of networks: infrastructure networks and virtual networks.</p>
+<h4 id="-a-name-infrastructure-network-a-infrastructure-network"><a name="infrastructure-network"></a>Infrastructure Network</h4>
+<p>An infrastructure network is a physical or virtual network provided by the infrastructure on which DC/OS runs. DC/OS does not manage or control this networking layer, but requires it to exist in order for DC/OS nodes to communicate.</p>
+<h4 id="-a-name-dcos-virtual-network-a-virtual-network"><a name="dcos-virtual-network"></a>Virtual Network</h4>
+<p>A DC/OS virtual network is specifically an virtual network internal to the cluster that connects DC/OS components and containerized tasks running on DC/OS.</p>
+<ul>
+<li>The virtual network provided by DC/OS is VXLAN managed by the Virtual Network Service (Navstar).</li>
+<li>Virtual networks must be configured by an administrator before being used by tasks.</li>
+<li>Tasks on DC/OS may opt-in to being placed on a specific virtual network and given a container-specific IP.</li>
+<li>Virtual networks allow logical subdivision of the tasks running on DC/OS.</li>
+<li>Each task on a virtual network may be configured with optional address groups that virtually isolate communication to tasks on the same network and address group.</li>
+</ul>
+<h3 id="-a-name-dcos-node-a-node"><a name="dcos-node"></a>Node</h3>
+<p>A DC/OS node is a virtual or physical machine on which a Mesos agent and/or Mesos master process runs. DC/OS nodes are networked together to form a DC/OS cluster.</p>
+<h4 id="-a-name-dcos-master-node-a-master-node"><a name="dcos-master-node"></a>Master Node</h4>
+<p>A DC/OS master node is a virtual or physical machine that runs a collection of DC/OS components that work together to manage the rest of the cluster.</p>
+<ul>
+<li>Each master node contains multiple DC/OS components, including most notably a <a href="#mesos-master">Mesos master</a> process.</li>
+<li>Master nodes work in a <a href="https://en.wikipedia.org/wiki/Quorum_%28distributed_computing%29">quorum</a> to provide consistency of cluster coordination. To avoid <a href="https://en.wikipedia.org/wiki/Split-brain_%28computing%29">split brain</a> cluster partitioning, clusters should always have an odd number of master nodes. For example, having three master nodes allows one to be down; having five master nodes allows two to be down, allowing for failure during a rolling update. Additional master nodes can be added for additional risk tolerance.</li>
+<li>A cluster with only one master node is usable for development, but is not highly available and may not be able to recover from failure.</li>
+</ul>
+<h4 id="-a-name-dcos-agent-node-a-agent-node"><a name="dcos-agent-node"></a>Agent Node</h4>
+<p>A DC/OS agent node is a virtual or physical machine on which Mesos tasks are run.</p>
+<ul>
+<li>Each agent node contains multiple DC/OS components, including most notably a <a href="#mesos-agent">Mesos agent</a> process.</li>
+<li>Agent nodes can be <a href="#private-agent-node">private</a> or <a href="#public-agent-node">public</a>, depending on agent and network configuration.</li>
+</ul>
+<p>For more information, see <a href="/docs/1.9/administration/securing-your-cluster/">Network Security</a> and <a href="/docs/1.9/administration/installing/custom/add-a-node/">Adding Agent Nodes</a>.</p>
+<h5 id="-a-name-private-agent-node-a-private-agent-node"><a name="private-agent-node"></a>Private Agent Node</h5>
+<p>A private agent node is an agent node that is on a network that <em>does not</em> allow ingress from outside of the cluster via the cluster’s infrastructure networking.</p>
+<ul>
+<li>The Mesos agent on each private agent node is, by default, configured with none of its resources allocated to any specific Mesos roles (<code>*</code>).</li>
+<li>Most service packages install by default on private agent nodes.</li>
+<li>Clusters are generally comprised of mostly private agent nodes.</li>
+</ul>
+<h5 id="-a-name-public-agent-node-a-public-agent-node"><a name="public-agent-node"></a>Public Agent Node</h5>
+<p>A public agent node is an agent node that is on a network that <em>does</em> allow ingress from outside of the cluster via the cluster’s infrastructure networking.</p>
+<ul>
+<li>The Mesos agent on each public agent node is configured with the <code>public_ip:true</code> agent attribute and all of its resources allocated to the <code>slave_public</code> role.</li>
+<li>Public agent nodes are used primarily for externally facing reverse proxy load balancers, like <a href="/docs/1.9/usage/service-discovery/marathon-lb/">Marathon-LB</a>.</li>
+<li>Clusters generally have only a few public agent nodes, because a single load balancer can handle proxying multiple services.</li>
+</ul>
+<p>For more information, see <a href="/docs/1.9/administration/installing/custom/convert-agent-type/">Converting Agent Node Types</a>.</p>
+<h3 id="-a-name-host-operating-system-a-host-operating-system"><a name="host-operating-system"></a>Host Operating System</h3>
+<p>A host operating system is the <a href="https://en.wikipedia.org/wiki/Operating_system">operating system</a> that runs on each DC/OS node underneath the DC/OS components, manages the local hardware and software resources, and provides common services for running other programs and services.</p>
+<ul>
+<li>DC/OS currently supports the following host operating systems: <a href="https://www.centos.org/">CentOS</a>, <a href="https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux">RHEL</a>, and <a href="https://coreos.com/">CoreOS</a>.</li>
+<li>While the host OS manges local tasks and machine resources, DC/OS manages cluster tasks and resources so that the user does not generally need to interact with the host operating systems on the nodes.</li>
+</ul>
+<h3 id="-a-name-bootstrap-machine-a-bootstrap-machine"><a name="bootstrap-machine"></a>Bootstrap Machine</h3>
+<p>A bootstrap machine is the machine on which the DC/OS installer artifacts are configured, built, and distributed.</p>
+<ul>
+<li>The bootstrap machine is not technically considered part of the cluster since it does not have DC/OS installed on it (this may change in the future). For most installation methods, the bootstrap node must be accessible to and from the machines in the cluster via infrastructure networking.</li>
+<li>The bootstrap machine is sometimes used as a jumpbox to control SSH access into other nodes in the cluster for added security and logging.</li>
+<li>One method of allowing master nodes to change IPs involves running ZooKeeper with Exhibitor on the bootstrap machine. Other alternatives include using S3, DNS, or static IPs, with various tradeoffs. For more information, see <a href="/docs/1.9/administration/installing/custom/configuration-parameters/#exhibitor_storage_backend">configuring the exhibitor storage backend</a>.</li>
+<li>If a bootstrap machine is not required for managing master node IP changes or as an SSH jumpbox, it can be shut down after bootstrapping and spun up on demand to <a href="/docs/1.9/administration/installing/custom/add-a-node/">add new nodes</a> to the cluster.</li>
+</ul>
+<p>For more information, see the <a href="/docs/1.9/administration/installing/custom/system-requirements/#bootstrap-node">system requirements</a>.</p>
+<h3 id="-a-name-dcos-service-a-service"><a name="dcos-service"></a>Service</h3>
+<p>A DC/OS service is a set of one or more service instances that can be started and stopped as a group and restarted automatically if they exit before being stopped.</p>
+<ul>
+<li>Services is currently just a DC/OS GUI abstraction that translates to Marathon apps and pods in the CLI and API. This distinction will change over time as the name “service” is pushed upstream into component APIs.</li>
+<li>Sometimes “service” may also refer to a systemd service on the host OS. These are generally considered components and don’t actually run on Marathon or Mesos.</li>
+<li>A service may be either a system service or a user service. This distinction is new and still evolving as namespacing is transformed into a system-wide first class pattern.</li>
+</ul>
+<h4 id="-a-name-marathon-service-a-marathon-service"><a name="marathon-service"></a>Marathon Service</h4>
+<p>A Marathon service consists of zero or more containerized service instances. Each service instance consists of one or more containerized Mesos tasks.</p>
+<ul>
+<li>Marathon apps and pods are both considered services.<ul>
+<li>Marathon app instances map 1 to 1 with tasks.</li>
+<li>Marathon pod instances map 1 to many with tasks.</li>
+</ul>
+</li>
+<li>Service instances are restarted as a new Mesos Task when they exit prematurely.</li>
+<li>Service instances may be re-scheduled onto another agent node if they exit prematurely and the agent is down or does not have enough resources any more.</li>
+<li>Services can be installed directly via the <a href="/docs/1.9/usage/managing-services/rest-api/">DC/OS API (Marathon)</a> or indirectly via the <a href="#package-manager">DC/OS Package Manager (Cosmos)</a> from a <a href="#dcos-package-repository">package repository</a> like <a href="#mesosphere-universe">Mesosphere Universe</a>. The <a href="#dcos-gui">DC/OS GUI</a> and <a href="#dcos-cli">DC/OS CLI</a> may be used to interact with the DC/OS Package Manager (Cosmos) more easily.</li>
+<li>A Marathon service may be a <a href="#dcos-scheduler">DC/OS scheduler</a>, but not all services are schedulers.</li>
+<li>A Marathon service is an abstraction around Marathon service instances which are an abstraction around Mesos tasks. Other schedulers (e.g. DC/OS Jobs (Metronome), Jenkins) have their own names for abstractions around Mesos tasks.</li>
+</ul>
+<p>Examples: Cassandra (scheduler), Marathon-on-Marathon, Kafka (scheduler), Nginx, Tweeter.</p>
+<h4 id="-a-name-systemd-service-a-systemd-service"><a name="systemd-service"></a>Systemd Service</h4>
+<p>A systemd service is a service that consists of a single, optionally containerized, machine operating system process, running on the master or agent nodes, managed by systemd, owned by DC/OS itself.</p>
+<ul>
+<li>All systemd service are currently either host OS service, DC/OS dependencies, DC/OS components, or services manually managed by the system administrator.</li>
+</ul>
+<p>Examples: Most DC/OS components, (system) Marathon.</p>
+<h4 id="-a-name-system-service-a-system-service"><a name="system-service"></a>System Service</h4>
+<p>A system service is a service that implements or enhances the functionality of DC/OS itself, run as either a Marathon service or a systemd service, owned by the system (admin) user or DC/OS itself.</p>
+<ul>
+<li>A system service may require special permissions to interact with other system services.</li>
+<li>Permission to operate as a system service on an Enterprise DC/OS cluster requires specific fine-grained permissions, while on open DC/OS all logged in users have the same administrative permissions.</li>
+</ul>
+<p>Examples: All DC/OS components.</p>
+<h4 id="-a-name-user-service-a-user-service"><a name="user-service"></a>User Service</h4>
+<p>A user service is a Marathon service that is not a system service, owned by a user of the system.</p>
+<ul>
+<li>This distinction is new and still evolving as namespacing is transformed into a system-wide first class pattern and mapped to fine-grained user and user group permissions.</li>
+</ul>
+<p>Examples: Jenkins, Cassandra, Kafka, Tweeter.</p>
+<h3 id="-a-name-dcos-service-group-a-service-group"><a name="dcos-service-group"></a>Service Group</h3>
+<p>A DC/OS service group is a hierarchical (path-like) set of DC/OS services for namespacing and organization.</p>
+<ul>
+<li>Service groups are currently only available for Marathon services, not systemd services.</li>
+<li>This distinction may change as namespacing is transformed into a system-wide first class pattern.</li>
+</ul>
+<h3 id="-a-name-dcos-job-a-job"><a name="dcos-job"></a>Job</h3>
+<p>A DC/OS job is a set of similar short-lived job instances, running as Mesos tasks, managed by the DC/OS Jobs (Metronome) component.</p>
+<ul>
+<li>A job can be created to run only once, or may run regularly on a schedule.</li>
+</ul>
+<h3 id="-a-name-dcos-scheduler-a-scheduler"><a name="dcos-scheduler"></a>Scheduler</h3>
+<p>A DC/OS scheduler is a Mesos scheduler that runs as a systemd service on master nodes or Mesos task on agent nodes.</p>
+<ul>
+<li>The key differences between a DC/OS scheduler and Mesos scheduler are where it runs and how it is installed.</li>
+<li>Some schedulers come pre-installed as DC/OS components (e.g. Marathon, DC/OS Jobs (Metronome)).</li>
+<li>Some schedulers can be installed by users as user services (e.g Kafka, Cassandra).</li>
+<li>Some schedulers run as multiple service instances to provide high availability (e.g. Marathon).</li>
+<li>In certain security modes within Enterprise DC/OS, a DC/OS scheduler must authenticate and be authorized using a service account in order to register with Mesos as a framework.</li>
+</ul>
+<h3 id="-a-name-dcos-scheduler-service-a-scheduler-service"><a name="dcos-scheduler-service"></a>Scheduler Service</h3>
+<p>A DC/OS scheduler service is a long-running DC/OS scheduler that runs as a DC/OS service (Marathon or systemd).</p>
+<ul>
+<li>Since DC/OS schedulers can also be run as short-lived tasks, not all schedulers are services.</li>
+</ul>
+<h3 id="-a-name-dcos-component-a-component"><a name="dcos-component"></a>Component</h3>
+<p>A DC/OS component is a DC/OS system service that is distributed with DC/OS.</p>
+<ul>
+<li>Components may be systemd services or Marathon services.</li>
+<li>Components may be deployed in a high availability configuration.</li>
+<li>Most components run on the master nodes, but some (e.g. mesos-agent) run on the agent nodes.</li>
+</ul>
+<p>Examples: Mesos, Marathon, Mesos-DNS, Bouncer, Admin Router, DC/OS Package Manager (Cosmos), Minuteman, History Service, etc.</p>
+<h3 id="-a-name-dcos-package-a-package"><a name="dcos-package"></a>Package</h3>
+<p>A DC/OS package is a bundle of metadata that describes how to configure, install, and uninstall a DC/OS service using Marathon.</p>
+<h3 id="-a-name-dcos-package-manager-a-package-manager"><a name="dcos-package-manager"></a>Package Manager</h3>
+<p>The [DC/OS Package Manager (Cosmos)(<a href="https://github.com/dcos/cosmos">https://github.com/dcos/cosmos</a>)) is a component that manages installing and uninstalling packages on a DC/OS cluster.</p>
+<ul>
+<li>The DC/OS GUI and DC/OS CLI act as clients to interact with the DC/OS Package Manager.</li>
+<li>The <a href="https://github.com/dcos/cosmos">DC/OS Package Manager API</a> allows programmatic interaction.</li>
+</ul>
+<h3 id="-a-name-dcos-package-registry-a-package-registry"><a name="dcos-package-registry"></a>Package Registry</h3>
+<p>A DC/OS package registry is a repository of DC/OS packages.</p>
+<ul>
+<li>The <a href="#dcos-package-manager">DC/OS Package Manager</a> may be configured to install packages from one or more package registries.</li>
+</ul>
+<h3 id="-a-name-mesosphere-universe-a-mesosphere-universe"><a name="mesosphere-universe"></a>Mesosphere Universe</h3>
+<p>The Mesosphere Universe is a public package registry, managed by Mesosphere.</p>
+<p>For more information, see the <a href="https://github.com/mesosphere/universe">Universe repository</a> on GitHub.</p>
+<h3 id="-a-name-container-registry-a-container-registry"><a name="container-registry"></a>Container Registry</h3>
+<p>A container registry is a repository of pre-built container images.</p>
+<p>The <a href="#mesos-docker-runtime">Docker Runtime</a> and <a href="#mesos-universal-container-runtime">Mesos Container Runtime</a> can both pull and run Docker images from public or private Docker container registries.</p>
+<h3 id="-a-name-cloud-template-a-cloud-template"><a name="cloud-template"></a>Cloud Template</h3>
+<p>A cloud template is an infrastructure-specific method of decoratively describing a DC/OS cluster.</p>
+<p>For more information, see <a href="/docs/1.9/administration/installing/cloud/">Cloud Installation Options</a>.</p>
+<h1 id="-a-name-mesos-concepts-a-mesos-concepts"><a name="mesos-concepts"></a>Mesos Concepts</h1>
+<p>The following terms are contextually correct when talking about Apache Mesos, but may be hidden by other abstraction within DC/OS.</p>
+<ul>
+<li><a href="#apache-mesos">Apache Mesos</a></li>
+<li><a href="#mesos-master">Master</a></li>
+<li><a href="#mesos-agent">Agent</a></li>
+<li><a href="#mesos-task">Task</a></li>
+<li><a href="#mesos-executor">Executor</a></li>
+<li><a href="#mesos-scheduler">Scheduler</a></li>
+<li><a href="#mesos-framework">Framework</a></li>
+<li><a href="#mesos-role">Role</a></li>
+<li><a href="#mesos-resource-offer">Resource Offer</a></li>
+<li><a href="#mesos-containerizer">Containerizer</a><ul>
+<li><a href="#mesos-universal-container-runtime">Mesos Universal Container Runtime</a></li>
+<li><a href="#mesos-docker-runtime">Docker Runtime</a></li>
+</ul>
+</li>
+<li><a href="#mesos-exhibitor-zookeeper">Exhibitor &amp; ZooKeeper</a></li>
+<li><a href="#mesos-dns">Mesos-DNS</a></li>
+</ul>
+<h3 id="-a-name-apache-mesos-a-apache-mesos"><a name="apache-mesos"></a>Apache Mesos</h3>
+<p>Apache Mesos is a distributed systems kernel that manages cluster resources and tasks.</p>
+<ul>
+<li>Mesos is one of the core components of DC/OS that predates DC/OS itself, bringing maturity and stability to the platform.</li>
+</ul>
+<p>For more information, see the <a href="http://mesos.apache.org/">Mesos website</a>.</p>
+<h3 id="-a-name-mesos-master-a-master"><a name="mesos-master"></a>Master</h3>
+<p>A Mesos master is a process that runs on master nodes to coordinate cluster resource management and facilitate orchestration of tasks.</p>
+<ul>
+<li>The Mesos masters form a quorum and elect a leader.</li>
+<li>The lead Mesos master collects resources reported by Mesos agents and makes resource offers to Mesos schedulers. Schedulers then may accept resource offers and place tasks on their corresponding nodes.</li>
+</ul>
+<h3 id="-a-name-mesos-agent-a-agent"><a name="mesos-agent"></a>Agent</h3>
+<p>A Mesos agent is a process that runs on agent nodes to manage the executors, tasks, and resources of that node.</p>
+<ul>
+<li>The Mesos agent registers some or all of the node’s resources, which allows the lead Mesos master to offer those resources to schedulers, which decide on which node to run tasks.</li>
+<li>The Mesos agent reports task status updates to the lead Mesos master, which in turn reports them to the appropriate scheduler.</li>
+</ul>
+<h3 id="-a-name-mesos-task-a-task"><a name="mesos-task"></a>Task</h3>
+<p>A Mesos task is an abstract unit of work, lifecycle managed by a Mesos executor, that runs on a DC/OS agent node.</p>
+<ul>
+<li>Tasks are often processes or threads, but could even just be inline code or items in a single-threaded queue, depending on how their executor is designed.</li>
+<li>The Mesos built-in command executor runs each task as a process that can be containerized by one of several <a href="#mesos-containerizer">Mesos containerizers</a>.</li>
+</ul>
+<h3 id="-a-name-mesos-executor-a-executor"><a name="mesos-executor"></a>Executor</h3>
+<p>A Mesos executor is a method by which Mesos agents launch tasks.</p>
+<ul>
+<li>Executor processes are launched and managed by Mesos agents on the agent nodes.</li>
+<li>Mesos tasks are defined by their scheduler to be run by a specific executor (or the default executor).</li>
+<li>Each executor runs in its own container.</li>
+</ul>
+<p>For more information about framework schedulers and executors, see the <a href="http://mesos.apache.org/documentation/latest/app-framework-development-guide/">Application Framework development guide</a>.</p>
+<h3 id="-a-name-mesos-scheduler-a-scheduler"><a name="mesos-scheduler"></a>Scheduler</h3>
+<p>A Mesos scheduler is a program that defines new Mesos tasks and assigns resources to them (placing them on specific nodes).</p>
+<ul>
+<li>A scheduler receives resource offers describing CPU, RAM, etc., and allocates them for discrete tasks that can be launched by Mesos agents.</li>
+<li>A scheduler must register with Mesos as a framework.</li>
+</ul>
+<p>Examples: Kubernetes, Rancher, Elasticsearch, .</p>
+<h3 id="-a-name-mesos-framework-a-framework"><a name="mesos-framework"></a>Framework</h3>
+<p>A Mesos framework consists of a scheduler, tasks, and optionally custom executors.</p>
+<ul>
+<li>The term framework and scheduler are sometimes used interchangeably. Prefer scheduler within the context of DC/OS.</li>
+</ul>
+<p>For more information about framework schedulers and executors, see the <a href="http://mesos.apache.org/documentation/latest/app-framework-development-guide/">Application Framework development guide</a>.</p>
+<h3 id="-a-name-mesos-role-a-role"><a name="mesos-role"></a>Role</h3>
+<p>A Mesos role is a group of Mesos Frameworks that share reserved resources, persistent volumes, and quota. These frameworks are also grouped together in Mesos’ hierarchical Dominant Resource Fairness (DRF) share calculations.</p>
+<ul>
+<li>Roles are often confused as groups of resources, because of they way they can be statically configured on the agents. The assignment is actually the inverse: resources are assigned to roles.</li>
+<li>Role resource allocation can be configured statically on the Mesos agent or changed at runtime using the Mesos API.</li>
+</ul>
+<h3 id="-a-name-mesos-resource-offer-a-resource-offer"><a name="mesos-resource-offer"></a>Resource Offer</h3>
+<p>A Mesos resource offer provides a set of unallocated resources (e.g. cpu, disk, memory) from an agent to a scheduler so that the scheduler may allocate those resources to one or more tasks. Resource offers are constructed by the leading Mesos master, but the resources themselves are reported by the individual agents.</p>
+<h3 id="-a-name-mesos-containerizer-a-containerizer"><a name="mesos-containerizer"></a>Containerizer</h3>
+<p>A containerizer is a containerization and resource isolation abstraction around a specific container runtime, namely the <a href="#mesos-docker-runtime">Docker Runtime</a> and <a href="#mesos-universal-container-runtime">Mesos Universal Container Runtime</a>.</p>
+<h4 id="-a-name-mesos-universal-container-runtime-a-mesos-universal-container-runtime"><a name="mesos-universal-container-runtime"></a>Mesos Universal Container Runtime</h4>
+<p>The Mesos Universal Container Runtime is a containerizer that supports traditional Mesos containers around binary executables and also Mesos containers launched from Docker images. Containers managed by the Mesos Universal Container Runtime do not use <a href="https://www.docker.com/products/docker-engine">Docker-Engine</a>, even if launched from a Docker image.</p>
+<h4 id="-a-name-mesos-docker-runtime-a-docker-runtime"><a name="mesos-docker-runtime"></a>Docker Runtime</h4>
+<p>The Docker Runtime is a containerizer that supports launching Docker containers from Docker images with <a href="https://www.docker.com/products/docker-engine">Docker-Engine</a>.</p>
+<h3 id="-a-name-mesos-exhibitor-zookeeper-a-exhibitor-amp-zookeeper"><a name="mesos-exhibitor-zookeeper"></a>Exhibitor &amp; ZooKeeper</h3>
+<p>Mesos depends on ZooKeeper, a high-performance coordination service to manage the cluster state. Exhibitor automatically configures and manages ZooKeeper on the <a href="#master-node">master nodes</a>.</p>
+<h3 id="-a-name-mesos-exhibitor-zookeeper-a-mesos-dns"><a name="mesos-exhibitor-zookeeper"></a>Mesos-DNS</h3>
+<p>Mesos-DNS is a DC/OS component that provides service discovery within the cluster. Mesos-DNS allows applications and services that are running on Mesos to find each other by using the domain name system (DNS), similar to how services discover each other throughout the Internet.</p>
+<p>For more information, see the <a href="/docs/1.9/usage/service-discovery/mesos-dns/">Mesos-DNS documentation</a>.</p>
+<h1 id="-a-name-marathon-concepts-a-marathon-concepts"><a name="marathon-concepts"></a>Marathon Concepts</h1>
+<p>The following terms are contextually correct when talking about Marathon, but may be hidden by other abstraction within DC/OS.</p>
+<ul>
+<li><a href="#marathon">Marathon</a></li>
+<li><a href="#marathon-application">Application</a></li>
+<li><a href="#marathon-pod">Pod</a></li>
+<li><a href="#marathon-group">Group</a></li>
+</ul>
+<h3 id="-a-name-marathon-a-marathon"><a name="marathon"></a>Marathon</h3>
+<p>Marathon is a container orchestration engine for Mesos and DC/OS.</p>
+<ul>
+<li>Marathon is one of the core components of DC/OS that predates DC/OS itself, bringing maturity and stability to the platform.</li>
+</ul>
+<p>For more information, see the <a href="https://mesosphere.github.io/marathon/">Marathon website</a>.</p>
+<h3 id="-a-name-marathon-application-a-application"><a name="marathon-application"></a>Application</h3>
+<p>A Marathon application is a long-running service that may have one or more instances that map one to one with Mesos tasks.</p>
+<ul>
+<li>The user creates an application by providing Marathon with an application definition (JSON). Marathon then schedules one or more application instances as Mesos tasks, depending on how many the definition specified.</li>
+<li>Applications currently support the use of either the <a href="#mesos-universal-container-runtime">Mesos Universal Container Runtime</a> or the <a href="#mesos-docker-runtime">Docker Runtime</a>.</li>
+</ul>
+<h3 id="-a-name-marathon-pod-a-pod"><a name="marathon-pod"></a>Pod</h3>
+<p>A Marathon pod is a long-running service that may have one or more instances that map one to many with colocated Mesos tasks.</p>
+<ul>
+<li>The user creates a pod by providing Marathon with a pod definition (JSON). Marathon then schedules one or more pod instances as Mesos tasks, depending on how many the definition specified.</li>
+<li>Pod instances may include one or more tasks that share certain resources (e.g. IPs, ports, volumes).</li>
+<li>Pods currently require the use of the <a href="#mesos-universal-container-runtime">Mesos Universal Container Runtime</a>.</li>
+</ul>
+<h3 id="-a-name-marathon-group-a-group"><a name="marathon-group"></a>Group</h3>
+<p>A Marathon group is a set of services (applications and/or pods) within a hierarchical directory <a href="https://en.wikipedia.org/wiki/Path_%28computing%29">path</a> structure for namespacing and organization.</p>
+]]></description><link>https://dcos.io/docs/1.9/overview/concepts</link><guid isPermaLink="true">https://dcos.io/docs/1.9/overview/concepts</guid></item><item><title><![CDATA[Feature Maturity]]></title><description><![CDATA[<p>The purpose of the feature maturity phases is to educate customers, partners, and Mesosphere field and support organizations about the maturity and quality of features.</p>
+<h1 id="-a-name-criteria-a-criteria"><a name="criteria"></a>Criteria</h1>
+<h2 id="completeness">Completeness</h2>
+<p><strong>Functionality:</strong> Completeness of the feature implementation.</p>
+<p><strong>Interfaces:</strong> Feature has an API with deprecation cycle, CLI, and UI.</p>
+<p><strong>Documentation:</strong> Feature has appropriate documentation. e.g., Admin Guide, Developer Guide, Release Notes.</p>
+<h2 id="quality">Quality</h2>
+<p><strong>Functional Test:</strong> Feature is validated for correctness.</p>
+<p><strong>System Test:</strong> Feature is validated to meet scalability, reliability, and performance requirements through a combination of load, soak, stress, spike, fault, and configuration tests.</p>
+<p><strong>Mesosphere Dogfooding:</strong> Feature in-use in Mesosphere production environment.</p>
+<h1 id="-a-name-phases-a-phases"><a name="phases"></a>Phases</h1>
+<h2 id="-a-name-experimental-a-experimental"><a name="experimental"></a>Experimental</h2>
+<p>Use these features at your own risk. We might add, change, or delete any functionality.</p>
+<h3 id="completeness">Completeness</h3>
+<ul>
+<li>Feature may be incomplete</li>
+<li>API may be incomplete and is subject to change without warning or deprecation cycle</li>
+<li>User interfaces may be missing or incomplete</li>
+<li>Documentation may be missing or incomplete</li>
+</ul>
+<h3 id="quality">Quality</h3>
+<ul>
+<li>Limited or no functional test</li>
+<li>Limited or no system test</li>
+<li>Limited or no Mesosphere dogfooding</li>
+</ul>
+<h2 id="-a-name-preview-a-preview"><a name="preview"></a>Preview</h2>
+<p>We might add, change, or delete any functionality.</p>
+<h3 id="completeness">Completeness</h3>
+<ul>
+<li>Feature is complete</li>
+<li>API may be incomplete and changes may not be subject to deprecation cycle</li>
+<li>User interfaces may be missing or incomplete</li>
+<li>Documentation may be incomplete</li>
+</ul>
+<h3 id="quality">Quality</h3>
+<ul>
+<li>Robust functional test</li>
+<li>Limited or no system test</li>
+<li>Limited or no Mesosphere dogfooding</li>
+</ul>
+<h2 id="-a-name-stable-a-stable"><a name="stable"></a>Stable</h2>
+<h3 id="completeness">Completeness</h3>
+<ul>
+<li>Feature is complete</li>
+<li>API is complete and changes are subject to deprecation cycle</li>
+<li>User Interfaces are complete</li>
+<li>Documentation is complete</li>
+</ul>
+<h3 id="quality">Quality</h3>
+<ul>
+<li>Robust functional test</li>
+<li>Robust performance testing</li>
+<li>Robust fault testing</li>
+<li>Robust Mesosphere dogfooding</li>
+</ul>
+]]></description><link>https://dcos.io/docs/1.9/overview/feature-maturity</link><guid isPermaLink="true">https://dcos.io/docs/1.9/overview/feature-maturity</guid></item><item><title><![CDATA[Features]]></title><description><![CDATA[<p>This is an overview of the features that make DC/OS more than the sum of its parts.</p>
+<ul>
+<li><a href="#high-resource-utilization">High Resource Utilization</a></li>
+<li><a href="#mixed-workload-colocation">Mixed Workload Colocation</a></li>
+<li><a href="#container-orchestration">Container Orchestration</a></li>
+<li><a href="#extensible-resource-isolation">Extensible Resource Isolation</a></li>
+<li><a href="#stateful-storage-support">Stateful Storage Support</a></li>
+<li><a href="#package-management">Package Management</a></li>
+<li><a href="#cloud-agnostic-installer">Cloud-Agnostic Installer</a></li>
+<li><a href="#web-and-command-line-interfaces">Web and Command Line Interfaces</a></li>
+<li><a href="#elastic-scalability">Elastic Scalability</a></li>
+<li><a href="#high-availability">High Availability</a></li>
+<li><a href="#zero-downtime-upgrades">Zero Downtime Upgrades</a></li>
+<li><a href="#integration-tested-components">Integration-Tested Components</a></li>
+<li><a href="#service-discovery-and-load-balancing">Service Discovery and Load Balancing</a></li>
+</ul>
+<h2 id="high-resource-utilization">High Resource Utilization</h2>
+<p>DC/OS makes it easy to get the most out of your compute resources.</p>
+<p>Deciding where to run processes to best utilize cluster resources is hard, NP-hard in-fact. Deciding where to place long-running services which have changing resource requirements over time is even harder. In reality there’s no single scheduler that can efficiently and effectively place all types of tasks. There’s no way for a single scheduler to be infinitely configurable, universally portable, lightning fast, and easy to use - all at the same time.</p>
+<p>DC/OS manages this problem by separating resource management from task scheduling. Mesos manages CPU, memory, disk, and GPU resources. Task placement is delegated to higher level schedulers that are more aware of their task’s specific requirements and constraints. This model, known as two-level scheduling, enables multiple workloads to be colocated efficiently.</p>
+<h2 id="mixed-workload-colocation">Mixed Workload Colocation</h2>
+<p>DC/OS makes it easy to run all your computing tasks on the same hardware.</p>
+<p>For scheduling long-running services, DC/OS tightly integrates with Marathon to provide a solid stage on which to launch microservices, web applications, or other schedulers.</p>
+<p>For other types of work, DC/OS makes it easy to select and install from a library of industry-standard schedulers. This opens the door to running batch jobs, analytics pipelines, message queues, big data storage, and more.</p>
+<p>For complex custom workloads, you can even write your own scheduler to optimize and precisely control the scheduling logic for specific tasks.</p>
+<h2 id="container-orchestration">Container Orchestration</h2>
+<p>DC/OS provides easy-to-use container orchestration right out of the box.</p>
+<p>Docker provides a great development experience, but trying to run Docker containers in production presents significant challenges. To overcome these challenges, DC/OS includes Marathon as a core component, giving you a production-grade, battle-hardened scheduler that is capable of orchestrating both containerized and non-containerized workloads.</p>
+<p>With Marathon, you have the ability to reach extreme scale, scheduling tens of thousands of tasks across thousands of nodes. You can use highly configurable declarative application definitions to enforce advanced placement constraints with node, cluster, and grouping affinities.</p>
+<h2 id="extensible-resource-isolation">Extensible Resource Isolation</h2>
+<p>DC/OS makes it possible to configure multiple resource isolation zones.</p>
+<p>Not all tasks have the same requirements. Some require maximum isolation for security or performance guarantees. Others are ephemeral, public, or easily restarted. And most are somewhere in between.</p>
+<p>The simplest isolation method is to just delegate to Docker. It’s trivial to run Docker containers on DC/OS, but Docker is a bit of a blunt instrument when it comes to isolation. The <a href="http://mesos.apache.org/documentation/latest/mesos-containerizer/">Mesos containerizer</a> is much more flexible, with multiple independently configurable isolators, and pluggable custom isolators. The Mesos containerizer can even run Docker containers without being chained to the fragility of <code>dockerd</code>.</p>
+<h2 id="stateful-storage-support">Stateful Storage Support</h2>
+<p>DC/OS gives your services multiple persistent and ephemeral storage options.</p>
+<p>External persistent volumes, the bread and butter of block storage, are available on many platforms. These are easy to use and reason about because they work just like legacy server disks, however, by design, they compromise speed for elasticity and replication.</p>
+<p>Distributed file systems are a staple of cloud native applications, but they tend to require thinking about storage in new ways and are almost always slower due to network-based interaction.</p>
+<p>Local ephemeral storage is the Mesos default for allocating temporary disk space to a service. This is enough for many stateless or semi-stateless 12-factor and cloud native applications, but may not be good enough for stateful services.</p>
+<p>Local persistent volumes bridge the gap and provide fast, persistent storage. If your service is replicating data already or your drives are RAID and backed up to nearline or tape drive, local volumes might give you enough fault tolerance without the speed tax.</p>
+<h2 id="package-management">Package Management</h2>
+<p>DC/OS makes it easy to install both public community and private proprietary packaged services.</p>
+<p>The Mesosphere Universe Package Repository connects you with a library of open source industry-standard schedulers, services, and applications. Why reinvent the wheel if you don’t have to? Take advantage of community projects to handle batch job scheduling, highly available data storage, robust message queuing, and more.</p>
+<p>DC/OS also supports installing from multiple package repositories: you can host your own private packages to be shared within your company or with your customers.</p>
+<h2 id="cloud-agnostic-installer">Cloud-Agnostic Installer</h2>
+<p>The DC/OS Installer makes it easy to install DC/OS on any cluster of physical or virtual machines.</p>
+<p>For users with their own on-premise hardware or virtual machine provisioning infrastructure, the GUI or CLI Installer provides a quick, intuitive way to install DC/OS.</p>
+<p>For users deploying to the public cloud, DC/OS offers several configurable cloud provisioning templates for AWS, Azure, and Packet.</p>
+<p>For the advanced user, the Advanced Installer provides a scriptable, automatable interface to integrate with your prefered configuration management system.</p>
+<h2 id="web-and-command-line-interfaces">Web and Command Line Interfaces</h2>
+<p>The DC/OS web and command line interfaces make it easy to monitor and manage the cluster and its services.</p>
+<p>The DC/OS web interface lets you monitor resource allocation, running services, current tasks, component health, available packages, and more with intuitive browser-based navigation, real-time graphs, and interactive debugging tools.</p>
+<p>The DC/OS command line interface provides control of DC/OS from the comfort of a terminal. It’s powerful, yet easily scriptable, with handy plugins to interact with installed services.</p>
+<h2 id="elastic-scalability">Elastic Scalability</h2>
+<p>DC/OS gives you the power to easily scale your services up and down with the turn of a dial.</p>
+<p>Horizontal scaling is trivial in Marathon, as long as your service supports it. You can change the number of service instances at any time. DC/OS even lets you autoscale the number of instances based on session count, using the Marathon Load Balancer.</p>
+<p>Vertical scaling is also supported in Marathon, allowing you to allocate more or less resources to services and automatically performing a rolling update to reschedule the instances without downtime.</p>
+<p>Adding nodes to a DC/OS cluster is a snap too. The DC/OS Installer uses immutable artifacts that allow you to provision new nodes without having to recompile, reconfigure, or re-download component packages from flaky remote repositories.</p>
+<h2 id="high-availability">High Availability</h2>
+<p>DC/OS is highly available and makes it easy for your services to be highly available too.</p>
+<p>Mission-critical services require health monitoring, self-healing, and fault tolerance both for themselves and the platform and infrastructure they run on. DC/OS gives you multiple layers of protection.</p>
+<p>To achieve self-healing, DC/OS services are monitored by Marathon and restarted when they fail. Even legacy services that don’t support distribution or replication can be automatically restarted by Marathon to maximize uptime and reduce service interruption. On top of that, all core DC/OS components, including Marathon, are monitored by the DC/OS diagnostics service and restarted by <code>systemd</code> when they fail.</p>
+<p>To achieve fault tolerance, DC/OS can run in multiple master configurations. This provides not just system-level fault tolerance but also scheduler-level fault tolerance. DC/OS can even survive node failure during an upgrade with no loss of service.</p>
+<h2 id="zero-downtime-upgrades">Zero Downtime Upgrades</h2>
+<p>DC/OS provides automation for updating services and the systems with zero downtime.</p>
+<p>DC/OS services running on Marathon can all be updated with rolling, blue-green, or canary deployment patterns. If the update fails, roll it back with a single click. These powerful tools are critical for minimizing downtime and user interruption.</p>
+<p>DC/OS itself also supports zero-downtime upgrades with its powerful installer. Stay up-to-date with the latest open source components with a single combined update.</p>
+<h2 id="integration-tested-components">Integration-Tested Components</h2>
+<p>DC/OS provides a well-tested set of open source components and bakes them all together with a single combined installer.</p>
+<p>Mixing and matching open source components can be a pain. You never know which versions will work together or what the side effects of their interactions will be. Let the Mesos experts handle it for you! Get to production quickly and focus on the quality of your products, not the stability of your platform.</p>
+<h2 id="service-discovery-and-load-balancing">Service Discovery and Load Balancing</h2>
+<p>DC/OS includes several options for automating service discovery and load balancing.</p>
+<p>Distributed services create distributed problems, but you don’t have to solve them all yourself. DC/OS includes automatic DNS endpoint generation, an API for service lookup, transport layer (L4) virtual IP proxying for high speed internal communication, and application layer (L7) load balancing for external-facing services.</p>
+]]></description><link>https://dcos.io/docs/1.9/overview/features</link><guid isPermaLink="true">https://dcos.io/docs/1.9/overview/features</guid></item><item><title><![CDATA[High Availability]]></title><description><![CDATA[<p>This document discusses the high availability (HA) features in DC/OS and best practices for building HA applications on DC/OS.</p>
+<h1 id="leader-follower-architecture">Leader/Follower Architecture</h1>
+<p>A common pattern in HA systems is the leader/follower concept. This is also sometimes referred to as: master/slave, primary/replica, or some combination thereof. This architecture is used when you have one authoritative process, with N standby processes. In some systems, the standby processes might also be capable of serving requests or performing other operations. For example, when running a database like MySQL with a master and replica, the replica is able to serve read-only requests, but it cannot accept writes (only the master will accept writes).</p>
+<p>In DC/OS, a number of components follow the leader/follower pattern. We’ll discuss some of them here and how they work.</p>
+<h4 id="mesos">Mesos</h4>
+<p>Mesos can be run in high availability mode, which requires running 3 or 5 masters. When run in HA mode, one master is elected as the leader, while the other masters are followers. Each master has a replicated log which contains some state about the cluster. The leading master is elected by using ZooKeeper to perform leader election. For more detail on this, see the <a href="https://mesos.apache.org/documentation/latest/high-availability/">Mesos HA documentation</a>.</p>
+<h4 id="marathon">Marathon</h4>
+<p>Marathon can be run in HA mode, which allows running multiple Marathon instances (at least 2 for HA), with one elected leader. Marathon uses ZooKeeper for leader election. The followers do not accept writes or API requests, instead the followers proxy all API requests to the leading Marathon instance.</p>
+<h4 id="zookeeper">ZooKeeper</h4>
+<p>ZooKeeper is used by numerous services in DC/OS to provide consistency. ZooKeeper can be used as a distributed locking service, a state store, and a messaging system. ZooKeeper uses <a href="https://en.wikipedia.org/wiki/Paxos_(computer_science&#41;">Paxos-like</a> log replication and a leader/follower architecture to maintain consistency across multiple ZooKeeper instances. For a more detailed explanation of how ZooKeeper works, check out the <a href="https://zookeeper.apache.org/doc/r3.4.8/zookeeperInternals.html">ZooKeeper internals document</a>.</p>
+<h1 id="fault-domain-isolation">Fault Domain Isolation</h1>
+<p>Fault domain isolation is an important part of building HA systems. To correctly handle failure scenarios, systems must be distributed across fault domains to survive outages. There are different types of fault domains, a few examples of which are:</p>
+<ul>
+<li>Physical domains: this includes machine, rack, datacenter, region, and availability zone.</li>
+<li>Network domains: machines within the same network may be subject to network partitions. For example, a shared network switch may fail or have invalid configuration.</li>
+</ul>
+<p>With DC/OS, you can distribute masters across racks for HA. Agents can be distributed across regions, and it’s recommended that you tag agents with attributes to describe their location. Synchronous services like ZooKeeper should also remain within the same region to reduce network latency. For more information, see the Configuring High-Availability <a href="/docs/1.9/administration/high-availability/">documentation</a>.</p>
+<p>For applications which require HA, they should also be distributed across fault domains. With Marathon, this can be accomplished by using the <a href="https://mesosphere.github.io/marathon/docs/constraints.html"><code>UNIQUE</code>  and <code>GROUP_BY</code> constraints operator</a>.</p>
+<h1 id="separation-of-concerns">Separation of Concerns</h1>
+<p>HA services should be decoupled, with responsibilities divided amongst services. For example, web services should be decoupled from databases and shared caches.</p>
+<h1 id="eliminating-single-points-of-failure">Eliminating Single Points of Failure</h1>
+<p>Single points of failure come in many forms. For example, a service like ZooKeeper can become a single point of failure when every service in your system shares one ZooKeeper cluster. You can reduce risks by running multiple ZooKeeper clusters for separate services. There’s an Exhibitor <a href="https://github.com/mesosphere/exhibitor-dcos">Universe package</a> that makes this easy.</p>
+<p>Other common single points of failure include: </p>
+<ul>
+<li>Single database instances (like a MySQL)</li>
+<li>One-off services</li>
+<li>Non-HA load balancers</li>
+</ul>
+<h1 id="fast-failure-detection">Fast Failure Detection</h1>
+<p>Fast failure detection comes in many forms. Services like ZooKeeper can be used to provide failure detection, such as detecting network partitions or host failures. Service health checks can also be used to detect certain types of failures. As a matter of best practice, services <em>should</em> expose health check endpoints, which can be used by services like Marathon.</p>
+<h1 id="fast-failover">Fast Failover</h1>
+<p>When failures do occur, failover <a href="https://en.wikipedia.org/wiki/Fail-fast">should be as fast as possible</a>. Fast failover can be achieved by:</p>
+<ul>
+<li>Using an HA load balancer like <a href="/docs/1.9/usage/service-discovery/marathon-lb/">Marathon-LB</a>, or <a href="/docs/1.9/usage/service-discovery/load-balancing-vips/">Minuteman</a> for internal layer 4 load balancing.</li>
+<li>Building apps in accordance with the <a href="http://12factor.net/">12-factor app</a> manifesto.</li>
+<li>Following REST best-practices when building services: in particular, avoiding storing client state on the server between requests.</li>
+</ul>
+<p>A number of DC/OS services follow the fail-fast pattern in the event of errors. Specifically, both Mesos and Marathon will shut down in the case of unrecoverable conditions such as losing leadership.</p>
+]]></description><link>https://dcos.io/docs/1.9/overview/high-availability</link><guid isPermaLink="true">https://dcos.io/docs/1.9/overview/high-availability</guid></item></channel></rss>

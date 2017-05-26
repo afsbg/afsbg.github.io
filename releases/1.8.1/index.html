@@ -1,0 +1,207 @@
+<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="../../styles/index-v=1490984623561.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta charset="UTF-8"/>
+    <link rel="shortcut icon" type="image/x-icon" href="../../assets/images/icons/favicon/favicon.ico"/>
+    <link rel="apple-touch-icon" href="../../assets/images/icons/favicon/favicon-apple-57x57.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="../../assets/images/icons/favicon/favicon-apple-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="../../assets/images/icons/favicon/favicon-apple-114x114.png"/>
+    <link rel="apple-touch-icon" sizes="144x144" href="../../assets/images/icons/favicon/favicon-apple-144x144.png"/>
+    <link rel="apple-touch-icon-precomposed" href="../../assets/images/icons/favicon/favicon-apple-57x57.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../../assets/images/icons/favicon/favicon-apple-72x72.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../../assets/images/icons/favicon/favicon-apple-114x114.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../../assets/images/icons/favicon/favicon-apple-144x144.png"/>
+    <link rel="apple-touch-icon" sizes="60x60" href="../../assets/images/icons/favicon/favicon-apple-60x60.png"/>
+    <link rel="apple-touch-icon" sizes="76x76" href="../../assets/images/icons/favicon/favicon-apple-76x76.png"/>
+    <link rel="apple-touch-icon" sizes="120x120" href="../../assets/images/icons/favicon/favicon-apple-120x120.png"/>
+    <link rel="apple-touch-icon" sizes="152x152" href="../../assets/images/icons/favicon/favicon-apple-152x152.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="60x60" href="../../assets/images/icons/favicon/favicon-apple-60x60.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="76x76" href="../../assets/images/icons/favicon/favicon-apple-76x76.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="120x120" href="../../assets/images/icons/favicon/favicon-apple-120x120.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../../assets/images/icons/favicon/favicon-apple-152x152.png"/>
+    <title>DC/OS Release 1.8.1</title>
+  </head>
+  <body>
+    <div class="container container--dark-background">
+      <nav class="navigation">
+        <div class="mobile-nav-container"><a id="nav-icon" href="index.html#"><span></span><span></span><span></span><span></span></a>
+          <div class="nav-logo-container"><a href="../../index.html" class="nav-logo">
+              <div class="logo"></div></a></div>
+        </div>
+        <ul class="menu-mobile">
+          <li class="menu-item"><a href="../../why-dcos/index.html">Who&nbsp;We&nbsp;Are!</a>
+          </li>
+          <li class="menu-item"><a href="../../install/index.html">Install</a>
+          </li>
+          <li class="menu-item"><a href="../../docs/1.9/index.html">Docs</a></li>
+          <li class="menu-item"><a href="../../community/index.html">Community</a>
+          </li>
+          <li class="menu-item"><a href="../../blog/index.html">Blog</a>
+          </li>
+          <li class="menu-item"><a href="https://github.com/dcos/dcos" target="_blank">GitHub</a></li>
+          <li class="menu-item"><a href="../../get-started/index.html">Get Started</a></li>
+        </ul>
+        <ul class="menu">
+          <li class="menu-item"><a href="../../why-dcos/index.html">Who&nbsp;We&nbsp;Are!</a>
+          </li>
+          <li class="menu-item"><a href="../../install/index.html">Install</a>
+          </li>
+          <li class="menu-item"><a href="../../docs/1.9/index.html">Docs</a></li>
+          <li class="menu-item"><a href="../../community/index.html">Community</a>
+          </li>
+          <li class="menu-item"><a href="../../blog/index.html">Blog</a>
+          </li>
+          <li class="menu-item">
+            <div class="menu-item__github-button"><a href="https://github.com/dcos/dcos" data-count-href="/dcos/dcos/stargazers" data-count-api="/repos/dcos/dcos#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star dcos/dcos on GitHub" class="github-button">Star</a></div>
+          </li>
+          <li class="menu-item"><a href="../../get-started/index.html" class="cta cta--button button--secondary">Get&nbsp;Started</a>
+          </li>
+        </ul>
+      </nav>
+      <div class="container__content">
+        <h1>DC/OS Release 1.8.1</h1>
+        <p class="hero-subtitle"><a href="https://downloads.dcos.io/dcos/EarlyAccess/commit/c1915a9f9f02caf7e34022eaea04f15ff853bd0e/dcos_generate_config.sh" class="cta cta--button">Download</a><a href="../../docs/1.8/index.html" class="cta cta--text">View Documentation &rarr;</a></p>
+      </div>
+    </div>
+    <div class="container">
+      <div class="container__content">
+        <div class="container__content--release-notes docs-layout__docs-content"><p>The release notes provide a list of useful topics and links for DC/OS.</p>
+<h1 id="breaking-changes">Breaking Changes</h1>
+<ul>
+<li>Manual modifications of Admin Router config are not supported. If you require a custom certificate, you must run <a href="../../docs/1.8/administration/tls-ssl/haproxy-adminrouter/index.html">HAProxy in front of Admin Router</a>.</li>
+<li>Network Time Protocol (NTP) must be enabled on all nodes for clock synchronization. For more information, see the <a href="../../docs/1.8/administration/installing/custom/system-requirements/index.html">documentation</a>.</li>
+<li>The <code>AcceptEULA</code> parameter was removed from <a href="../../docs/1.8/administration/installing/cloud/aws/index.html">AWS templates</a>. Any scripts written to deploy these templates may need to be updated so the parameter is no longer passed when deploying the templates.</li>
+</ul>
+<h1 id="what-s-new">What&#39;s New</h1>
+<h2 id="apache-mesos-1-0-and-marathon-1-3-rc-integrated">Apache Mesos 1.0 and Marathon 1.3 RC integrated</h2>
+<ul>
+<li>Apache Mesos 1.0 <a href="https://github.com/apache/mesos/blob/1.0.x/CHANGELOG">CHANGELOG</a>.</li>
+<li>Marathon 1.3 RC <a href="https://github.com/mesosphere/marathon/releases">release notes</a>.</li>
+</ul>
+<h2 id="container-orchestration">Container Orchestration</h2>
+<h4 id="services-built-in-marathon-">Services (&quot;Built-In&quot; Marathon)</h4>
+<p>Marathon is not just one container orchestrator out of many that we support; it is our default way to run things on DC/OS, supporting the full range of DC/OS features. In this release we&#39;ll have a major change in the Services tab in DC/OS. The native DC/OS Marathon instance UI is now fully integrated with the DC/OS UI. You can access it from the <a href="../../docs/1.8/usage/webinterface/index.html"><strong>Services</strong></a> tab on the DC/OS UI. The new fully integrated UI no longer shows a list of frameworks, but shows an embedded Marathon. This means that all of your services and applications are in one place.</p>
+<p>For more information, see the <a href="../../docs/1.8/usage/webinterface/index.html#services">documentation</a>.</p>
+<h4 id="jobs-ability-to-run-scheduled-jobs-on-dc-os">Jobs - Ability to run scheduled jobs on DC/OS</h4>
+<p>There is now built-in support of running scheduled jobs. We created a new Apache Mesos framework called <a href="https://github.com/dcos/metronome">Metronome</a>. Metronome is integrated natively with DC/OS and is available from the <a href="../../docs/1.8/usage/webinterface/index.html"><strong>Jobs</strong></a> tab on the DC/OS UI. You can create and administer scheduled jobs directly from the Jobs tab. Similar to the Services tab for long-running applications, you can manage all of your Jobs from one centralized place. You can set up jobs with a scheduler by using the cron format.</p>
+<p>Additionally, you can specify attributes like the time zone or a starting deadline. We also have a JSON view mode which allows you to specify everything in one file to easily copy and paste it. We will constantly improve and extend the given functionality. Metronome will likely replace Chronos as our DC/OS job framework. If you still need Chronos, you can get it from the DC/OS <a href="https://github.com/mesosphere/universe">Universe</a>.</p>
+<p>For more information, see the <a href="../../docs/1.8/usage/jobs/index.html">documentation</a>.</p>
+<h2 id="networking-services">Networking Services</h2>
+<h4 id="ip-per-container-with-vxlan-based-virtual-networks">IP per Container with VxLAN based Virtual Networks</h4>
+<p>DC/OS comes with built-in support for Virtual Networks leveraging the Container Network Interface (CNI) standard, and one default Virtual Network named <code>dcos</code>. Any container that attaches to a Virtual Network receives its own dedicated IP. This allows users to run workloads that are not friendly to dynamically assigned ports and would rather bind to the ports in their existing app configuration. Now, with dedicated IP/Container, workloads are free to bind to any port as every container has access to the entire available port range.</p>
+<p>For more information, see the <a href="../../docs/1.8/administration/virtual-networks/index.html">documentation</a>.</p>
+<h4 id="dns-based-service-addresses-for-load-balanced-virtual-ips">DNS Based Service Addresses for Load Balanced Virtual IPs</h4>
+<p>DC/OS 1.8 introduces DNS Named Service Addresses for VIPs. With DNS Named VIPs, clients connect with a service address instead of an IP address. Due to the way DNS Named VIPs are generated in DC/OS, the risk of collision associated with IP VIPs does not exist. This means that administrators do not need to carefully manage DNS Named VIPs to avoid collision. This also means DNS Named VIPs can be automatically created at the time of service installation.</p>
+<p>For more information, see the <a href="../../docs/1.8/usage/service-discovery/load-balancing-vips/virtual-ip-addresses/index.html">documentation</a>.</p>
+<h4 id="network-isolation-of-virtual-network-subnets">Network Isolation of Virtual Network Subnets</h4>
+<p>DC/OS now supports the creation of multiple virtual networks at install time and will associate non-overlapping subnets with each of the virtual networks. Further, DC/OS users can program Network Isolation rules across DC/OS agent nodes to ensure that traffic across Virtual Network subnets is isolated.</p>
+<p>For more information, see the <a href="../../docs/1.8/administration/virtual-networks/index.html">documentation</a>.</p>
+<h2 id="cli">CLI</h2>
+<h4 id="binary-clis-for-linux-windows-and-mac">Binary CLIs for Linux, Windows, and Mac</h4>
+<p>Installing the DC/OS CLI is easier than ever. We’ve replaced the install script with a simple binary CLI.</p>
+<p>For more information, see the <a href="../../docs/1.8/usage/cli/install/index.html">documentation</a>.</p>
+<h4 id="download-cli-binaries-from-dc-os-ui">Download CLI binaries from DC/OS UI</h4>
+<p>Download the CLI binaries directly from the DC/OS UI. For more information, see the <a href="../../docs/1.8/usage/webinterface/index.html">documentation</a>.</p>
+<h2 id="package-management-service">Package Management Service</h2>
+<p>Easy to deploy offline Universe. For more information, see the <a href="../../docs/1.8/administration/installing/index.html">documentation</a>.</p>
+<!-- ## Cloud Installation
+- Advanced AWS and Azure Templates. For more information, see the [documentation](/docs/1.8/administration/installing/cloud/)
+- Auto Scaling for AWS, including GovCloud. For more information, see the [documentation](/docs/1.8/administration/installing/cloud/aws/). -->
+<h2 id="dc-os-data-services">DC/OS Data services</h2>
+<ul>
+<li>Non-root user config (except Cassandra). <!-- [Documentation]() --></li>
+<li>Binary CLIs for all services.</li>
+</ul>
+<h4 id="hdfs-service">HDFS Service</h4>
+<p>DC/OS Universe now has a new DC/OS HDFS Service. This new DC/OS HDFS Service is an entirely new implementation sharing no code with the previous DC/OS HDFS Services. DC/OS HDFS Service can be deployed with a single command. Multiple instances of the DC/OS HDFS Service can be deployed to a single DC/OS cluster. Configuration of a DC/OS HDFS Service can updated at runtime without service interruption. DC/OS HDFS Service instances reserve all resources including CPU, Memory, Disk and Network Ports.</p>
+<p>For more information, see the <a href="https://docs.mesosphere.com/1.8/usage/service-guides/hdfs/">documentation</a>.</p>
+<h4 id="kafka-service">Kafka Service</h4>
+<p>DC/OS Universe has an updated DC/OS Kafka Service. The updated DC/OS Kafka Service now supports configuring ZK service for Apache Kafka.</p>
+<p>For more information, see the <a href="https://docs.mesosphere.com/1.8/usage/service-guides/kafka/">documentation</a>.</p>
+<h4 id="confluent-kafka-service">Confluent Kafka Service</h4>
+<p>DC/OS Universe has a DC/OS Confluent Platform Service that is based on the DC/OS Kafka Service. Confluent offers support for the DC/OS Confluent Platform Service on DC/OS.</p>
+<p>For more information, see the Universe <a href="https://github.com/mesosphere/universe/tree/version-3.x/repo/packages/C/confluent-kafka">documentation</a>.</p>
+<h4 id="cassandra-service">Cassandra Service</h4>
+<p>DC/OS Universe has an updated DC/OS Cassandra Service. The updated DC/OS Cassandra Service now supports multi-datacenter Cassandra ring topologies, and backup and restore with Azure Storage.</p>
+<p>For more information, see the <a href="https://docs.mesosphere.com/1.8/usage/service-guides/cassandra/">documentation</a>.</p>
+<h4 id="datastax-enterprise-dse-service">Datastax Enterprise (DSE) Service</h4>
+<p>DC/OS Universe has a DC/OS DataStax Enterprise (DSE) Service that is based on the DC/OS Cassandra Service. DataStax offers support for the DC/OS DataStax Enterprise Service on DC/OS.</p>
+<p>For more information, see the Universe <a href="https://github.com/mesosphere/universe/tree/version-3.x/repo/packages/D/dse">documentation</a>.</p>
+<h4 id="spark-service">Spark Service</h4>
+<p>DC/OS Universe has an updated version of Apache Spark based on 1.6.2.  In addition to all the of features of Apache Spark 1.6.2, the DC/OS Spark Service supports Kerberos and SSL with secure HDFS clusters. Latest stable Spark with coarse-grained scheduler.</p>
+<p>For more information, see the <a href="https://docs.mesosphere.com/1.8/usage/service-guides/spark/">documentation</a>.</p>
+<h2 id="developer-agility">Developer Agility</h2>
+<!-- - GitLab Package. -->
+<ul>
+<li>Artifactory Package. For more information, see the <a href="https://github.com/JFrogDev/artifactory-dcos">documentation</a>.</li>
+<li>Updated Jenkins packages. For more information, see the <a href="https://docs.mesosphere.com/1.8/usage/service-guides/jenkins/">documentation</a>.</li>
+</ul>
+<h2 id="improved-ui-cli-improvements">Improved UI &amp; CLI improvements</h2>
+<ul>
+<li>See the CLI <a href="https://github.com/dcos/dcos-cli/releases">release notes</a>.</li>
+</ul>
+<h2 id="fixes-and-enhancements">Fixes and enhancements</h2>
+<p>Over 1350 other fixes and enhancements to DC/OS and DC/OS Services, including:</p>
+<ul>
+<li>DCOS-7415 - Unable to fetch /v2/tasks as plaintext for Marathon 0.15.3 in some cases</li>
+<li>DCOS-7422 - Improved reconnect logic in the case of root Marathon / Mesos master disconnections</li>
+<li>DCOS-7810 - Invalid IDs inside of nested groups leading to unexpected blocked deployments</li>
+<li>DCOS-7926 - Improved Marathon performance while deploying thousands of tasks</li>
+<li>DCOS-8128 - Improved Marathon task recovery in the case of some network events</li>
+<li>DCOS-8370 - Apps should not be able to share the same service port on a single host</li>
+<li>DCOS-8730 - Admin Router does not respect ports provided by external proxy</li>
+<li>MARATHON-888 - Improved handled of orphaned containers after master failover</li>
+<li>MARATHON-956 - Improved Marathon performance to prevent occurance of &quot;futures timed out&quot; errors</li>
+</ul>
+<h1 id="-a-name-known-issues-a-known-issues-and-limitations-oss-"><a name="known-issues"></a>Known Issues and Limitations <!-- OSS --></h1>
+<ul>
+<li>DCOS-270 - Docker version 1.12.x is not supported.</li>
+<li>DCOS-8975 - Port mapping for virtual networks is not displayed correctly. <!-- OSS --></li>
+<li>DCOS-9007 - Advanced AWS templates are coming soon. <!-- OSS --></li>
+<li>DCOS-9045 - Pre-flight Check for agents nodes fails if port 53 is not available. <!-- OSS --></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="container__content container__content--footer">
+        <div class="footer">
+          <ul class="footer-main">
+            <li class="footer-item"><a href="../../contribute/index.html">Contribute</a></li>
+            <li class="footer-item"><a href="../../tos/index.html">Terms&nbsp;of&nbsp;Service</a></li>
+            <li class="footer-item"><a href="../../privacy/index.html">Privacy&nbsp;Policy</a></li>
+            <li class="footer-item"><a href="../index.html">Releases</a></li>
+            <li class="footer-item"><a href="https://dcos.io/brand/">Press&nbsp;Kit</a></li>
+          </ul>
+          <ul class="footer-secondary">
+            <li class="footer-item"><a href="http://www.twitter.com/dcos"><img src="../../assets/images/icons/twitter-dark.svg" class="footer-item__icon twitter-icon"/><span>Twitter</span></a></li>
+            <li class="footer-item"><a href="http://chat.mesosphere.com"><img src="../../assets/images/icons/slack-dark.svg" class="footer-item__icon"/><span>Slack</span></a></li>
+            <li class="footer-item"><a href="https://github.com/dcos"><img src="../../assets/images/icons/github-dark.svg" class="footer-item__icon"/><span>GitHub</span></a></li>
+          </ul>
+        </div>
+      </div>
+      <!-- Google Tag Manager-->
+      <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MT2WX7" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+      </noscript>
+      <script>
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-MT2WX7');
+        
+      </script>
+      <script src="../../assets/javascript/picturefill/dist/picturefill.min.js"></script>
+      <script src="../../assets/javascript/jquery/dist/jquery.min.js"></script>
+      <script src="../../assets/javascript/sticky-kit.min.js"></script>
+      <script src="../../assets/javascript/lunr/lunr.min.js"></script>
+      <script src="../../assets/javascript/jquery.scrollNav.min.js"></script>
+      <script src="../../scripts/main.min.js"></script>
+      <script id="github-bjs" async="async" defer="defer" src="https://buttons.github.io/buttons.js"></script>
+    </div>
+  </body>
+</html>

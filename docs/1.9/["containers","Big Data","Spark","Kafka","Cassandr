@@ -1,0 +1,341 @@
+<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="styles/index-v=1490984623561.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta charset="UTF-8"/>
+    <link rel="shortcut icon" type="image/x-icon" href="assets/images/icons/favicon/favicon.ico"/>
+    <link rel="apple-touch-icon" href="assets/images/icons/favicon/favicon-apple-57x57.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="assets/images/icons/favicon/favicon-apple-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="assets/images/icons/favicon/favicon-apple-114x114.png"/>
+    <link rel="apple-touch-icon" sizes="144x144" href="assets/images/icons/favicon/favicon-apple-144x144.png"/>
+    <link rel="apple-touch-icon-precomposed" href="assets/images/icons/favicon/favicon-apple-57x57.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/images/icons/favicon/favicon-apple-72x72.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/images/icons/favicon/favicon-apple-114x114.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/images/icons/favicon/favicon-apple-144x144.png"/>
+    <link rel="apple-touch-icon" sizes="60x60" href="assets/images/icons/favicon/favicon-apple-60x60.png"/>
+    <link rel="apple-touch-icon" sizes="76x76" href="assets/images/icons/favicon/favicon-apple-76x76.png"/>
+    <link rel="apple-touch-icon" sizes="120x120" href="assets/images/icons/favicon/favicon-apple-120x120.png"/>
+    <link rel="apple-touch-icon" sizes="152x152" href="assets/images/icons/favicon/favicon-apple-152x152.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="60x60" href="assets/images/icons/favicon/favicon-apple-60x60.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="76x76" href="assets/images/icons/favicon/favicon-apple-76x76.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="120x120" href="assets/images/icons/favicon/favicon-apple-120x120.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="assets/images/icons/favicon/favicon-apple-152x152.png"/>
+    <title>The Definitive Platform for Modern Apps | DC/OS</title>
+    <meta property="og:locale" content="en_US"/>
+    <meta property="og:type" content="article"/>
+    <meta property="og:title" content="The Definitive Platform for Modern Apps | DC/OS"/>
+    <meta property="og:image" content="https://dcos.io/assets/images/social-img.png"/>
+    <meta property="og:description" content="Based on the production proven Apache Mesos, combining years of  experience, and best practices of building and running modern applications in production."/>
+    <meta property="og:url" content="https://dcos.io/"/>
+    <meta property="og:site_name" content="DC/OS"/>
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:site" content="@dcos"/>
+    <meta name="twitter:title" content="The Definitive Platform for Modern Apps | DC/OS"/>
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:image" content="https://dcos.io/assets/images/social-img.png"/>
+    <meta name="twitter:description" content="Based on the production proven Apache Mesos, combining years of  experience, and best practices of building and running modern applications in production."/>
+  </head>
+  <body>
+    <div style="display: block;" class="container container--dark-background clearfix sm-pb0">
+      <div class="mx-auto max-width-4 px2">
+        <nav class="navigation" style="padding: 0;">
+          <div class="mobile-nav-container"><a id="nav-icon" href="index.html#"><span></span><span></span><span></span><span></span></a>
+            <div class="nav-logo-container"><a href="index.html" class="nav-logo">
+                <div class="logo"></div></a></div>
+          </div>
+          <ul class="menu-mobile">
+            <li class="menu-item"><a href="why-dcos/index.html">Who&nbsp;We&nbsp;Are!</a>
+            </li>
+            <li class="menu-item"><a href="install/index.html">Install</a>
+            </li>
+            <li class="menu-item"><a href="docs/1.9/index.html">Docs</a></li>
+            <li class="menu-item"><a href="community/index.html">Community</a>
+            </li>
+            <li class="menu-item"><a href="blog/index.html">Blog</a>
+            </li>
+            <li class="menu-item"><a href="https://github.com/airdata" target="_blank">GitHub</a></li>
+            <li class="menu-item"><a href="get-started/index.html">Get Started</a></li>
+          </ul>
+          <ul class="menu">
+            <li class="menu-item"><a href="why-dcos/index.html">Who&nbsp;We&nbsp;Are!</a>
+            </li>
+            <li class="menu-item"><a href="install/index.html">Install</a>
+            </li>
+            <li class="menu-item"><a href="docs/1.9/index.html">Docs</a></li>
+            <li class="menu-item"><a href="community/index.html">Community</a>
+            </li>
+            <li class="menu-item"><a href="blog/index.html">Blog</a>
+            </li>
+            <li class="menu-item">
+              <div class="menu-item__github-button"><a href="https://github.com/airdata" data-count-href="/dcos/dcos/stargazers" data-count-api="/repos/dcos/dcos#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star dcos/dcos on GitHub" class="github-button">Star</a></div>
+            </li>
+            <li class="menu-item"><a href="get-started/index.html" class="cta cta--button button--secondary">Get&nbsp;Started</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div class="Wallop Wallop--fade px0">
+        <div class="Wallop-list mx-auto left-align">
+          <div style="background-image: url('assets/images/hero-bg-tiles.svg');" class="Wallop-item flex flex-wrap flex-auto has-bg md-py4 py2 px2">
+            <div class="max-width-4 mx-auto flex flex-wrap flex-auto items-center">
+              <div class="sm-col-5 col-12 xs-center">
+                <h1 class="hero-title"><span>SysAdmins Operations:</span><br/><span class="typer2"></span><span>&nbsp;it</span></h1><a href="day2ops/index.html" class="btn btn-primary block sm-inline-block">Learn More</a>
+              </div>
+              <div class="sm-col-7 col-12 xs-center right-align"><img src="assets/images/day2ops-illustration.png" srcset="assets/images/day2ops-illustration.png 1x, /assets/images/day2ops-illustration@2x.png 2x"/>
+              </div>
+            </div>
+          </div>
+          <div style="background-image: url('assets/images/illustrations/fast-data-header.svg');" class="Wallop-item flex flex-wrap flex-auto has-bg md-py5 py2 px2">
+            <div class="max-width-4 mx-auto flex flex-wrap flex-auto items-center">
+              <div class="sm-col-6 col-12 xs-center">
+                <h1 class="hero-title"><span>Deploy your fast</span><br class="sm-hide md-hide"/><span>data pipeline</span><br class="sm-hide md-hide"/><span>with DC/OS</span></h1><a href="fast-data/index.html" class="btn btn-primary block sm-inline-block">Learn More</a>
+              </div>
+              <div class="sm-col-6 col-12 lg-hide"><img src="assets/images/fast-data.png" srcset="assets/images/fast-data.png 1x, /assets/images/fast-data@2x.png 2x"/>
+              </div>
+            </div>
+          </div>
+          <div class="Wallop-item flex flex-wrap flex-auto md-py5 py2 px2">
+            <div class="max-width-4 mx-auto flex flex-wrap flex-auto items-center">
+              <div class="sm-col-6 col-12 xs-center">
+                <h1 class="hero-title"><span>The easiest way to</span><br>
+                  <span>run </span><span class="typer">m</span><br>
+                  <span>in production.</span></h1>
+                <a href="get-started/index.html" class="btn btn-primary block sm-inline-block">Get Started</a><a href="index.html#" data-overlay-toggle="video-overlay" class="inline-block sm-ml3 block sm-inline-block m0"><img src="assets/images/icons/playbutton.png" class="cta--video__icon inline-block align-middle"/>
+                <p class="cta--video__text inline-block mt0 mb2">Play Video</p></a>
+              </div>
+              <div class="sm-col-6 col-12"><img src="assets/images/hero-image.png" srcset="assets/images/hero-image.png 1x, /assets/images/hero-image@2x.png 2x"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="Wallop-buttonPrevious xs-hide sm-hide"><img src="assets/images/icons/chevron-white-left.svg"/></button>
+        <button class="Wallop-buttonNext xs-hide sm-hide"><img src="assets/images/icons/chevron-white-right.svg"/></button>
+      </div>
+    </div>
+    <div class="outer-container bg-gray clearfix py5 px2">
+      <div class="row">
+        <div class="max-width-4 mx-auto">
+          <div class="mxn2 flex flex-wrap flex-auto">
+            <div class="lg-col-3 col-6 left-align px2 mb4 md-mb4 lg-mb0"><img src="assets/images/icons/containersbigdata.svg" class="hero-list__item__image"/>
+              <h5 class="hero-list__item__copy__title">Containers &amp; Big Data</h5>
+              <p class="hero-list__item__copy__paragraph small">Easily deploy and run stateful or stateless distributed workloads including Docker containers, Big Data, and traditional apps.</p>
+            </div>
+            <div class="lg-col-3 col-6 left-align px2 mb4 md-mb4 lg-mb0"><img src="assets/images/icons/open-source-dark.svg" class="hero-list__item__image"/>
+              <h5 class="hero-list__item__copy__title">100% Open Source</h5>
+              <p class="hero-list__item__copy__paragraph small">Run DC/OS in production without any scale or performance limitations, on any on-premises or cloud platform.</p>
+            </div>
+            <div class="lg-col-3 col-6 left-align px2"><img src="assets/images/icons/productionproven.svg" class="hero-list__item__image"/>
+              <h5 class="hero-list__item__copy__title">Production Proven</h5>
+              <p class="hero-list__item__copy__paragraph small">Built on Apache Mesos with the experience of Mesosphere, Yelp, Twitter, Airbnb, and many of today’s most innovative companies.</p>
+            </div>
+            <div class="lg-col-3 col-6 left-align px2"><img src="assets/images/icons/serviceecosystem.svg" class="hero-list__item__image"/>
+              <h5 class="hero-list__item__copy__title">Datacenter Apps</h5>
+              <p class="hero-list__item__copy__paragraph small">Build apps quickly using a rich ecosystem of datacenter-scale application services.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="padding: 5rem 2rem;" class="outer-container bg-white clearfix">
+      <div class="row flex flex-column">
+        <div class="sm-col sm-col-12 md-col-8 mx-auto center">
+          <h2>The Definitive Platform for Modern Apps - Production Experience Built-in.</h2>
+          <p>Modern apps include containers of microservices and stateful big-data services.  DC/OS is the world’s first and only fully open source platform enabling enterprises to easily build and run modern apps in production.  Built on Apache Mesos, DC/OS abstracts your datacenter into a single computer, pooling distributed workloads and simplifying rollout and operations.</p><a href="why-dcos/index.html" style="display: inline-block;" class="cta cta--button button--secondary">Learn More</a>
+        </div>
+      </div>
+      <div class="max-width-4 mx-auto">
+        <div style="margin-left: 0; margin-right: 0;" class="stack-diagram mxn2">
+          <div class="stack-diagram__top">
+            <div class="stack-diagram__top-info">
+              <h3>Services &amp; Applications</h3>
+              <p>Easily deploy and run datacenter-wide app services such as Docker, Cassandra, and Kubernetes pooled on a single platform</p>
+              <div class="stack-diagram__arrow">
+                <div class="stack-diagram__dot"></div>
+              </div>
+            </div>
+          </div>
+          <div class="stack-diagram__middle">
+            <div class="stack-diagram__middle-info">
+              <h3>DC/OS Powered by Apache Mesos</h3>
+              <p>Runtime, tools and best practices built-in to simplify operations and deliver a production self-healing infrastructure</p>
+              <div class="stack-diagram__arrow">
+                <div class="stack-diagram__dot"></div>
+              </div>
+            </div>
+          </div>
+          <div class="stack-diagram__bottom">
+            <div class="stack-diagram__bottom-info">
+              <h3>Run Anywhere</h3>
+              <p>Bare-metal, virtual, cloud or hybrid - DC/OS runs on it all - only requirement is a modern Linux distro; Windows support coming soon</p>
+              <div class="stack-diagram__arrow">
+                <div class="stack-diagram__dot"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row flex flex-column">
+        <div class="stack-diagram-mobile center mb0">
+          <div class="stack-diagram-mobile__container"><img src="assets/images/illustrations/top.png" srcset="assets/images/illustrations/top.png 1x, /assets/images/illustrations/top@2x.png 2x"/>
+            <h5 class="hero-list__item__copy__title">Services &amp; Applications</h5>
+            <p>Easily deploy and run datacenter-wide app services such as Docker, Cassandra, and Kubernetes pooled on a single platform</p>
+          </div>
+          <div class="stack-diagram-mobile__container"><img src="assets/images/illustrations/middle.png" srcset="assets/images/illustrations/middle.png 1x, /assets/images/illustrations/middle@2x.png 2x"/>
+            <h5 class="hero-list__item__copy__title">DC/OS Powered by Apache Mesos</h5>
+            <p>Runtime, tools and best practices built-in to simplify operations and deliver a production self-healing infrastructure</p>
+          </div>
+          <div class="stack-diagram-mobile__container"><img src="assets/images/illustrations/bottom.png" srcset="assets/images/illustrations/bottom.png 1x, /assets/images/illustrations/bottom@2x.png 2x"/>
+            <h5 class="hero-list__item__copy__title">Run Anywhere</h5>
+            <p>Bare-metal, virtual, cloud or hybrid - DC/OS runs on it all - only requirement is a modern Linux distro; Windows support coming soon</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="padding: 0 2rem 3rem 2rem;" class="outer-container bg-white clearfix">
+      <div class="row">
+        <div class="max-width-4 mx-auto">
+          <div class="mxn2 flex flex-wrap flex-auto">
+            <div class="lg-col-4 col-6 xs-col-12 xs-center px2 pb3"><img src="assets/images/icons/buildamazingapps.svg" class="hero-list__item__image larger-icon"/>
+              <h5 class="hero-list__item__copy__title">Build Amazing Apps</h5>
+              <p class="hero-list__item__copy__paragraph">Combine the power of microservices, containers and Big Data to quickly build and ship modern state of the art applications.</p><a href="why-dcos/index.html" class="cta cta--text">Learn More &rarr;</a>
+            </div>
+            <div class="lg-col-4 col-6 xs-col-12 xs-center px2 pb3"><img src="assets/images/icons/operatewithconfidence.svg" class="hero-list__item__image larger-icon"/>
+              <h5 class="hero-list__item__copy__title">Operate with Confidence</h5>
+              <p class="hero-list__item__copy__paragraph">Use a production-proven platform to confidently operate, monitor and troubleshoot your datacenter with efficiency, ease, and flexibility.</p><a href="why-dcos/index.html" class="cta cta--text">Learn More &rarr;</a>
+            </div>
+            <div class="lg-col-4 col-6 xs-col-12 xs-center px2 pb3"><img src="assets/images/icons/outpacethecompetition.svg" class="hero-list__item__image larger-icon"/>
+              <h5 class="hero-list__item__copy__title">Outpace the Competition</h5>
+              <p class="hero-list__item__copy__paragraph">Quickly roll out new services using the ever growing DC/OS ecosystem, and attract the best talent working on the latest modern app technology.</p><a href="why-dcos/index.html" class="cta cta--text">Learn More &rarr;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container container--case-study">
+      <div class="case-study-item active">
+        <div class="container__content container__content--case-study-copy">
+          <ul class="bullet-list"></ul>
+          <div class="case-study-fade-wrapper">
+            <div class="copy-wrapper">
+              <h3 class="case-study-title">Autodesk is Forging Ahead with Mesos, Containers and DC/OS</h3>
+              <p class="case-study-description">Having now run our event streaming and Big Data ingestion pipeline services in production on DC/OS, across 3 regions, over the last year, we've achieved the following results: a 66% reduction in AWS Instances, cost Improvements up to 57%, and an impressive 40 sec time to deploy a new build with zero downtime.</p><a href="http://cloudengineering.autodesk.com/blog/2016/04/autodesk-is-forging-ahead-with-dcos.html" target="_blank" class="cta cta--text case-study-link">Read full case study &rarr;</a>
+            </div>
+          </div>
+        </div>
+        <div class="container__content container__content--case-study-image-wrapper">
+          <div style="background-image: url('assets/images/case-studies/case-study-autodesk.png')" class="image-wrapper"></div>
+        </div>
+      </div>
+      <div class="case-study-item">
+        <div class="container__content container__content--case-study-copy">
+          <div class="case-study-fade-wrapper">
+            <div class="copy-wrapper">
+              <h3 class="case-study-title">Open Source DC/OS: The modern way to run a distributed database</h3>
+              <p class="case-study-description">Just a little while ago, setup, management and maintenance of a database cluster was just a world of pain. Now we have stepped across the edge to a new era in which open-source technology is all you need to run distributed applications at scale.</p><a href="https://www.arangodb.com/2016/04/dcos-the-modern-way-to-run-a-distributed-database/" target="_blank" class="cta cta--text case-study-link">Read full case study &rarr;</a>
+            </div>
+          </div>
+        </div>
+        <div class="container__content container__content--case-study-image-wrapper">
+          <div style="background-image: url('assets/images/case-studies/case-study-arangodb.png')" class="image-wrapper"></div>
+        </div>
+      </div>
+      <div class="case-study-item">
+        <div class="container__content container__content--case-study-copy">
+          <div class="case-study-fade-wrapper">
+            <div class="copy-wrapper">
+              <h3 class="case-study-title">linkerd + DC/OS: microservices in production made easy</h3>
+              <p class="case-study-description">linkerd is Buoyant’s open source traffic layer manager for microservices. If you’re running microservices on DC/OS, you can install the linkerd DC/OS package today to get programmable control over the flow of all RPC traffic throughout your application.</p><a href="https://blog.buoyant.io/2016/04/19/linkerd-dcos-microservices-in-production-made-easy/" target="_blank" class="cta cta--text case-study-link">Read full case study &rarr;</a>
+            </div>
+          </div>
+        </div>
+        <div class="container__content container__content--case-study-image-wrapper">
+          <div style="background-image: url('assets/images/case-studies/case-study-linkerd.png')" class="image-wrapper"></div>
+        </div>
+      </div>
+      <div class="case-study-item">
+        <div class="container__content container__content--case-study-copy">
+          <div class="case-study-fade-wrapper">
+            <div class="copy-wrapper">
+              <h3 class="case-study-title">SMACK stack on DC/OS -- how it’s all woven together</h3>
+              <p class="case-study-description">In this blog, we explore how easy it is to run an application on DC/OS using the SMACK stack (Kubernetes, Rancher, Mesos, Jenkins, and Nexus). We focus on how the different components of the stack are woven together to support the application.</p><a href="http://www.cakesolutions.net/teamblogs/smack-stack-on-dcos" target="_blank" class="cta cta--text case-study-link">Read full case study &rarr;</a>
+            </div>
+          </div>
+        </div>
+        <div class="container__content container__content--case-study-image-wrapper">
+          <div style="background-image: url('assets/images/case-studies/case-study-smack.png')" class="image-wrapper"></div>
+        </div>
+      </div>
+      <div class="case-study-item">
+        <div class="container__content container__content--case-study-copy">
+          <div class="case-study-fade-wrapper">
+            <div class="copy-wrapper">
+              <h3 class="case-study-title">On-demand Interactive Data Science with DC/OS</h3>
+              <p class="case-study-description">In this post, we analyze a set of road safety data from Great Britain, 1979-2004. This analysis requires distributed processing and we create an environment that allows our processing jobs to scale horizontally. We’re running a DC/OS cluster with an interactive research notebook (container of Jupyter Python Notebook with Apache Kubernetes) and a distributed file system (HDFS).</p><a href="http://blog.dataart.com/on-demand-interactive-data-science-with-dcos/" target="_blank" class="cta cta--text case-study-link">Read full case study &rarr;</a>
+            </div>
+          </div>
+        </div>
+        <div class="container__content container__content--case-study-image-wrapper">
+          <div style="background-image: url('assets/images/case-studies/case-study-data-art.png')" class="image-wrapper"></div>
+        </div>
+      </div>
+    </div>
+    <div class="container partner-quote-container">
+      <div class="container__content">
+        <div class="partner-quote-block-container">
+          <div class="partner-quote-block active">
+            <blockquote class="partner-quote-block__quote">"The world needed a better architecture for all modern apps, not just containers. The open source community has come together around DC/OS to deliver an amazing ecosystem of products and datacenter services."</blockquote>
+            <cite class="partner-quote-block__cite">Florian Leibert, CEO & Co-Founder, Mesosphere</cite>
+          </div>
+          <div class="partner-quote-block hidden">
+            <blockquote class="partner-quote-block__quote">"Microsoft selected DC/OS for the Azure Container Service so our customers can easily build, deploy and manage modern applications on our enterprise-ready Azure cloud platform, as well as in private and hybrid cloud environments."</blockquote>
+            <cite class="partner-quote-block__cite">Mark Russinovich, Azure Chief Technology Officer, Microsoft</cite>
+          </div>
+          <div class="partner-quote-block hidden">
+            <blockquote class="partner-quote-block__quote">"DC/OS is specifically designed for organizations seeking highly scalable, agile application development with continuous improvement and robust, reliable deployment."</blockquote>
+            <cite class="partner-quote-block__cite">Edy Liongosari, Managing Director, Accenture Labs</cite>
+          </div>
+        </div>
+        <ul class="partner-quote-logo-list">
+          <li class="partner-quote-logo-list__partner-quote-logo active"><a data-activate-quote="0"><img src="assets/images/logos/mesosphere.svg"/></a></li>
+          <li class="partner-quote-logo-list__partner-quote-logo"><a data-activate-quote="1"><img src="assets/images/logos/microsoft.svg"/></a></li>
+          <li class="partner-quote-logo-list__partner-quote-logo"><a data-activate-quote="2"><img src="assets/images/logos/accenture.svg"/></a></li>
+        </ul>
+      </div>
+    </div>
+    <div data-overlay="video-overlay" class="overlay">
+      <div class="overlay__close-cta"><a href="index.html#" data-overlay-toggle="video-overlay"><img src="assets/images/icons/cancel.svg"/></a></div>
+      <div class="overlay__video">
+        <iframe src="https://www.youtube-nocookie.com/embed/VdhJ_Fm3_mk?rel=0&enablejsapi=1&showinfo=0;" frameborder="0" allowfullscreen="allowfullscreen"></iframe>
+      </div>
+    </div>
+    <div class="container container--dark-background">
+      <div class="container__content">
+        <h2>You'll be running DC/OS in less than 10 minutes.</h2><a href="get-started/index.html" class="cta cta--button">Get Started</a>
+      </div>
+      <div class="container__content container__content--footer">
+        <div class="footer">
+          <ul class="footer-main">
+            <li class="footer-item"><a href="contribute/index.html">Contribute</a></li>
+            <li class="footer-item"><a href="tos/index.html">Terms&nbsp;of&nbsp;Service</a></li>
+            <li class="footer-item"><a href="privacy/index.html">Privacy&nbsp;Policy</a></li>
+            <li class="footer-item"><a href="releases/index.html">Releases</a></li>
+            <li class="footer-item"><a href="https://dcos.io/brand/">Press&nbsp;Kit</a></li>
+          </ul>
+          <ul class="footer-secondary">
+            <li class="footer-item"><a href="http://www.twitter.com/dcos"><img src="assets/images/icons/twitter.svg" class="footer-item__icon twitter-icon"/><span>Twitter</span></a></li>
+            <li class="footer-item"><a href="http://chat.mesosphere.com"><img src="assets/images/icons/slack.svg" class="footer-item__icon"/><span>Slack</span></a></li>
+            <li class="footer-item"><a href="https://github.com/dcos"><img src="assets/images/icons/github.svg" class="footer-item__icon"/><span>GitHub</span></a></li>
+          </ul>
+        </div>
+      </div>
+      <script src="assets/javascript/picturefill/dist/picturefill.min.js"></script>
+      <script src="assets/javascript/jquery/dist/jquery.min.js"></script>
+      <script src="assets/javascript/sticky-kit.min.js"></script>
+      <script src="assets/javascript/lunr/lunr.min.js"></script>
+      <script src="assets/javascript/jquery.scrollNav.min.js"></script>
+      <script src="scripts/main.min.js"></script>
+      <script id="github-bjs" async="async" defer="defer" src="https://buttons.github.io/buttons.js"></script>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,179 @@
+<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="../styles/index-v=1490984623561.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta charset="UTF-8"/>
+    <link rel="shortcut icon" type="image/x-icon" href="../assets/images/icons/favicon/favicon.ico"/>
+    <link rel="apple-touch-icon" href="../assets/images/icons/favicon/favicon-apple-57x57.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="../assets/images/icons/favicon/favicon-apple-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="../assets/images/icons/favicon/favicon-apple-114x114.png"/>
+    <link rel="apple-touch-icon" sizes="144x144" href="../assets/images/icons/favicon/favicon-apple-144x144.png"/>
+    <link rel="apple-touch-icon-precomposed" href="../assets/images/icons/favicon/favicon-apple-57x57.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/images/icons/favicon/favicon-apple-72x72.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/images/icons/favicon/favicon-apple-114x114.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/images/icons/favicon/favicon-apple-144x144.png"/>
+    <link rel="apple-touch-icon" sizes="60x60" href="../assets/images/icons/favicon/favicon-apple-60x60.png"/>
+    <link rel="apple-touch-icon" sizes="76x76" href="../assets/images/icons/favicon/favicon-apple-76x76.png"/>
+    <link rel="apple-touch-icon" sizes="120x120" href="../assets/images/icons/favicon/favicon-apple-120x120.png"/>
+    <link rel="apple-touch-icon" sizes="152x152" href="../assets/images/icons/favicon/favicon-apple-152x152.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="60x60" href="../assets/images/icons/favicon/favicon-apple-60x60.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="76x76" href="../assets/images/icons/favicon/favicon-apple-76x76.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="120x120" href="../assets/images/icons/favicon/favicon-apple-120x120.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../assets/images/icons/favicon/favicon-apple-152x152.png"/>
+    <title>Install | DC/OS</title>
+    <meta property="og:locale" content="en_US"/>
+    <meta property="og:type" content="article"/>
+    <meta property="og:title" content="Install | DC/OS"/>
+    <meta property="og:image" content="https://dcos.io/assets/images/social-img.png"/>
+    <meta property="og:description" content="Find detailed installation guides for Vagrant, AWS, Windows Azure, packet, Google Compute Engine, CentOS, CoreOS using the CLI, GUI or the advanced custom installer."/>
+    <meta property="og:url" content="https://dcos.io/"/>
+    <meta property="og:site_name" content="DC/OS"/>
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:site" content="@dcos"/>
+    <meta name="twitter:title" content="Install | DC/OS"/>
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:image" content="https://dcos.io/assets/images/social-img.png"/>
+    <meta name="twitter:description" content="Find detailed installation guides for Vagrant, AWS, Windows Azure, packet, Google Compute Engine, CentOS, CoreOS using the CLI, GUI or the advanced custom installer."/>
+  </head>
+  <body>
+    <div class="container container--dark-background">
+      <nav class="navigation">
+        <div class="mobile-nav-container"><a id="nav-icon" href="index.html#"><span></span><span></span><span></span><span></span></a>
+          <div class="nav-logo-container"><a href="../index.html" class="nav-logo">
+              <div class="logo"></div></a></div>
+        </div>
+        <ul class="menu-mobile">
+          <li class="menu-item"><a href="../why-dcos/index.html">Who&nbsp;We&nbsp;Are!</a>
+          </li>
+          <li class="menu-item"><a href="index.html" class="active">Install</a>
+          </li>
+          <li class="menu-item"><a href="../docs/1.9/index.html">Docs</a></li>
+          <li class="menu-item"><a href="../community/index.html">Community</a>
+          </li>
+          <li class="menu-item"><a href="../blog/index.html">Blog</a>
+          </li>
+          <li class="menu-item"><a href="https://github.com/airdata" target="_blank">GitHub</a></li>
+          <li class="menu-item"><a href="../get-started/index.html">Get Started</a></li>
+        </ul>
+        <ul class="menu">
+          <li class="menu-item"><a href="../why-dcos/index.html">Who&nbsp;We&nbsp;Are!</a>
+          </li>
+          <li class="menu-item"><a href="index.html" class="active">Install</a>
+          </li>
+          <li class="menu-item"><a href="../docs/1.9/index.html">Docs</a></li>
+          <li class="menu-item"><a href="../community/index.html">Community</a>
+          </li>
+          <li class="menu-item"><a href="../blog/index.html">Blog</a>
+          </li>
+          <li class="menu-item">
+            <div class="menu-item__github-button"><a href="https://github.com/airdata" data-count-href="/dcos/dcos/stargazers" data-count-api="/repos/dcos/dcos#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star dcos/dcos on GitHub" class="github-button">Star</a></div>
+          </li>
+          <li class="menu-item"><a href="../get-started/index.html" class="cta cta--button button--secondary">Get&nbsp;Started</a>
+          </li>
+        </ul>
+      </nav>
+      <div class="container__content community-hero">
+        <h1>Install DC/OS</h1>
+      </div>
+    </div>
+    <div class="container">
+      <div class="container__content install-columns">
+        <ul class="container__content--hero-list">
+          <li class="hero-list__item"><img src="../assets/images/icons/local.svg" class="hero-list__item__image"/>
+            <div class="hero-list__item__copy">
+              <h3 class="install-bullets-title">Local</h3>
+              <p>Vagrant-based installer that creates a cluster of virtual machines on a local machine.</p>
+              <h4 class="install-bullets-title">Requirements</h4>
+              <p class="small">A machine with at least 16GB of RAM.</p>
+              <h6>Install on:</h6>
+            </div><a href="../docs/1.9/administration/installing/local/index.html" class="card">
+              <div class="card-content"><img src="../assets/images/logos/install-platforms/vagrant.png" srcset="../assets/images/logos/install-platforms/vagrant.png 1x, /assets/images/logos/install-platforms/vagrant@2x.png 2x"/>
+              </div></a>
+          </li>
+          <li class="hero-list__item"><img src="../assets/images/icons/cloud.svg" class="hero-list__item__image"/>
+            <div class="hero-list__item__copy">
+              <h3 class="install-bullets-title">Cloud</h3>
+              <p>Configurable cloud provisioning templates for AWS, Azure, Packet and Google Compute Engine.</p>
+              <h4 class="install-bullets-title">Requirements</h4>
+              <p class="small">An active cloud subscription with your favorite provider.</p>
+              <h6>Install on:</h6>
+            </div><a href="../docs/1.9/administration/installing/cloud/aws/index.html" class="card">
+              <div class="card-content"><img src="../assets/images/logos/install-platforms/aws.png" srcset="../assets/images/logos/install-platforms/aws.png 1x, /assets/images/logos/install-platforms/aws@2x.png 2x"/>
+              </div></a><a href="../docs/1.9/administration/installing/cloud/azure/index.html" class="card">
+              <div class="card-content"><img src="../assets/images/logos/install-platforms/azure.png" srcset="../assets/images/logos/install-platforms/azure.png 1x, /assets/images/logos/install-platforms/azure@2x.png 2x"/>
+              </div></a><a href="../docs/1.9/administration/installing/cloud/packet/index.html" class="card">
+              <div class="card-content"><img src="../assets/images/logos/install-platforms/packet.png" srcset="../assets/images/logos/install-platforms/packet.png 1x, /assets/images/logos/install-platforms/packet@2x.png 2x"/>
+              </div></a><a href="../docs/1.9/administration/installing/cloud/gce/index.html" class="card">
+              <div class="card-content"><img src="../assets/images/logos/install-platforms/gce.png" srcset="../assets/images/logos/install-platforms/gce.png 1x, /assets/images/logos/install-platforms/gce@2x.png 2x"/>
+              </div></a>
+          </li>
+          <li class="hero-list__item"><img src="../assets/images/icons/custom-cloud.svg" class="hero-list__item__image"/>
+            <div class="hero-list__item__copy">
+              <h3 class="install-bullets-title">Custom Cloud</h3>
+              <p>Custom installers for existing setups in either AWS or any cloud.</p>
+              <h4 class="install-bullets-title">Requirements</h4>
+              <p class="small">An active cloud subscription; an existing cluster with at least 4 nodes.</p>
+              <h6>Install on:</h6>
+            </div><a href="../docs/1.9/administration/installing/custom/index.html" class="card">
+              <div class="card-content"><img src="../assets/images/logos/install-platforms/aws.png" srcset="../assets/images/logos/install-platforms/aws.png 1x, /assets/images/logos/install-platforms/aws@2x.png 2x"/>
+              </div></a><a href="../docs/1.9/administration/installing/custom/index.html" class="card card--custom-instal">
+              <div class="card-content">
+                <h5 class="custom-install">OTHER PLATFORMS</h5>
+              </div></a>
+          </li>
+          <li class="hero-list__item"><img src="../assets/images/icons/on-premesis.svg" class="hero-list__item__image"/>
+            <div class="hero-list__item__copy">
+              <h3 class="install-bullets-title">On-Premises</h3>
+              <p>GUI, command line and advanced installers for on-premises setups.</p>
+              <h4 class="install-bullets-title">Requirements</h4>
+              <p class="small">At least 4 nodes, each 4GB/2 CPUs.</p>
+              <h6>Install on:</h6>
+            </div><a href="../docs/1.9/administration/installing/custom/index.html" class="card">
+              <div class="card-content"><img src="../assets/images/logos/install-platforms/centos.png" srcset="../assets/images/logos/install-platforms/centos.png 1x, /assets/images/logos/install-platforms/centos@2x.png 2x"/>
+              </div></a><a href="../docs/1.9/administration/installing/custom/advanced/index.html" class="card">
+              <div class="card-content"><img src="../assets/images/logos/install-platforms/coreos.png" srcset="../assets/images/logos/install-platforms/coreos.png 1x, /assets/images/logos/install-platforms/coreos@2x.png 2x"/>
+              </div></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <div class="container__content container__content--footer">
+        <div class="footer">
+          <ul class="footer-main">
+            <li class="footer-item"><a href="../contribute/index.html">Contribute</a></li>
+            <li class="footer-item"><a href="../tos/index.html">Terms&nbsp;of&nbsp;Service</a></li>
+            <li class="footer-item"><a href="../privacy/index.html">Privacy&nbsp;Policy</a></li>
+            <li class="footer-item"><a href="../releases/index.html">Releases</a></li>
+            <li class="footer-item"><a href="https://dcos.io/brand/">Press&nbsp;Kit</a></li>
+          </ul>
+          <ul class="footer-secondary">
+            <li class="footer-item"><a href="http://www.twitter.com/dcos"><img src="../assets/images/icons/twitter-dark.svg" class="footer-item__icon twitter-icon"/><span>Twitter</span></a></li>
+            <li class="footer-item"><a href="http://chat.mesosphere.com"><img src="../assets/images/icons/slack-dark.svg" class="footer-item__icon"/><span>Slack</span></a></li>
+            <li class="footer-item"><a href="https://github.com/dcos"><img src="../assets/images/icons/github-dark.svg" class="footer-item__icon"/><span>GitHub</span></a></li>
+          </ul>
+        </div>
+      </div>
+      <!-- Google Tag Manager-->
+      <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MT2WX7" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+      </noscript>
+      <script>
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-MT2WX7');
+        
+      </script>
+      <script src="../assets/javascript/picturefill/dist/picturefill.min.js"></script>
+      <script src="../assets/javascript/jquery/dist/jquery.min.js"></script>
+      <script src="../assets/javascript/sticky-kit.min.js"></script>
+      <script src="../assets/javascript/lunr/lunr.min.js"></script>
+      <script src="../assets/javascript/jquery.scrollNav.min.js"></script>
+      <script src="../scripts/main.min.js"></script>
+      <script id="github-bjs" async="async" defer="defer" src="https://buttons.github.io/buttons.js"></script>
+    </div>
+  </body>
+</html>	

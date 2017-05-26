@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="../../styles/index-v=1490984623561.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta charset="UTF-8"/>
+    <link rel="shortcut icon" type="image/x-icon" href="../../assets/images/icons/favicon/favicon.ico"/>
+    <link rel="apple-touch-icon" href="../../assets/images/icons/favicon/favicon-apple-57x57.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="../../assets/images/icons/favicon/favicon-apple-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="../../assets/images/icons/favicon/favicon-apple-114x114.png"/>
+    <link rel="apple-touch-icon" sizes="144x144" href="../../assets/images/icons/favicon/favicon-apple-144x144.png"/>
+    <link rel="apple-touch-icon-precomposed" href="../../assets/images/icons/favicon/favicon-apple-57x57.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../../assets/images/icons/favicon/favicon-apple-72x72.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../../assets/images/icons/favicon/favicon-apple-114x114.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../../assets/images/icons/favicon/favicon-apple-144x144.png"/>
+    <link rel="apple-touch-icon" sizes="60x60" href="../../assets/images/icons/favicon/favicon-apple-60x60.png"/>
+    <link rel="apple-touch-icon" sizes="76x76" href="../../assets/images/icons/favicon/favicon-apple-76x76.png"/>
+    <link rel="apple-touch-icon" sizes="120x120" href="../../assets/images/icons/favicon/favicon-apple-120x120.png"/>
+    <link rel="apple-touch-icon" sizes="152x152" href="../../assets/images/icons/favicon/favicon-apple-152x152.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="60x60" href="../../assets/images/icons/favicon/favicon-apple-60x60.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="76x76" href="../../assets/images/icons/favicon/favicon-apple-76x76.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="120x120" href="../../assets/images/icons/favicon/favicon-apple-120x120.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../../assets/images/icons/favicon/favicon-apple-152x152.png"/>
+    <title>DC/OS Release 1.8.7</title>
+  </head>
+  <body>
+    <div class="container container--dark-background">
+      <nav class="navigation">
+        <div class="mobile-nav-container"><a id="nav-icon" href="index.html#"><span></span><span></span><span></span><span></span></a>
+          <div class="nav-logo-container"><a href="../../index.html" class="nav-logo">
+              <div class="logo"></div></a></div>
+        </div>
+        <ul class="menu-mobile">
+          <li class="menu-item"><a href="../../why-dcos/index.html">Who&nbsp;We&nbsp;Are!</a>
+          </li>
+          <li class="menu-item"><a href="../../install/index.html">Install</a>
+          </li>
+          <li class="menu-item"><a href="../../docs/1.9/index.html">Docs</a></li>
+          <li class="menu-item"><a href="../../community/index.html">Community</a>
+          </li>
+          <li class="menu-item"><a href="../../blog/index.html">Blog</a>
+          </li>
+          <li class="menu-item"><a href="https://github.com/dcos/dcos" target="_blank">GitHub</a></li>
+          <li class="menu-item"><a href="../../get-started/index.html">Get Started</a></li>
+        </ul>
+        <ul class="menu">
+          <li class="menu-item"><a href="../../why-dcos/index.html">Who&nbsp;We&nbsp;Are!</a>
+          </li>
+          <li class="menu-item"><a href="../../install/index.html">Install</a>
+          </li>
+          <li class="menu-item"><a href="../../docs/1.9/index.html">Docs</a></li>
+          <li class="menu-item"><a href="../../community/index.html">Community</a>
+          </li>
+          <li class="menu-item"><a href="../../blog/index.html">Blog</a>
+          </li>
+          <li class="menu-item">
+            <div class="menu-item__github-button"><a href="https://github.com/dcos/dcos" data-count-href="/dcos/dcos/stargazers" data-count-api="/repos/dcos/dcos#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star dcos/dcos on GitHub" class="github-button">Star</a></div>
+          </li>
+          <li class="menu-item"><a href="../../get-started/index.html" class="cta cta--button button--secondary">Get&nbsp;Started</a>
+          </li>
+        </ul>
+      </nav>
+      <div class="container__content">
+        <h1>DC/OS Release 1.8.7</h1>
+        <p class="hero-subtitle"><a href="https://downloads.dcos.io/dcos/stable/commit/1b43ff7a0b9124db9439299b789f2e2dc3cc086c/dcos_generate_config.sh" class="cta cta--button">Download</a><a href="../../docs/1.8/index.html" class="cta cta--text">View Documentation &rarr;</a></p>
+      </div>
+    </div>
+    <div class="container">
+      <div class="container__content">
+        <div class="container__content--release-notes docs-layout__docs-content"><h2 id="-1-8-7-nov-14-2016-releases-1-8-7-"><a href="index.html">1.8.7 - Nov 14, 2016</a></h2>
+<h3 id="new-and-changed-features">New and changed features</h3>
+<ul>
+<li>Marathon <a href="https://github.com/mesosphere/marathon/releases">1.3.6</a>.</li>
+</ul>
+<h3 id="fixed-issues">Fixed issues</h3>
+<ul>
+<li>DCOS-10959 - Update 1.8 Java to 8u112.</li>
+<li>DCOS-11027 - Network performance improvements for 1,000 node clusters.</li>
+<li>DCOS-11260 - In some situations, Marathon can fail to elect a leader during ZooKeeper restart.</li>
+<li><em>Warning:</em> constraint validation change: Constraint validation in Marathon is significantly improved with Marathon 1.3.x. Previously acceptable values for regular expressions, such as LIKE and UNLIKE, may no longer pass validation since they are not valid regular expressions. Where possible, Marathon will correct the regular expression (specifically <code>*</code> to <code>.*</code>); however, when this is not possible, the constraint will be removed and a warning will be logged for the affected app IDs.</li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="container__content container__content--footer">
+        <div class="footer">
+          <ul class="footer-main">
+            <li class="footer-item"><a href="../../contribute/index.html">Contribute</a></li>
+            <li class="footer-item"><a href="../../tos/index.html">Terms&nbsp;of&nbsp;Service</a></li>
+            <li class="footer-item"><a href="../../privacy/index.html">Privacy&nbsp;Policy</a></li>
+            <li class="footer-item"><a href="../index.html">Releases</a></li>
+            <li class="footer-item"><a href="https://dcos.io/brand/">Press&nbsp;Kit</a></li>
+          </ul>
+          <ul class="footer-secondary">
+            <li class="footer-item"><a href="http://www.twitter.com/dcos"><img src="../../assets/images/icons/twitter-dark.svg" class="footer-item__icon twitter-icon"/><span>Twitter</span></a></li>
+            <li class="footer-item"><a href="http://chat.mesosphere.com"><img src="../../assets/images/icons/slack-dark.svg" class="footer-item__icon"/><span>Slack</span></a></li>
+            <li class="footer-item"><a href="https://github.com/dcos"><img src="../../assets/images/icons/github-dark.svg" class="footer-item__icon"/><span>GitHub</span></a></li>
+          </ul>
+        </div>
+      </div>
+      <!-- Google Tag Manager-->
+      <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MT2WX7" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+      </noscript>
+      <script>
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-MT2WX7');
+        
+      </script>
+      <script src="../../assets/javascript/picturefill/dist/picturefill.min.js"></script>
+      <script src="../../assets/javascript/jquery/dist/jquery.min.js"></script>
+      <script src="../../assets/javascript/sticky-kit.min.js"></script>
+      <script src="../../assets/javascript/lunr/lunr.min.js"></script>
+      <script src="../../assets/javascript/jquery.scrollNav.min.js"></script>
+      <script src="../../scripts/main.min.js"></script>
+      <script id="github-bjs" async="async" defer="defer" src="https://buttons.github.io/buttons.js"></script>
+    </div>
+  </body>
+</html>

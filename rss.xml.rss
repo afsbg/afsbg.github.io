@@ -1,0 +1,793 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[DC/OS Blog]]></title><description><![CDATA[DC/OS Blog]]></description><link>https://dcos.io</link><image><url>./assets/images/rss-logo.png</url><title>DC/OS Blog</title><link>https://dcos.io</link></image><generator>metalsmith-feed</generator><lastBuildDate>Fri, 31 Mar 2017 18:23:49 GMT</lastBuildDate><atom:link href="https://dcos.io/rss.xml" rel="self" type="application/rss+xml"/><item><title><![CDATA[DC/OS 1.9.0 is Generally Available!]]></title><description><![CDATA[<p>Today we’re excited to announce that <a href="https://dcos.io/releases/">DC/OS 1.9</a> is generally available! It includes updates that make deploying containers alongside data services—and operating them all on a common pool of resources—even easier. Our favorite features are reviewed here, but for a full list of what’s new please check out the <a href="https://dcos.io/releases/1.9.0/">release notes</a> and <a href="https://dcos.io/docs/1.9/">documentation</a>.</p>
+<p><img src="/assets/images/blog/2017-03-30_1-9-0_GA_image_0.png" alt="DC/OS 1.9 Dashboard" /> <em>DC/OS 1.9 Dashboard</em></p>
+<h1 id="new-gui">New GUI</h1>
+<p>To start with the most noticeable change, the DC/OS 1.9 Graphical User Interface has some beautiful improvements! In addition to the new, light look and feel, we’ve added a tab in the services view to help you troubleshoot deployments. Now you can select any service, and see each host where that service is running, along with whether or not each host has matched the service’s requirements, for role, constraint, CPU, memory, disk, and port.</p>
+<p><img src="/assets/images/blog/2017-03-30_1-9-0_GA_image_1.png" alt="Services deployment troubleshooting tab" /> <em>Services deployment troubleshooting tab</em></p>
+<p>The new GUI also includes improved navigation, especially in the service-create workflow. To learn more about the UI, take a look at the <a href="https://dcos.io/docs/1.9/usage/webinterface/#docs-article">documentation</a>. If you have feedback or would like to get more involved with the DC/OS user experience please join the <a href="https://github.com/dcos/community/tree/master/wg-ux">UX working group</a>!</p>
+<h1 id="gpu-based-scheduling">GPU based scheduling</h1>
+<p>DC/OS 1.9 includes Apache Mesos 1.2, which allows DC/OS users to run GPU consuming frameworks like <a href="https://github.com/tensorflow/ecosystem/tree/master/marathon">Tensor Flow</a> on the same cluster as CPU consuming frameworks like <a href="http://cassandra.apache.org/">Apache Cassandra</a>. The addition of GPU resources to DC/OS is especially useful for users building or running deep learning and <a href="https://dcos.io/fast-data/">fast data</a> applications.</p>
+<p>In collaboration with Nvidia, we built native DC/OS support for injecting GPUs into containers. If you are already running your containerized GPU-based applications with <a href="https://github.com/NVIDIA/nvidia-docker"><code>nvidia-docker</code></a> those same apps will run on DC/OS without modification—and you will have the added ability to isolate access to GPUs on a per-container basis.  Our mantra is “test locally with <code>nvidia-docker</code>; deploy to production with DC/OS.”</p>
+<p>GPU resources are in preview, and only accessible when using the <a href="https://dcos.io/docs/1.9/usage/containerizers/">Universal Container Runtime</a>. For more information, check out the <a href="https://dcos.io/docs/1.9/usage/gpu/">DC/OS documentation</a>, and the more detailed <a href="http://mesos.apache.org/documentation/latest/gpu-support/">Mesos documentation</a>.</p>
+<h1 id="operating-on-dc-os">Operating on DC/OS</h1>
+<h2 id="unified-logging">Unified Logging</h2>
+<p>Starting with DC/OS version 1.9, task, container, service, node, and host level logs can be sent to journald. Operators can then collect and filter them with the logging aggregator of their choice, which gives them the flexibility to account for their specific security and privacy concerns. To learn more about getting DC/OS logs, please read Mesosphere’s great <a href="https://mesosphere.com/blog/2016/10/05/delivering-day-2-operations-with-dcos/">blog post</a> on it (part of their Day 2 Operations series), and check out the <a href="https://dcos.io/docs/1.9/administration/logging/">documentation</a>. Logging is experimental, and because of a bug in journald, it’s disabled by default in this release, but please do turn it on and try it out.</p>
+<h2 id="unified-metrics">Unified Metrics</h2>
+<p>In 1.9, Metrics are available through an HTTP API, and Mesosphere is in the process of building a variety of <a href="https://github.com/airdata-metrics/tree/master/plugins">plugins</a> to connect that API to the most popular aggregators, starting with <a href="https://www.datadoghq.com/">Datadog</a>. If you’d like to request a plugin (or build your own) please join the <a href="https://github.com/dcos/community/tree/master/wg-day-2-ops">day 2 operations working group</a>. You can read more about the new metrics functionality on Mesosphere’s <a href="https://mesosphere.com/blog/2016/10/12/day-2-operations-metrics/">blog</a>, and in the <a href="https://dcos.io/docs/1.9/administration/metrics/">docs</a>.</p>
+<h2 id="remote-container-shell-debugging-api-">Remote Container Shell (Debugging API)</h2>
+<p>DC/OS allows you to launch and run containers while remaining agnostic to their physical location on nodes in your cluster. Container <a href="https://dcos.io/docs/1.9/administration/debugging/">debugging</a>, introduced in 1.9, extends this idea by allowing DC/OS users to now launch additional processes inside their containers, without SSH, or any information about where those containers are running.</p>
+<p>This is especially useful for quickly running <code>cat</code> to verify the contents of a configuration file or opening a long-running interactive <code>bash</code> session to debug issues more thoroughly. Debugging is experimental, and only available if you launched your containers using the Mesos container runtime or <a href="https://dcos.io/docs/1.9/usage/containerizers/">Universal Container Runtime</a>.</p>
+<h1 id="pods">Pods</h1>
+<p>Pods let you specify a set of one or more containers that should always run together on the same node. They can make sure that apps will always be able to communicate with necessary monitoring or service discovery, or ensure that co-dependent containers will never be provisioned on separate nodes, which is especially useful if you’re in the process of transitioning to microservices from a monolithic app.</p>
+<p>You can set up pods by providing Marathon with a pod definition <code>.json</code> file, much like you do when specifying a Marathon app definition. For more information on how pods work under the hood check out the <a href="https://dcos.io/blog/2017/exploring-pods-in-dc-os-1-9/index.html">blog post</a> by Elizabeth K. Joseph and Karl Isenberg. To learn more about using pods, please read <a href="https://mesosphere.com/blog/2017/03/15/introducing-pods-dcos-1-9/">this post</a> from Amr Abdelrazik. Note that you need to use the <a href="https://dcos.io/docs/1.9/usage/containerizers/">Universal Container Runtime</a> with pods, and that they are experimental in this release. Please try them out and file some bugs <a href="https://jira.dcos.io/">here</a>.</p>
+<h1 id="data-services">Data Services</h1>
+<p>In addition to improvements to DC/OS itself, we’re really proud to announce new packages in the DC/OS Universe service catalog, which our amazing technical partners created using the new software development kit (SDK). The SDK itself isn’t ready for general use yet, so special thanks to the companies who took the time to work with Mesosphere to both contribute the following new, awesome packages, and to help improve the SDK.</p>
+<p><img src="/assets/images/blog/2017-03-30_1-9-0_GA_image_2.png" alt="Packages in the DC/OS Universe service catalog" /> <em>Packages in the DC/OS Universe service catalog</em></p>
+<h2 id="alluxio">Alluxio</h2>
+<p>Alluxio Enterprise Edition is based on an open source project that, like Apache Mesos, started at UC Berkeley’s AMPLab. Alluxio connects various data applications (Apache Spark, Apache Flink, Hadoop Mapreduce, and others) to data storage systems (Amazon S3, Google Cloud Storage, Hadoop, etc.), while maintaining data transfer speeds. To learn more, sign up for the <a href="https://event.on24.com/eventRegistration/EventLobbyServlet?target=reg20.jsp&amp;referrer=&amp;eventid=1386725&amp;sessionid=1&amp;key=B6BD11CCF8367BF616B0EB55E5020048&amp;regTag=&amp;sourcepage=register">webinar</a> on April 4th.</p>
+<h2 id="datastax-enterprise-max">Datastax Enterprise Max</h2>
+<p>Datastax offers enterprise products built on Apache Cassandra, and contributes to the open source project as well. A few months ago they created a Universe package for Datastax Enterprise (DSE), and now have added DSE Max, which includes analytics and search. To learn more, sign up for the <a href="http://event.on24.com/wcc/r/1386670/FB17CDAD8DFD4EB72B22C807053A0919">webinar</a> on April 18th.</p>
+<h2 id="couchbase">Couchbase</h2>
+<p>Couchbase Server is an open source, distributed NoSQL document database, with integrated caching, that provides the power of SQL with the flexibility of JSON. It replicates data over multiple regions, for high availability and disaster recovery (HA/DR). Couchbase Lite runs on mobile and Internet of Things (IoT) devices, and syncs to Couchbase Server. To learn more, sign up for the <a href="http://event.on24.com/wcc/r/1386709/B6E0D2323B9B6B675410D0063A05670E">webinar</a> on May 2nd.</p>
+<h2 id="elastic-stack">Elastic Stack</h2>
+<p>Elastic Stack is an out of the box version of the popular, open source ELK stack (Elasticsearch, Kibana, and Logstash), which aso includes Beats. Elastic Stack can be used for logging, and to used to ingest, search, analyze, and visualize other types of data in real-time. Managing the subcomponents of the Elastic Stack separately can be complex, but DC/OS makes it easy to launch and maintain.</p>
+<h2 id="redis">Redis</h2>
+<p>Redis is a in-memory data structure store, used as a NoSQL database, cache and message broker, for high performance operations. Redis Labs, the company behind the Redis open source project, offers an enterprise product that includes automated scaling, clustering, multi-zone high availability, auto-failover, continuous monitoring and 24x7 support. To learn more sign up for the <a href="http://event.on24.com/wcc/r/1386729/B1E7090DA4489515C8525E1B33DA7373">webinar</a> on May 9th.</p>
+<h2 id="try-out-the-new-packages">Try out the new packages</h2>
+<p>For more details about the new packages, and the Universe, check out Mesosphere’s <a href="https://mesosphere.com/blog/2017/03/14/bringing-production-proven-data-services-to-dcos/">blog post</a> on new data services. All packages are installable from the DC/OS UI with <a href="https://dcos.io/docs/1.9/usage/managing-services/install/">just a couple clicks or commands</a>, and you can browse the complete list of packages available through the DC/OS Universe <a href="https://universe.serv.sh/#/">here</a>.</p>
+<h1 id="learn-more-about-dc-os-1-9">Learn more about DC/OS 1.9</h1>
+<p>This is a featureful release, and we’re excited to hear your questions. We’ll have a Q&amp;A <a href="https://www.meetup.com/DC-OS-Online-Meetup/events/238471362/">office hours</a> with Tal Broda (Mesosphere’s VP of Engineering) on March 30th, where you can ask about any implementation questions that come up, via video chat. For help any time, join the DC/OS community <a href="https://groups.google.com/a/dcos.io/d/forum/users">mailing list</a>, or <a href="http://chat.dcos.io/">Slack</a>. And of course, if you find bugs we’d love your reports in <a href="https://jira.mesosphere.com/">JIRA</a>. <a href="https://dcos.io/releases/1.9.0/">Try 1.9 out today</a>; we hope you enjoy it!</p>
+]]></description><link>https://dcos.io/blog/2017/dc-os-1-9-0-is-generally-available/index.html</link><guid isPermaLink="true">https://dcos.io/blog/2017/dc-os-1-9-0-is-generally-available/index.html</guid><dc:creator><![CDATA[Judith Malnick, Mesosphere]]></dc:creator><pubDate>Tue, 28 Mar 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[Reflecting on SCaLE 15x]]></title><description><![CDATA[<p>Between March 2nd and 5th, over three thousand open source enthusiasts descended on Pasadena, California for the <a href="https://www.socallinuxexpo.org/scale/15x">Southern California Linux Expo</a>. The <a href="https://www.socallinuxexpo.org/scale/15x/schedule">schedule</a> drew professionals and hobbyists alike to talk about everything from specific projects like Ubuntu and PostgreSQL; to open source use cases in education and entertainment; to tracks on containers, DevOps and open data.</p>
+<p><img src="/assets/images/blog/2017-03-22_scale15x_entrance.jpg" alt="SCaLE 15x Entrance" /></p>
+<p>On March 2nd I ran an <a href="http://scale.opensourceinfra.org/">Open Infrastructure Day</a> with Spencer Krum of IBM, where we promoted and shared various projects that are running with all or part of their infrastructures maintained in the open. We heard from infrastructure engineers at <a href="https://www.openstack.org/">OpenStack</a>, <a href="https://jenkins.io/">Jenkins</a>, the <a href="https://www.apache.org/foundation/">Apache Software Foundation</a><a href="https://jenkins.io/">,</a> and others about their tooling and recommendations for operating projects in the open. The afternoon was spent in an unconference covering topics like handling donations, CI systems, and using containers. Spencer wrote an article about the event <a href="https://developer.ibm.com/opentech/2017/03/07/7-things-learned-open-infrastructure-day-scale-15x/">here</a>, and I go into more detail in an article <a href="https://opensource.com/article/17/3/growth-open-source-project-infrastructures">here</a> (on OpenSource.com).</p>
+<p>On Saturday afternoon, just before giving my talk on “Listening to the Needs of Your Global Open Source Community”, I attended a talk by Anand Babu Periasamy on “Minio: An open source alternative to AWS S3”. We’re using <a href="https://www.minio.io/">Minio</a> in our <a href="https://github.com/dcos/demos/tree/master/1.9/applogs#fast-data-application-logs">Fast Data: Application Logs</a> and <a href="https://github.com/dcos/demos/tree/master/1.9/sensoranalytics#fast-data-sensor-analytics">Fast Data: Sensor Analytics</a> demos for DC/OS, so I was interested in learning more about the background, goals and future of the project. Minio, a minimalist distributed object storage server that is fully S3-compatible has has a strong focus on simplicity. With a belief that only simple systems can scale well, Minio prioritizes stability and S3-compatibility so that cloud operators have an open source option. In contrast to object storage projects like <a href="http://swift.openstack.org">Swift</a>, Minio isn’t planning to add additional back ends or plugins, or to extend the product beyond the basic mandate. The Minio team wants users to be able to seamlessly move between S3 and Minio, without being locked into either. We used it in our demos because we value this simplicity; it satisfies our need for a cloud-focused object storage while remaining simple for demos, and scalable for production environments.</p>
+<p><img src="/assets/images/blog/2017-03-22_scale15x_minio.jpg" alt="Minio presentation" /></p>
+<p>There was an entire track on Thursday, Saturday and Sunday devoted to Containers and Virtualization. Of particular interest to me, on Sunday I attended Josh Berkus’ “State: That’s What’s Happening” where (with a focus on Kubernetes though largely transferrable to DC/OS) he walked the audience through various stateful-services concerns. He reviewed types of stores, how orchestration tooling needs microservice-state awareness, and demonstrated Kubernetes in combination with different storage options. Slides from his talk are available <a href="https://jberkus.github.io/state_happening/#1">here</a>.</p>
+<p>In the final talk of the conference, we heard from Nathan Handler who spoke on “Automatically Scaling Mesos Services and Clusters at Yelp”. He began his talk by walking the audience through several iterations of Yelp’s infrastructure, and how the current iteration reduces costs, using <a href="http://mesos.apache.org/">Apache Mesos</a> to intelligently balance workloads across nodes. Instead of using DC/OS, he presented tooling developed in house at Yelp called <a href="https://github.com/Yelp/paasta">PaaSTA</a>, which uses familiar tooling of <a href="https://mesosphere.github.io/marathon/">Marathon</a>, <a href="https://mesos.github.io/chronos/">Chronos</a>, Jenkins, <a href="https://www.docker.com/">Docker</a>, Git, and <a href="https://sensuapp.org/">Sensu</a> to build a continuously deployment platform on Mesos.</p>
+<p><img src="/assets/images/blog/2017-03-22_scale15x_paasta.jpg" alt="PaaSTA presentation" /></p>
+<p>During his talk Nathan shared some of Yelp’s reasons for building their own platform rather than using something like DC/OS, and after the conference he was able to take some time for me to expand upon their rationale:</p>
+<p>“We began coming up with the plan for PaaSTA back in July 2014. DC/OS Enterprise GA didn’t happen until June 2015, which is also when the free community edition launched. By that time, we had already put quite a bit of work into tailoring PaaSTA (which used mesos/marathon) to our specific needs. We opted for mesos because it was a clear leader in its field at the time. Marathon was chosen because it was designed to do one thing, but do it well. We also generally tend to opt towards the free/open source versions of tools or developing them ourselves rather than paying for a closed enterprise version. This is to allow us the flexibility/control to manage all aspects of our infrastructure and fix our own problems rather than being dependent on a third party.”</p>
+<p>Like many companies, Yelp found that open source was key to the strategy they employed and then built tooling around what they needed from Mesos and Marathon, which they already found value in. Timing of the DC/OS release wasn’t right for them, but he went on to share:</p>
+<p>“we continue to run PaaSTA because it has grown and evolved into a tool that is heavily tailored for our specific needs/workflows while still allowing us to benefit from the DC/OS work that trickles down into the mesos frameworks.” Slides from his talk can be found <a href="https://www.slideshare.net/NathanHandler/paasta-autoscaling-at-yelp">here</a>.</p>
+<p>This year at SCaLE I noticed a trend toward forward-thinking talks, exemplified in keynotes by Christine Corbett Moran (“Open Source Software as Activism”) and Karen Sandler (“In the Scheme of Things, How Important is Software Freedom?”). Each took a close look at our open source communities and the work we’re doing, and the ways we are doing it. The code is important, but so are the methods we’re using to build and preserve communities, and the positive intent behind our work. SCaLE was a serious and inspiring look into efforts that so many of us are spending in open source spaces, and I’m excited to return next year.</p>
+<p>You can read more about my experience at SCaLE 15x on my personal blog <a href="http://princessleia.com/journal/2017/03/scale15x/">here</a>.</p>
+]]></description><link>https://dcos.io/blog/2017/reflecting-on-scale-15x/index.html</link><guid isPermaLink="true">https://dcos.io/blog/2017/reflecting-on-scale-15x/index.html</guid><dc:creator><![CDATA[Elizabeth K. Joseph, Mesosphere]]></dc:creator><pubDate>Wed, 22 Mar 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[Exploring Pods in DC/OS 1.9]]></title><description><![CDATA[<p>Requests for pods in Apache Mesos goes back to a JIRA Epic opened in 2015: [<a href="https://issues.apache.org/jira/browse/MESOS-2449">MESOS-2449</a>] - Support group of tasks (Pod) constructs and API in Mesos. The Epic includes dozens of issues, which enable Mesos to schedule containers together on single hosts, when a framework requests it. On the 10th of November 2016 <a href="http://mesos.apache.org/blog/mesos-1-1-0-released/">Apache Mesos 1.1.0 was released</a>, and included support for pods under the name “task groups”.</p>
+<p>The ability to allocate resources to multiple containers at once isn’t the only prerequisite for pods on Mesos; Frameworks has to be able to schedule those containers together as well. This meant building new functionality into Marathon, which shipped in <a href="https://github.com/mesosphere/marathon/releases/tag/v1.4.0">version 1.4.0</a> on the 17th of February 2017.</p>
+<p>With the release of DC/OS 1.9 we are happy to announce that pods are available to DC/OS users. Here’s how they work!</p>
+<h1 id="dc-os-pods-what-are-they-good-for-">DC/OS Pods: What are they good for?</h1>
+<p>By default, when you launch a container with a job or service in it, DC/OS puts the container on any node that has the resources that you request, allowing you to remain agnostic to the physical location of containers in your cluster. Historically, you could only influence container placement with <a href="https://mesosphere.github.io/marathon/docs/constraints.html">constraints</a> and resources, which specify particular node hostnames, nodes attributes, and node resources for your containers. You couldn’t guarantee that any two containers would be scheduled on the same node without specifying exactly which node, until now.</p>
+<p>Pods provide a solution to this problem. A set of containers can now be co-located on the same node, where they can share resources like network namespace and storage volumes. Additionally, containers are linked in health checks, so that if a container in a pod fails a health check or goes unresponsive, all containers in the pod can be restarted or relocated together to another node.</p>
+<p>Pods can be particularly valuable if your application depends on support services that need to be co-located with your main application, such as a log scraper or analytics service. They can also be important for supporting containerization of legacy applications, which sometimes involves separating co-dependent components of a monolithic application into multiple separate containerized microservices that still need to share disk or localhost.</p>
+<p>In a recent blog post, Amr Abdelrazik provided a more comprehensive overview of the use cases for pods, which you can read at <a href="https://mesosphere.com/blog/2017/03/15/introducing-pods-dcos-1-9/">Introducing Pods in DC/OS 1.9</a>.</p>
+<h1 id="pod-internals">Pod Internals</h1>
+<p>To run a pod using Mesos and Marathon, you first have to define it. Pods are configured for Marathon using JSON pod definitions, which look similar to Marathon <a href="https://dcos.io/docs/1.9/usage/managing-services/application-basics/">application definitions</a>, except that they can list multiple containers, referred to as sub-containers, which define the tasks you will want to run together.</p>
+<p>To schedule a pod, Marathon converts the pod definition into Mesos task group definitions and accepts offers that have sufficient resources and match the pod constraints. The number of task groups created depends on the number of instances specified in the pod definition; each pod instance gets its own new task group.</p>
+<p>Once an offer is accepted, the Mesos master tells the appropriate Mesos agent to launch the task groups assigned to the offer. The Mesos agent, using the <a href="https://dcos.io/docs/1.9/usage/containerizers/#dc-os-universal-container-runtime">Universal Container Runtime</a>, launches a new task group executor for each task group. Like other executors, the task group executor is itself a container. Unlike other executors, the task group executor can manage multiple tasks as sub-containers that share the executor container’s namespace and resources.</p>
+<p><img src="/assets/images/blog/2017-03-17_pods_diagram.png" alt="Pods diagram" /></p>
+<p>To learn more about pods in Marathon, check out the <a href="http://mesosphere.github.io/marathon/docs/pods.html">documentation</a>.</p>
+<h1 id="using-pods-in-dc-os-1-9">Using Pods in DC/OS 1.9</h1>
+<p>In the DC/OS GUI, pods are handled and visually represented as types of <a href="https://dcos.io/docs/1.9/overview/concepts/#dcos-service">Services</a>, along with apps. As such, you can deploy or create a pod by running a new Service in the DC/OS GUI and selecting the Multi-container (Pod) option.</p>
+<p><a href="/assets/images/blog/2017-03-17_pods_gui_1.jpg" /><img src="/assets/images/blog/2017-03-17_pods_gui_1.jpg" alt="Run a Service screenshot" border="0" /></a></p>
+<p>Because pods are configured with JSON pod definitions, you can also use the JSON Configuration option on the Run a Service page to configure a pod, just like you would for an app. The new pods <a href="https://dcos.io/docs/1.9/usage/pods/quickstart/">Quick Start</a> for DC/OS 1.9 provides a simple example of a pod definition, and you can view more pod definitions in the <a href="https://dcos.io/docs/1.9/usage/pods/examples/">Examples</a>.</p>
+<p>Once a pod is up and running, you can view its status in the DC/OS GUI just like any other service. By clicking on your pod in the list of services, you will be taken to the pod detail page where you can view the pod instances and the sub-containers within each pod instance, along with their statuses.</p>
+<p><a href="/assets/images/blog/2017-03-17_pods_gui_2.jpg" /><img src="/assets/images/blog/2017-03-17_pods_gui_2.jpg" alt="Services screenshot" border="0"/></a></p>
+<p>Both the DC/OS CLI and REST API also support pods. If you were using the <a href="https://dcos.io/docs/1.9/usage/pods/examples/#a-pod-with-multiple-containers">pod with multiple containers</a> example, shown in the screenshot above, you would create a pod using the CLI by entering:</p>
+<p><code>dcos marathon pod add a-pod-with-multiple-containers.json</code></p>
+<p>You should get back:</p>
+<p><code>Created deployment 75630ae1-5912-4747-94b9-08f888f01363</code></p>
+<p>To view a list of running and stopped pods, you can use:</p>
+<p><code>dcos marathon pod list</code></p>
+<p>You can also remove, show, and update pods in the CLI by referencing the pod ID:</p>
+<pre><code class="lang-bash">dcos marathon pod remove [--force] &lt;pod-id&gt;
+dcos marathon pod show &lt;pod-id&gt;
+dcos marathon pod update [--force] &lt;pod-id&gt;
+</code></pre>
+<p>See <a href="https://dcos.io/docs/1.9/usage/pods/using-pods/">Using Pods</a> for specific usage of each of these commands.</p>
+<h1 id="conclusion">Conclusion</h1>
+<p>Pods is considered experimental in DC/OS release 1.9.0, and is exclusively supported by the <a href="https://dcos.io/docs/1.9/usage/containerizers/#dc-os-universal-container-runtime">Universal Container Runtime</a>. Pod features currently on the roadmap for future releases include: ordered container start times within a Pod, and Bridge Mode networking support.</p>
+<p>To further explore pods in this release, refer to <a href="https://dcos.io/docs/1.9/usage/pods/">the documentation</a>, which includes a <a href="https://dcos.io/docs/1.9/usage/pods/quickstart/">Quick Start</a>, <a href="https://dcos.io/docs/1.9/usage/pods/technical-overview/">Technical Overview</a>, <a href="https://dcos.io/docs/1.9/usage/pods/using-pods/">Using Pods</a> and <a href="https://dcos.io/docs/1.9/usage/pods/examples/">Examples</a>.</p>
+]]></description><link>https://dcos.io/blog/2017/exploring-pods-in-dc-os-1-9/index.html</link><guid isPermaLink="true">https://dcos.io/blog/2017/exploring-pods-in-dc-os-1-9/index.html</guid><dc:creator><![CDATA[Elizabeth K. Joseph and Karl Isenberg, Mesosphere]]></dc:creator><pubDate>Fri, 17 Mar 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[DC/OS and Instana - a Partnership for Modern Operations]]></title><description><![CDATA[<p>Deployment and monitoring of modern applications and infrastructure has evolved. Gone are the days of writing code for a year, deploying to production (having a release party), and hoping that the operations team has the tools to handle what comes at them. DevOps culture and CI/CD practices no longer prioritize deployment timelines over solving customer problems.</p>
+<p>Modern operations require continual improvement so businesses can keep up with the evolving expectations of their customers. Adopting container technologies accelerates this improvement by enabling businesses to implement continuous delivery, and microservices architectures.</p>
+<p>What’s next? After a business has adopted containers, monitoring them is the next step. But,  established monitoring tools were designed for static, legacy application stacks, before the concepts of CI/CD, microservices and containers even existed. These traditional tools struggle to give teams the visibility and feedback they need to assure quality of service for critical modern applications.</p>
+<p>To address the gap between legacy monitoring tools and modern applications, <a href="http://www.instana.com">Instana</a> is helping IT teams make sense out of the chaos that deploying containers at scale creates, by giving them full-stack visibility, including summary metrics about the quality of the application’s services. Instana has added a package in the DC/OS Universe service catalog, which is now available to install on DC/OS.</p>
+<p>We’re excited to announce the Instana package for DC/OS, which reports on the overall health of a user’s container environment, including the quality of their microservices and code. DC/OS users who install Instana will better understand how the containers in their cluster impact each other as they interact through the layers of their infrastructure, and how well the microservices that make up their application are operating.</p>
+<p><strong>Visibility for DC/OS</strong></p>
+<p><img src="/assets/images/blog/2017-03-015_Instana_image_0.png" alt="Structure of an Instana Agent" /> <em>Structure of an Instana Agent</em></p>
+<p>Instana installs one agent on each host in the DC/OS cluster, which discovers the containers running on those hosts. Each agent then fetches the necessary sensors from the Instana Sensor Repository, and begins monitoring both the microservices inside each container, and the messages passed between microservices. It reports its information to the Instana Knowledge Engine, which analyzes and visualizes the data.</p>
+<p><img src="/assets/images/blog/2017-03-015_Instana_image_1.png" alt="node.js memory" /> <em>Example visualization of node.js metrics running inside a Docker container on DC/OS</em></p>
+<p>Each sensor from the Repository allows Instana to monitor a different type of containerized application component, so Instana can provide quality of service (QoS) metrics on a container to container basis, depending on the language that the component was written in. There are over 60 sensors so far.</p>
+<p><img src="/assets/images/blog/2017-03-015_Instana_image_2.png" alt="Single container memory utilization on DC\/OS" /> <em>Single container memory utilization on DC\/OS</em></p>
+<p>The new DC/OS monitoring solution from Instana provides:</p>
+<ul>
+<li>Insights into a DC/OS cluster</li>
+<li>Monitoring and quality-of-service management of services running “inside” and “outside” of containers, including full distributed tracing</li>
+<li>Visualization and searching for Marathon-specific container labels and tags</li>
+<li>Marathon event detection and correlation to any QoS problems</li>
+<li>Immediate insight into root-cause issues impacting your DC/OS cluster and the applications that run on it</li>
+</ul>
+<p>Get started by signing up for <a href="https://www.instana.com">Instana</a>,<a href="https://www.instana.com"> </a><a href="https://dcos.io/get-started">spinning up a DC/OS cluster</a><a href="https://www.instana.com">,</a> and installing the Instana Package from the Universe. With Instana and DC/OS you get the actionable intelligence needed to support your modern operations environment.</p>
+<p>Interested in learning more?</p>
+<p><a href="http://webinars.devops.com/microservice-monitoring-quality-management">Register for our webinar</a> on March 30th, 2017 at 10:00 am PST, and learn how the Instana and DC/OS make monitoring your containerized application and managing the quality of your services incredibly easy.</p>
+]]></description><link>https://dcos.io/blog/2017/dc-os-and-instana-a-partnership-for-modern-operations/index.html</link><guid isPermaLink="true">https://dcos.io/blog/2017/dc-os-and-instana-a-partnership-for-modern-operations/index.html</guid><dc:creator><![CDATA[Pavlo Baron, Instana]]></dc:creator><pubDate>Thu, 16 Mar 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[Open Source Team at Spark Summit East 2017]]></title><description><![CDATA[<p>I had the pleasure of attending Spark Summit East 2017 in Boston February 8-9th with my open-source-software-team colleague Jörg Schad. As the name suggests, the conference centered around <a href="http://spark.apache.org/">Apache Spark</a>, the open source large-scale data processing engine.</p>
+<p>DC/OS has particularly well-tuned support for running Spark and for integrating it with supporting technologies, including <a href="https://kafka.apache.org/">Apache Kafka</a>, <a href="http://cassandra.apache.org/">Apache Cassandra</a> and others without having to worry about the underlying Mesos-driven infrastructure.</p>
+<p>My colleague Jörg gave a 20 minute demo, using Spark to build a geo-enabled Internet of Things (IoT) pipeline to track taxis in New York City.</p>
+<p><img src="/assets/images/blog/2017-03-02_joerg_spark_summit_east.jpg" alt="Jörg Schad presenting at Spark Summit East 2017"/></p>
+<p><em>Jörg Schad presenting at Spark Summit East 2017</em></p>
+<p>His video and slides can be found here: <a href="https://spark-summit.org/east-2017/events/powering-predictive-mapping-at-scale-with-spark-kafka-and-elastic-search/">Powering Predictive Mapping at Scale with Spark, Kafka, and Elastic Search</a>. The demo itself is open sourced and <a href="https://github.com/amollenkopf/dcos-iot-demo/">available on GitHub</a> if you want to give it a try yourself.</p>
+<p>Jörg and I also spent time at the booth where we met folks who use Apache Spark for all kinds of data projects. Some attendees were familiar with DC/OS, and some were new to it like me, giving me a great opportunity—since this was my first booth event since joining Mesosphere—to outline the basics of how DC/OS supports Spark and other <a href="https://dcos.io/fast-data">fast data</a> services.</p>
+<p><img src="/assets/images/blog/2017-03-02_booth_spark_summit_east.jpg" alt="Jörg Schad and Kim Garshol at the Mesosphere booth"/></p>
+<p><em>Jörg Schad and Kim Garshol at the Mesosphere booth</em></p>
+<p>While at the event, Jörg and I also appeared on DC/OS Office Hours to discuss our impressions of the conference. We noted a lot of talk about Artificial Intelligence and Machine Learning at Spark Summit East, especially in the keynotes. Big data keeps getting bigger, allowing companies to train algorithms to do jobs that, up until now, fell solidly in the human realm. Many talks also discussed live streaming data using Apache Spark, with mechanisms that integrate both archival and streaming data for processing and searches. The video from our Office Hours can be found <a href="https://youtu.be/Np-08lWeIbc?list=PLVWqoBEzghqdpHYXcOESRPLJseA6cRT_q">here</a>.</p>
+<p>I wrote more about the event on my personal blog, <a href="http://princessleia.com/journal/2017/02/spark-summit-east-2017/">here</a>.</p>
+<p>If you happen to be in Berlin, you can learn about some of the event highlights in person from Jörg at the <a href="https://www.meetup.com/Berlin-Apache-Spark-Meetup/events/237849059/">upcoming Berlin Apache Spark Meetup</a> on Thursday, March 9, 2017 at 7:00 PM.</p>
+]]></description><link>https://dcos.io/blog/2017/open-source-team-at-spark-summit-east-2017/index.html</link><guid isPermaLink="true">https://dcos.io/blog/2017/open-source-team-at-spark-summit-east-2017/index.html</guid><dc:creator><![CDATA[Elizabeth K. Joseph, Mesosphere]]></dc:creator><pubDate>Thu, 02 Mar 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[Apache Flink on DC/OS (and Apache Mesos)]]></title><description><![CDATA[<p>Last December, data Artisans organized the first-ever <a href="http://flink.apache.org/">Apache Flink®</a> user survey. We asked the community where they were running Flink, and here’s what we found:</p>
+<p><img src="/assets/images/blog/2017-02-27_Flink_image_0.png" alt="User survey reslults"/></p>
+<p>Just under 30% of respondents were running Flink on <a href="http://mesos.apache.org">Apache Mesos</a> (on-premise or in the cloud). Notably, Flink <em>hadn’t even provided official support for Mesos</em> until this month’s Flink 1.2 release. This 30% is a testament to Mesos’ popularity.</p>
+<p>It comes as no surprise, then, that demand for Mesos support was on the rise in the Flink community and showed up as a <a href="http://data-artisans.com/flink-user-survey-2016-part-2/#new-features">common feature request</a> in the Flink user survey:</p>
+<blockquote>
+<p>“Excited for the upcoming Mesos integration.”</p>
+<p>“Full support for Mesos”</p>
+<p>“Support to run on Mesos”</p>
+</blockquote>
+<p>Apache Flink® 1.2 includes many improvements to Flink deployment modes, and one such improvement is support for Apache Mesos and <a href="https://dcos.io/">DC/OS</a> (datacenter operating system, the open-source Mesos distribution and application management layer provided by <a href="https://mesosphere.com/">Mesosphere</a>) as first-class citizens.</p>
+<p>Here at data Artisans, we have seen seen a wide range of production Flink deployments, so we appreciate how quickly the resource manager space is evolving and how Flink, too, must evolve—especially as Flink supports a broader variety of use cases. A tighter integration with Mesos and DC/OS represents an important step forward in Flink’s capabilities.</p>
+<p>In this post, we’ll give a high-level overview of deploying Flink on both Mesos and DC/OS. Be sure to refer to the <a href="https://ci.apache.org/projects/flink/flink-docs-release-1.2/setup/mesos.html">complete documentation</a> before starting this process yourself.</p>
+<h1 id="flink-s-interaction-with-mesos">Flink’s interaction with Mesos</h1>
+<p>For the uninitiated: Flink is a stateful stream processing framework that supports high-throughput, low-latency applications. Flink is a lightweight and fault tolerant, providing strict accuracy guarantees in case of failures, with minimal impact on performance. Flink deployments cover a range of use cases; Alibaba, for example, uses Flink to <a href="http://data-artisans.com/blink-flink-alibaba-search/">optimize search results in real-time</a>.</p>
+<p>Flink’s Mesos and DC/OS implementation in 1.2 consists of an Application Master, which runs the JobManager and the ResourceManager.</p>
+<p>The ResourceManager hosts the Mesos scheduler communicating with the Mesos cluster and allocating resources for Mesos tasks, which run Flink’s TaskManagers.</p>
+<p><img src="/assets/images/blog/2017-02-27_Flink_image_1.jpg" alt="Package screen capture"/></p>
+<h2 id="flink-on-dc-os">Flink on DC/OS</h2>
+<p>In its Mesos user survey, <a href="https://mesosphere.com/blog/2016/11/02/apache-mesos-survey-2016/">Mesosphere found</a> that 87% of new Mesos users are running DC/OS, and so Flink’s Mesos support wouldn’t be complete without DC/OS support, too. To run Flink on DC/OS, first <a href="https://dcos.io/install/">install DC/OS from the official site</a>.</p>
+<p>Note that DC/OS includes Mesos, Marathon (a service that will supervise your applications and maintain their state in case of failures), and ZooKeeper, all pre-configured out of the box.</p>
+<p>Once your DC/OS cluster is ready, you can simply search for “Flink” in Universe, install the package with a couple of clicks, and you’re ready to get started. If you’d like to use <a href="https://ci.apache.org/projects/flink/flink-docs-release-1.2/setup/checkpoints.html">Flink’s checkpoints</a> for fault tolerance (recommended for most production deployments), you’ll also need to install HDFS.</p>
+<p>We’d like to extend a big thanks to our friends at Mesosphere for their contribution to DC/OS support, enabling a seamless integration between Flink and DC/OS.</p>
+<h2 id="flink-on-mesos">Flink on Mesos</h2>
+<p>First things first: the <a href="http://mesos.apache.org/documentation/latest/">Mesos documentation</a> will walk you through initial Mesos setup. Next you should also <a href="https://mesosphere.github.io/marathon/docs/">install Marathon</a>, since you usually want your cluster to be highly available (HA). In order to run Marathon, you also need a ZooKeeper quorum running. We assume for the following that ZooKeeper is reachable under node:2181. Lastly, we recommend installing a distributed file system where Flink can store its checkpoints. We assume for the following that HDFS is installed and can be reached via hdfs://node/.</p>
+<p>After installing Mesos and Co. we have to enable Flink’s HA functionality by adding the following lines to Flink’s configuration file:</p>
+<pre><code>high-availability: zookeeper
+
+high-availability.zookeeper.quorum: node:2181
+
+high-availability.zookeeper.storageDir: hdfs://node/flink/ha
+
+recovery.zookeeper.path.mesos-workers: /mesos-workers
+</code></pre><p>Last but not least, we have to start Flink as a Marathon application by giving the following JSON application description to Marathon:</p>
+<pre><code>{
+
+  &quot;id&quot;: &quot;flink&quot;,
+
+  &quot;cmd&quot;: &quot;$FLINK/bin/mesos-appmaster.sh -Dmesos.master=node:5050 -Dmesos.initial-tasks=1&quot;,
+
+  &quot;cpus&quot;: 1.0,
+
+  &quot;mem&quot;: 1024
+
+}
+</code></pre><p>Congratulations. You now have a highly-available Flink cluster running on Mesos!</p>
+<h1 id="looking-ahead">Looking Ahead</h1>
+<p>The Flink community is actively working on improvements beyond the 1.2 release, and will add two key components in the near future.</p>
+<ol>
+<li><p><strong>Dynamic resource allocation:</strong> In Flink 1.2, it’s not possible to dynamically adjust the number of tasks allocated to a job running on Mesos. <a href="https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=65147077">FLIP-6</a> will address this issue by separating the concerns of all deployment components. A dispatcher component will receive jobs and spawn Flink clusters, and the new ResourceManager will dynamically allocate new tasks if more resources are needed.</p>
+</li>
+<li><p><strong>Integration with the Flink CLI:</strong> In the future, it will be possible to start a Mesos cluster per job using the Flink CLI. Right now, a user must first start a Flink cluster on Mesos and then submit a long-running cluster session.</p>
+</li>
+</ol>
+<p>We believe that the Flink community’s work in partnership with Mesosphere will enable a broader range of Flink deployments, and we look forward to hearing user feedback about this new integration. Please contact the <a href="http://flink.apache.org/community.html#mailing-lists">Apache Flink user mailing list</a> if you have comments or questions.</p>
+]]></description><link>https://dcos.io/blog/2017/apache-flink-on-dc-os-and-apache-mesos/index.html</link><guid isPermaLink="true">https://dcos.io/blog/2017/apache-flink-on-dc-os-and-apache-mesos/index.html</guid><dc:creator><![CDATA[Till Rohrmann, data Artisans]]></dc:creator><pubDate>Mon, 27 Feb 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[Linux.conf.au 2017 Retrospective]]></title><description><![CDATA[<p>I spend a lot of time participating in community-driven open source conferences, which is how I found myself talking about “Listening to the needs of your global open source community” at <a href="https://linux.conf.au/">Linux.conf.au</a> (LCA)—in Tasmania—just two weeks after joining the DC/OS Open Source team. Slides from that talk are available <a href="https://www.slideshare.net/pleia2/lca-2017-listening-to-the-needs-of-your-global-open-source-community">here</a> and a video of the talk is <a href="https://www.youtube.com/watch?v=2uczCstmMyE">on YouTube</a>.</p>
+<p><img src="/assets/images/blog/2017-02-23_lca2017_0.jpg" alt="Global Community talk from LCA 2017"/></p>
+<p>LCA talks address cutting-edge open source trends, and this year they focused on the future of open source projects generally, rather than specific technologies. A keynote by Pia Waugh explored the opportunities that we, as open source technologists, have to make real improvements in the world around us. Dan Callahan of Mozilla gave us a framework to plan for project failure, which highlighted open standards, open communication, and the importance of reducing complexity, even in major infrastructure projects.</p>
+<p>Many of the individual talks at LCA this year had a strong operations slant, with talks about containers, kernels and firmware, security and more, however, I couldn’t help but notice large number of community-focused talks as well. In addition to the Community Leadership Summit X (CLSx) event I mentioned <a href="https://dcos.io/blog/2017/meet-our-new-developer-advocate/">in my last post</a>, a couple of talks stood out as especially relevant to the work we’re doing at Mesosphere as part of the DC/OS community.</p>
+<p>The first was <strong>Community Building Beyond the Black Stump</strong> presented by Josh Simmons. Drawing from his experience building a large community outside of a large city, Josh advocated for multidisciplinary meetups. In big, tech-heavy cities like San Francisco, communities focused on specific technologies make sense since enough people will be interested in any given topic to draw a crowd. However, in regions with smaller populations Josh noted that forming a group around one single technology isn’t always possible. He walked through some of the strategies he used for hosting events: always having attendees introduce themselves (so it is easy to follow-up with them later), making a safe space for questions of all levels, cross-promoting events with other nearby meetups, and reaching out to local schools, career counselors, and other local organizations to bring real value to their events.</p>
+<p>Josh found that multidisciplinary meetups have value in more populated areas as well, which he elaborated on, using his web-focused meetup group as an example. Multidisciplinary meetups bring together people with a diversity of skills; his group includes everyone from UI designers, to developers, to technical writers. They create strong communities, where people improve their careers by networking with other members outside of their area of expertise. They are welcoming; everyone’s diverse expertise mean that no one is ever the “smartest person in the room”. Everyone brings their own strengths.</p>
+<p>As I’ve started participating in DC/OS community events, the lessons from this talk have really resonated. While I believe that running DC/OS-focused events is important, I am excited to highlight other topics and technologies that are relevant for our community (fast data, day 2 operations, and container orchestration to name a few). I’m thrilled to say that on Thursday, February 23rd, Jörg Schad, Michael Hausenblas and I will be hosting in a <a href="https://www.meetup.com/DC-OS-Online-Meetup/events/237534764/">panel on DC/OS, Kubernetes, and OpenStack</a> with a broad focus on container orchestration. This event will take place at the Mesosphere office in San Francisco, and you can also view it online.</p>
+<p>The video of Josh’s talk can be found on <a href="https://www.youtube.com/watch?v=aNPPSrNoKFY">YouTube</a>.</p>
+<p>Another LCA talk that stood out for me was <strong>The Business of Community</strong> by VM (Vicky) Brasseur. She discussed how companies can support open source projects and communities, whether they are built around, release, or participate in (without controlling) open source projects. Mesosphere participates in all these ways, since it has Apache Mesos developers and committers on staff, and has released open source projects including Marathon and DC/OS.</p>
+<p><img src="/assets/images/blog/2017-02-23_lca2017_1.jpg" alt="Business of Community talk from LCA 2017"/></p>
+<p>VM navigated the often complicated path to working with a community, as well as the benefits and costs. At Mesosphere we have a good handle on the benefits of working with a community; we’ve seen them first hand—in the form of word of mouth marketing, recruitment opportunities, and contributions, both of support and R&amp;D. VM had an interesting perspective on costs. She mentioned that they include sponsorships, and helping paid developers feel comfortable contributing in the open, but stressed that they also include being a leader in the community by providing guidance and mentoring.</p>
+<p>VM’s perspective on how to succeed in working with a community was the most valuable part of her talk for me. She stressed communicating codified goals and success criteria. The question of how an open source team at a company can be most valuable to everyone, from the internal product team to marketing and the community, has a never-ending answer that we always need to be listening to and adjusting for.</p>
+<p>VM’s talk concluded with common pitfalls working with communities: lack of preparation, tracking uninformative metrics, lack of a community-specific strategy, and mismatched company and community expectations. She also shared an excellent <a href="https://www.zotero.org/groups/the-business-of-community/items/itemPage/1">collection of resources</a> that I’m making my way through, and have shared with the team. A video of VM’s talk, along with her slides, are available <a href="https://archive.org/details/lca2017-bizofcommunity">here</a>.</p>
+<p>With all of this in mind, I’d be thrilled to hear from members of the DC/OS community about how we are doing and where we can improve! If you’d like to discuss the resources or talks I mentioned here, or have other aspects of LCA, please start a thread in the #events DC/OS slack channel and at mention me, ejoseph.mesosphere. I’m also available at ejoseph@dcos.io, and on Twitter as @pleia2. If you’re interested in reading more of my thoughts on LCA 2017, I also discuss other aspects of the conference on my personal blog, <a href="http://princessleia.com/journal/2017/02/highlights-from-lca-2017-in-hobart/">Highlights from LCA 2017 in Hobart</a>.</p>
+<p>The next big open source conference I’m participating in is the <a href="https://www.socallinuxexpo.org/scale/15x">Southern California Linux Expo</a> (SCALE15x) in Pasadena, California. I will be running an <a href="http://scale.opensourceinfra.org/">Open Source Infrastructure Day</a> on March 2nd and then giving my <a href="https://www.socallinuxexpo.org/scale/15x/presentations/listening-needs-your-global-open-source-community">Listening to the Needs of Your Global Open Source Community</a> talk on Saturday the 4th during the main SCALE15x conference. Hope to see you there!</p>
+]]></description><link>https://dcos.io/blog/2017/linux-conf-au-2017-retrospective/index.html</link><guid isPermaLink="true">https://dcos.io/blog/2017/linux-conf-au-2017-retrospective/index.html</guid><dc:creator><![CDATA[Elizabeth K. Joseph, Mesosphere]]></dc:creator><pubDate>Thu, 23 Feb 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[Deploy Minio cloud storage to DC/OS]]></title><description><![CDATA[<h1 id="deploy-minio-cloud-storage-to-dc-os">Deploy Minio cloud storage to DC/OS</h1>
+<p>Container orchestration is gaining traction as the default way to deploy applications. Developers are architecting their modern applications from the ground-up to run in containers, which enables faster deployment and more resilience. Even legacy applications are adopting containers in every way they can to access these advantages.</p>
+<p>Of the many characteristics  that make an application container ready, the way it handles unstructured data is one of the most important. Back in the day, the default way to handle unstructured data was to dump all of it onto the server’s file system, but using the host filesystem doesn’t make any sense for containerized apps. This is because in an orchestrated environment, a container can be scheduled—or rescheduled—on any of the hosts in a cluster, but data written to a previous host can not be rescheduled with that container.</p>
+<p>The best solution is to use a cloud storage system with an easy to use, widely accepted API to handle storage. AWS S3 is an option, but what if you’d rather be in control of your application data? What if you want to run unstructured data storage in the cloud with your infrastructure, or run a cost effective solution on premises and still use S3 as a protocol for data transfer?</p>
+<p>There is a gap between no cloud storage and completely managed object storage, that Minio cloud storage server strives to fill. Minio is a cloud native storage server that provides an open source alternative to AWS S3.</p>
+<h2 id="what-is-cloud-native-">What is cloud native?</h2>
+<p>Cloud native applications are designed to take advantage of the fluid nature of resources in a cluster. A cloud native application doesn’t need resource management that will eventually compete with a cluster’s orchestration layer; it should rely on the orchestration layer to run applications wherever resources are allocated. In a cloud native environment, scalability is not a function of the application, but the orchestrator.</p>
+<p>As a true cloud native application, Minio focuses on storage and does that very well. It leaves out the resource management responsibility to orchestration platforms like DC/OS (the datacenter operating system). This allows Minio to scale very well as compared to applications with their own resource management mechanisms.</p>
+<p>DC/OS allows containerized applications to scale in a sustainable manner by running several isolated instances of the application. Take for example, an HTTP server, which can be easily containerized due to its stateless nature. With Docker containers and DC/OS you can scale your HTTP serving capacity by adding as many instances as required to handle extra load. This design not only enables sustainable scaling, it keeps failure domains limited.</p>
+<p>Minio is designed to scale in a similar manner. Each of your DC/OS cluster tenants can have their own isolated Minio server instance backed by the storage required for that tenant. This way, you can accommodate new tenants and storage requirements, by adding a new Minio instance for each new tenant. The complexity of the first Minio instance is no different than the millionth Minio instance.</p>
+<p>Remember, an application doesn’t automatically become cloud native when running in a container or on an orchestration platform. Design makes an application cloud native!</p>
+<h2 id="deploy-minio-on-dc-os">Deploy Minio on DC/OS</h2>
+<p>Deploying an application on DC/OS is simple; you can use a Universe package, or create a customized config file. We at Minio recently released an <a href="https://medium.com/r/?url=https%3A%2F%2Fgithub.com%2Fmesosphere%2Funiverse%2Ftree%2Fversion-3.x%2Frepo%2Fpackages%2FM%2Fminio%2F0">official universe package</a> to enable single click Minio deployment on a DC/OS cluster.</p>
+<p>In the rest of this post, I explain the process of deploying a Minio stand alone server on DC/OS with our new universe package and discuss how to scale this setup for a multi-tenant environment.</p>
+<h3 id="prerequisites">Prerequisites</h3>
+<p>To get started, you’ll need a cluster with DC/OS 1.8 or later running. You’ll also need <a href="https://medium.com/r/?url=https%3A%2F%2Fdcos.io%2Fdocs%2F1.8%2Fusage%2Fservice-discovery%2Fmarathon-lb%2Fusage%2F">Marathon-LB</a> installed. Note the IP address of the public agent(s) where Marathon-LB is running; you will need it later to locate the load balancer. Alternately, you could configure a hostname to point to the public agent(s) where Marathon-LB is running.</p>
+<p>You can use either the DC/OS UI or the command line interface to install the Minio package.</p>
+<h3 id="minio-package-via-dc-os-gui">Minio package via DC/OS GUI</h3>
+<p>Visit the DC/OS admin page, and click on “Universe” on the left menu bar. Then click on the “Packages” tab and search for Minio. Once you see the package, click the “Install” button on the right hand side.</p>
+<p><img src="/assets/images/blog/2017-02-07_image_0.png"/></p>
+<p>Next, you’ll need to enter configuration values like the storage and service type you’d like to use with your Minio instance. Finally enter the public Marathon-LB IP address under “networking &gt;&gt; public-agent”, and click “Review and Install”.</p>
+<p><img src="/assets/images/blog/2017-02-07_image_1.png"/></p>
+<p>This completes the install process. You’ll now need to get the access key and secret key from the Minio container logs. Click on “Services” and select Minio service in DC/OS admin page. Then go to the “logs” tab and copy the accesskey and secretkey.</p>
+<p><img src="/assets/images/blog/2017-02-07_image_2.png"/></p>
+<p>You can connect with the Minio instance via either the web browser or <a href="https://medium.com/r/?url=https%3A%2F%2Fgithub.com%2Fminio%2Fmc">Minio mc</a>.</p>
+<h3 id="minio-package-via-dc-os-cli">Minio package via DC/OS CLI</h3>
+<p>To install Minio package via CLI, type</p>
+<p><code>$ dcos install package minio</code></p>
+<p>Rest of the process remains largely same as the above GUI based install process.</p>
+<p>The DC/OS CLI also provides options to install customized packages via the dcos install command. Refer to the <a href="https://medium.com/r/?url=https%3A%2F%2Fdocs.mesosphere.com%2F1.8%2Fusage%2Fcli%2Fcommand-reference%2F">CLI reference doc</a> for more details.</p>
+<h3 id="minio-server-modes">Minio Server modes</h3>
+<p>Minio supports different modes, other than the default mode which we deployed above. These can come in handy based on your requirements. You can easily create deployments based on these Minio modes via a custom config script.</p>
+<ul>
+<li><p><a href="https://medium.com/r/?url=https%3A%2F%2Fdocs.minio.io%2Fdocs%2Fminio-erasure-code-quickstart-guide">Minio erasure coded mode</a>: Minio server, when launched with at least four drives, automatically goes to the erasure coded mode. This protects data against hardware failures and silent data corruption using erasure code and checksums. In this mode you could lose half of your drives and still be able to recover your data.</p>
+</li>
+<li><p><a href="https://medium.com/r/?url=https%3A%2F%2Fdocs.minio.io%2Fdocs%2Fdistributed-minio-quickstart-guide">Minio distributed mode</a>: Distributed mode allows you to run several (min4 and max 16) nodes as one single storage server.</p>
+</li>
+<li><p><a href="https://medium.com/r/?url=https%3A%2F%2Fgithub.com%2Fminio%2Fminio%2Ftree%2Fmaster%2Fdocs%2Fshared-backend">Minio shared backend mode</a>: Minio shared-backend mode provides an option to run multiple Minio instances, supported by the same storage backend like NAS, with a load balancer like <a href="https://medium.com/r/?url=https%3A%2F%2Fdcos.io%2Fdocs%2F1.8%2Fusage%2Fservice-discovery%2Fmarathon-lb%2Fusage%2F">Marathon-LB</a> running in  front to distribute the load evenly. The writes to the backend are synchronized.</p>
+</li>
+</ul>
+<p>We hangout on Slack: <a href="https://medium.com/r/?url=https%3A%2F%2Fslack.minio.io">https://slack.minio.io</a>. Join us!</p>
+]]></description><link>https://dcos.io/blog/2017/deploy-minio-cloud-storage-to-dc-os/index.html</link><guid isPermaLink="true">https://dcos.io/blog/2017/deploy-minio-cloud-storage-to-dc-os/index.html</guid><dc:creator><![CDATA[Nitesh Tiwari, Minio]]></dc:creator><pubDate>Tue, 07 Feb 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[Meet Our New Developer Advocate]]></title><description><![CDATA[<p><img src="/assets/images/blog/2017-02-02-ekjoseph.jpg" alt="Elizabeth K. Joseph"/></p>
+<p>At the beginning of January, I joined Mesosphere as a DC/OS Developer Advocate, joining Michael Hausenblas, Jörg Schad and Judith Malnick in efforts to grow the DC/OS user and developer community.</p>
+<p>I became involved with my first open source group in 2002 as a volunteer for the <a href="http://www.phillylinux.org/">Philadelphia Linux Users Group</a>. By 2007 I was coordinating the group and had made my first major contributions to several open source projects, working on packaging for <a href="https://www.debian.org/">Debian</a> and taking on various community tasks for <a href="https://www.ubuntu.com/">Ubuntu</a>. I had also taken my first position as a Linux Systems Administrator.</p>
+<p>I spent six years on the <a href="https://wiki.ubuntu.com/CommunityCouncil">Ubuntu Community Council</a> (one of the two governing bodies of the Ubuntu project), and in 2013 I was hired by Hewlett-Packard as a Linux Systems Engineer to help run the <a href="http://docs.openstack.org/infra/">OpenStack Project Infrastructure</a>, which included a fully open source Continuous Integration (CI) system. Through these roles, I have learned a lot about growing and listening to the needs of a global community, both as a volunteer and a paid contributor.</p>
+<p>Over the past decade I have found value in regularly attending <a href="http://www.communityleadershipsummit.com/">Community Leadership Summits</a> (CLS) where members of various communities—open source and otherwise—gather to share knowledge about community building. Most recently, I attended one of the satellite CLSx events in Hobart, Tasmania during <a href="https://linux.conf.au/">Linux.conf.au</a> (LCA), and summarized our discussions about recognition of community members, community metrics and more on my personal blog: <a href="http://princessleia.com/journal/2017/01/clsx-at-lca-2017/">CLSx at LCA 2017</a>. I regularly speak at open source events about how to listen to your community by reading between the lines, to understand what they need but aren’t directly requesting. At <a href="http://fosscon.org/">FOSSCON</a> in Philadelphia in August I gave a keynote titled “Listening to the needs of your global open source community”, which I repeated at LCA and will give again at the upcoming <a href="https://www.socallinuxexpo.org/scale/15x">SCALE15x</a> in Pasadena, California.</p>
+<p>Today I’m passionate about creating as much transparency as possible for open source communities. From broad software direction decisions to the intricacies of the CI system, I want community members to have as much visibility as possible into their projects. To promote transparency, I’m running an <a href="http://scale.opensourceinfra.org/">Open Source Infrastructure Day</a> on March 2nd (co-located with SCALE15x) where members of various projects will share strategies for running project infrastructures in the open.</p>
+<p>I’ve already learned a lot about the DC/OS community on <a href="http://chat.dcos.io/?_ga=1.263299084.186147938.1483478639">Slack</a> and the <a href="https://groups.google.com/a/dcos.io/d/forum/users">user mailing list</a>, and I’m excited to see the growth of new <a href="https://github.com/dcos/community#dcos-community">Working Groups</a> and Meetups (including the regular <a href="https://www.meetup.com/DC-OS-Online-Meetup/">DC/OS Online Meetup</a>), some of which lead by DC/OS users in our community. I’m looking forward to helping these outlets expand and flourish, and creating new opportunities for interested community members to get involved with DC/OS.</p>
+<p>So if you see me at an open source conference in the coming months, please say “Hello!” and encourage me dig some stickers out of my bag. I’m excited to work with anyone interested in getting involved with DC/OS to find the information you need to excel, and to work with Mesosphere engineers to make DC/OS development crystal clear. I’m available at ejoseph@dcos.io, I’m ejoseph.mesosphere on the DC/OS <a href="http://chat.dcos.io/?_ga=1.263299084.186147938.1483478639">Slack</a> and I tweet about open source projects I work on, communities, travel and my cats on Twitter as <a href="https://twitter.com/pleia2">@pleia2</a>.</p>
+]]></description><link>https://dcos.io/blog/2017/meet-our-new-developer-advocate/index.html</link><guid isPermaLink="true">https://dcos.io/blog/2017/meet-our-new-developer-advocate/index.html</guid><dc:creator><![CDATA[Elizabeth K. Joseph, Mesosphere]]></dc:creator><pubDate>Thu, 02 Feb 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[Huawei takes DC/OS where nobody has gone before]]></title><description><![CDATA[<p>Here at Huawei Ireland Research Center we are constantly investigating cool new technologies like distributed systems, big data architectures, and real-time processing software. Everyone on our research team uses a common set of hardware to evaluate how these untested workloads interact with more mature software we already have.</p>
+<p>We require strong isolation between our individual testing environments so that these tests don’t impact each other or cause downtime for our more routine development efforts. We also want our software to be portable (installable on premise and in different cloud environments) and future proof (able to take advantage of upcoming technological advancements).</p>
+<p>When DC/OS was open-sourced few months ago we immediately decided to start using it on the premise. And so we created our first Centos cluster…</p>
+<h1 id="our-first-test-environment">Our first test environment</h1>
+<p>The test environment we created is a small 12+ server cluster, with 750+ cores and 5.5+ TB of main memory in total. We automated the installation process using set of custom-made SaltStack scripts, so we can tear-down and re-role whole cluster in a matter of minutes. Our SaltStack scripts provide zero-configuration installation: they install DC/OS bootstrap node, all required dependencies and all DC/OS nodes. Initially we used the DC/OS web installer to roll out new machines, but we needed a more robust way to make the installation process repeatable.</p>
+<p>DC/OS can’t install master and slave nodes on the same physical machine. To save on hardware costs (our average server is 48 cores and 360+ GB RAM) we decided to use virtual machines for master servers. In practice this works well most of the time and saves resources. However, sudden load increases can cause problems when the masters run on VMs, and master server latency increases. For these reasons we will gradually migrate masters from VMs to physical hardware in the near future.</p>
+<p>Our clusters currently run mixed workloads; we run some micro services, stream and batch processing, and our CI environment all on the same hardware. DC/OS supports these mixed workloads, and with the Mesosphere Universe we can bootstrap our CI environment with a single click. DC/OS enables us to spend more time solving our core business problems, and less time setting up our cloud native environment.</p>
+<h1 id="initial-challenges">Initial challenges</h1>
+<p>Everything was going well, but as we started promoting DC/OS internally, we hit our first serious problem. The official Linux distribution used by Huawei is Suse Enterprise Linux (SLES) – which isn’t currently supported by DC/OS. So, we had to bite the bullet and attempt to run DC/OS on top of this Linux distribution. (Spoiler alert: in the end it was successful.)</p>
+<p>We installed SLES on few VMs and rolled up our sleeves. SLES 12SP1 (or later) is required in order to run Docker successfully, and Docker is not installed on SLES by default, so first we needed to install it manually before attempting to install DC/OS.</p>
+<p>Our first attempt to install DC/OS was with the GUI installer, which runs preflight compatibility checks to make sure that you are using supported hardware and software. To pass these checks we had to modify a few parameters so that SLES looked like Centos to the installer. In the file /etc/os-release we changed the VERSION_ID to an integer value (for SLES it looks something like 12.1) and the ID to “centos” from “sles”. These small changes, and installation of some additional prerequisites (ipset and se-linux), plus other minor tweaks allowed us to get DC/OS running on few VMs with SLES. This was great encouragement.</p>
+<h1 id="first-cluster-running-on-sles">First cluster running on SLES</h1>
+<p>After our success on VMs we moved onto real hardware, and for that we switched to the DC/OS CLI installer in order to script our cluster creation. The CLI installer runs fewer pre-flight checks, so the changes we made for the GUI installer weren’t necessary. But other tweaks were still needed to install DC/OS successfully on SLES. Here are all the things we had to do:</p>
+<ul>
+<li>Install Docker</li>
+</ul>
+<pre><code>sudo zypper addrepo http://download.opensuse.org/repositories/Virtualization:containers/SLE_12_SP1/Virtualization:containers.repo
+sudo zypper refresh
+sudo zypper --non-interactive install docker
+sudo service docker start
+</code></pre><ul>
+<li>Disable selinux</li>
+</ul>
+<pre><code>sudo setenforce 0
+</code></pre><ul>
+<li>Install and enable NTP</li>
+<li>Disable firewall</li>
+</ul>
+<pre><code>sudo rcSuSEfirewall2 stop
+</code></pre><ul>
+<li>Disable IPV6</li>
+</ul>
+<p>Hint: edit /etc/sysctl.conf</p>
+<ul>
+<li>Setup sudoers, no password access</li>
+</ul>
+<p>Hint:</p>
+<pre><code>sudo visudo
+</code></pre><p>For SLES we also had to stop and disable apparmor. Doing so can interfere with the security of your system, but since our cluster was running in a sandboxed environment it was safe for us to do.</p>
+<pre><code>sudo yast runlevel delete service=boot.apparmor
+sudo service boot.apparmor stop
+sudo service apparmor stop
+</code></pre><p>The most obvious problems we had were related to the fact that DC/OS uses absolute names for all Linux commands (tar, useradd, ipset), which aren’t always consistently located across different Linux distributions. So before starting the installation process we had to create symbolic links in the locations where DC/OS expected the commands to be:</p>
+<pre><code>sudo ln -s /bin/tar /usr/bin/tar
+sudo ln -s /usr/sbin/useradd /usr/bin/useradd
+sudo ln -s /usr/sbin/ipset /usr/bin/ipset
+sudo ln -s /usr/sbin/iptables /usr/bin/iptables
+sudo ln -s /usr/sbin/bridge /usr/bin/bridge
+</code></pre><p>This solved most of our problems and installation went on smoothly from here. Once we had our first DC/OS cluster running on SLES, we were able to deploy Marathon applications.</p>
+<h1 id="lingering-issues">Lingering issues</h1>
+<p>Then we restarted one of the nodes in our DC/OS cluster. For some reason (we’re still investigating why) after a node restarts we have to manually create and populate the file /run/dcos_exhibitor/exhibitor_defaults.conf (this file is required by DC/OS services to start). Under normal circumstances this file is created automatically by DC/OS. Maybe the file is missing is due to our specific environment, or some Linux peculiarity we are not aware of. For our test environments it isn’t a huge issue since node restarts should happen infrequently, but we do have to fix this problem in order to have stable environment.</p>
+<p>We created following JIRA detailing the challenges we faced running DC/OS on SLES:</p>
+<p><a href="https://jira.dcos.io/browse/DCOS-483">https://jira.dcos.io/browse/DCOS-483</a></p>
+<p>Http proxy authentication, which is required within Huawei, has also posed some problems for us.</p>
+<p>The first problem is a structural one: to use HTTP proxy with DC/OS you have to bake proxy configuration into the installation binary (configured in config.yaml as of version 1.8). It cannot be modified without reinstallation of DC/OS. This means that each time an HTTP password expires we have to reinstall our whole cluster to reset it. This is not an ideal solution so we asked for a better one here:</p>
+<p><a href="https://jira.dcos.io/browse/DCOS-482">https://jira.dcos.io/browse/DCOS-482</a></p>
+<p>Our second HTTP proxy problem was functional: we have not yet been able to get DC/OS to work with HTTP proxy authentication at all. We are still investigating the issue here, and we hope we can resolve it soon. For now we are working around it by creating our own local universe, which contains packages from the public universe combined with our custom software. The upside of this solution is the ease of installation—one click install for open source software and our own internal packages. The downside is that we have to transfer ~10GB+ of data in order to be able to install HDFS, Kafka etc.</p>
+<p>As already mentioned we really love the concept of Universe and how easy it is to install packages. All our software is now part of a custom built Universe - together with selected packages from the open source community.</p>
+<h1 id="the-way-forward">The way forward</h1>
+<p>As part of our investigation we created following JIRAs:</p>
+<ul>
+<li><a href="https://jira.dcos.io/browse/DCOS-494">https://jira.dcos.io/browse/DCOS-494</a></li>
+<li><a href="https://jira.dcos.io/browse/DCOS-492">https://jira.dcos.io/browse/DCOS-492</a></li>
+</ul>
+<p>In the end we have two fully usable clusters with DC/OS running on top of SLES 12SP1 and one on top of Centos. And there are few more installations planned. So, we are very happy.</p>
+<p>Our plan is to continue working with DC/OS community in order to fix the problems and test all the fixes and we can not wait to see where DC/OS will go in the future.</p>
+<p><strong>DISCLAIMER</strong>: The opinions expressed in text are solely those of the authors and not necessarily those of Huawei. Huawei does not guarantee the accuracy or reliability of the information provided herein.</p>
+]]></description><link>https://dcos.io/blog/2017/huawei-takes-dc-os-where-nobody-has-gone-before/index.html</link><guid isPermaLink="true">https://dcos.io/blog/2017/huawei-takes-dc-os-where-nobody-has-gone-before/index.html</guid><dc:creator><![CDATA[Borisa Zivkovic, Marko Milenkovic - Huawei Ireland Research Center]]></dc:creator><pubDate>Tue, 03 Jan 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[New DC/OS Packages You Can Use - December 2016]]></title><description><![CDATA[<p>Join our first <a href="https://dcos.io/blog/2016/join-the-dc-os-packaging-working-group/index.html">Packaging Working Group</a> meeting on January 6th to help us improve the experience of creating and contributing packages for DC/OS.</p>
+<h2 id="new-packages">New Packages</h2>
+<p>Note that these new packages are currently <code>EXPERIMENTAL</code>. There may be bugs, incomplete features, incorrect documentation, or other discrepancies</p>
+<p><img style="float: left;margin-right: 27px;margin-top: 4px;" width="90" height="90" src="/assets/images/blog/2016-12-28_minio_logo.png" alt="Minio Logo"/> <strong>Minio</strong> : Minio is an object storage server compatible with Amazon S3. It is best suited for storing unstructured data such as photos, videos, log files, backups and container / VM images. <a href="https://github.com/dcos/examples/tree/master/1.8/minio">Learn more</a>.
+<br/><br/></p>
+<p><img style="float: left;margin-right: 27px;margin-top: 4px;" width="90" height="90" src="/assets/images/blog/2016-122-28_ceph_logo.png" alt="Ceph Logo"/> <strong>Ceph</strong> : Ceph is storage platform that implements object storage on a single distributed computer cluster, and provides interfaces for object-, block- and file-level storage. And, in order to get real time visibilty on the health and usage of your Ceph cluster you can use the <strong>Ceph-dash</strong> Universe package. <a href="https://github.com/dcos/examples/tree/master/1.8/ceph">Learn more</a>.
+<br/><br/></p>
+<p><img style="float: left;margin-right: 27px;margin-top: 4px;" width="90" height="90" src="/assets/images/blog/2016-12-28_neo4j_logo.png" alt="Neo4j Logo"/> <strong>Neo4j</strong> : Neo4j is a highly scalable, native graph database purpose-built to leverage not only data but also its relationships. <a href="https://github.com/dcos/examples/tree/master/1.8/neo4j">Learn more</a>. If you want to install read replica servers as well, you can use the <strong>Neo4j-replica</strong> package and use the <strong>Neo4j-proxy</strong> to get access to your Neo4j cluster.
+<br/><br/></p>
+<p><img style="float: left;margin-right: 27px;margin-top: 4px;" width="90" height="90" src="/assets/images/blog/2016-12-28_sqlserver_logo.png" alt="SQL Server Logo"/> <strong>SQL Server</strong> : Microsoft SQL Server is a relational database management system developed by Microsoft. <a href="https://github.com/dcos/examples/tree/master/1.8/sqlserver">Learn more</a>.
+<br/><br/><br/><br/></p>
+<p><img style="float: left;margin-right: 27px;margin-top: 4px;" width="90" height="90" src="/assets/images/blog/2016-12-28_confluent_logo.png" alt="Confluent Logo"/> <strong>Confluent Replicator</strong>: The Connect Replicator allows you to easily and reliably replicate topics from one Kafka cluster to another. In addition to copying the messages, this connector will create topics as needed preserving the topic configuration in the source cluster. <a href="http://docs.confluent.io/3.1.1/connect/connect-replicator/docs/index.html">Learn more</a>.
+<br/><br/></p>
+<p><img style="float: left;margin-right: 27px;margin-top: 4px;" width="90" height="90" src="/assets/images/blog/2016-12-28_geoserver_logo.png" alt="Geoserver Logo"/> <strong>GeoServer</strong>: GeoServer is an open source server for sharing geospatial data.GeoServer 2.10.0 implements Open Geospatial Consortium (OGC) Web Map Service (WMS), Web Feature Service (WFS), Web Coverage Service (WCS) and Catalog Serivce for the Web (CSW). <a href="https://github.com/dcos/examples/tree/master/1.8/geoserver">Learn more</a>.
+<br/><br/></p>
+<p><img style="float: left;margin-right: 27px;margin-top: 4px;" width="90" height="90" src="/assets/images/blog/2016-12-27_hello_world.png" alt="Hello World Logo"/> <strong>Hello World example implementation</strong> : is an <a href="https://github.com/mesosphere/dcos-commons/tree/master/frameworks/helloworld">example implementation</a> of a stateful service using the DC/OS SDK. This SDK is a collection of tools, libraries, and documentation for easy integration and automation of stateful services, such as databases, message brokers, and caching services. <a href="https://github.com/mesosphere/dcos-commons/blob/master/docs/pages/tutorial.md">Learn more</a>.
+<br/><br/></p>
+<h2 id="updates-to-existing-packages">Updates to existing packages</h2>
+<ul>
+<li><a href="https://github.com/mesosphere/universe/pull/842">Confluent</a> packages updated to version 3.11. <a href="https://www.confluent.io/whitepaper/deploying-confluent-platform-with-mesosphere">Learn more</a>.</li>
+<li><a href="https://github.com/mesosphere/universe/pull/850">Tunnel CLI</a> updated to version 0.3.3 which adds retry logic when probing for a valid docker command to run on the cluster. Also prints the usage details when no arguments are passed.</li>
+<li><a href="https://github.com/mesosphere/universe/pull/880">Cassandra</a> upgraded to version 1.0.21-3.0.10. Check the <a href="https://github.com/mesosphere/dcos-cassandra-service/releases/tag/1.0.21-3.0.10">release notes</a>.</li>
+<li><a href="https://github.com/mesosphere/universe/pull/855">Linkerd</a> updated to version 0.8.3 which adds support for Mesosphere Enterprise DC/OS, improves HTTP server behavior with short-lived connections and retry metrics to include a total counter of all retry requests. More in <a href="https://github.com/BuoyantIO/linkerd/releases/tag/0.8.3">release notes</a>.</li>
+<li><a href="https://github.com/mesosphere/universe/pull/859">Scale</a> updated to 4.1.0. Check the <a href="https://github.com/ngageoint/scale/releases/tag/4.1.0">release notes</a>.</li>
+<li><a href="https://github.com/mesosphere/universe/pull/847">Gitlab</a> updated to version <a href="https://about.gitlab.com/2016/11/22/gitlab-8-14-released/">8.14.1</a>.
+<br/><br/></li>
+</ul>
+<p>Try <a href="https://dcos.io/get-started/">DC/OS</a></p>
+<p>Contribute your package to Universe on <a href="https://github.com/mesosphere/universe">GitHub</a>.</p>
+<p>Engage with the DC/OS community on <a href="http://chat.dcos.io/">Slack</a> or our mailing list.</p>
+]]></description><link>https://dcos.io/blog/2016/new-dc-os-packages-you-can-use-december-2016/index.html</link><guid isPermaLink="true">https://dcos.io/blog/2016/new-dc-os-packages-you-can-use-december-2016/index.html</guid><dc:creator><![CDATA[Ravi Yadav]]></dc:creator><pubDate>Wed, 28 Dec 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Announcing the DC/OS 101 Tutorial]]></title><description><![CDATA[<p>Snowed in? Cabin Fever? Don’t know what to do with your vacation? Learn more about DC/OS by trying out our new <a href="https://dcos.io/docs/1.8/usage/tutorials/dcos-101/">DC/OS 101 tutorial</a>!</p>
+<p>The DC/OS 101 tutorial is designed to give you hands-on experience with the essential pieces of DC/OS right away. Follow the simple recipes, or read and try the optional “deep dives” to learn how DC/OS works behind the scenes.</p>
+<p>The tutorial covers the following topics:</p>
+<ul>
+<li>Installing services</li>
+<li>Deploying apps (containerized and non-containerized)</li>
+<li>Connecting multiple applications</li>
+<li>Service discovery</li>
+<li>Load-balancing (within the cluster and externally)</li>
+<li>Making applications accessible from outside the cluster</li>
+<li>Investigating/debugging common problems</li>
+</ul>
+<p>Ask questions, discuss the tutorial, and give feedback in the #101-tutorial <a href="http://chat.dcos.io/">community slack channel</a>.</p>
+<p>We wish you happy holidays and a great start to the new year!</p>
+<p>Your DC/OS community team</p>
+]]></description><link>https://dcos.io/blog/2016/announcing-the-dc-os-101-tutorial/index.html</link><guid isPermaLink="true">https://dcos.io/blog/2016/announcing-the-dc-os-101-tutorial/index.html</guid><dc:creator><![CDATA[Judith Malnick and Jörg Schad, Mesosphere]]></dc:creator><pubDate>Thu, 22 Dec 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[DC/OS CLI, Installation Made Simple]]></title><description><![CDATA[<p>With DC/OS we are making installing and running complicated distributed system applications such as Spark as simple as a single click. With DC/OS 1.8 we are making installing and running the DC/OS CLI just as simple. The CLI is now packaged in a single native bundle, so you can just download and run the executable.</p>
+<p>Starting with DC/OS 1.8 you will see updated instructions in the UI on how to download the new CLI. But anyone running DC/OS 1.6.1 and above can run the binary CLIs, just follow the instructions <a href="https://docs.mesosphere.com/1.8/usage/cli/install/">here</a>.</p>
+<h2 id="why-we-switched-to-native-bundles">Why we switched to native bundles</h2>
+<p>Installation was a significant pain point with previous CLI versions. It had many non-trivial dependencies that made it tough to get started. Because first impressions are important, we decided to fix it. We write lots of great features for the CLI and don’t want installation to be an inhibitor.</p>
+<h2 id="cli-requirements">CLI Requirements</h2>
+<ul>
+<li>Before: curl, Python, pip, virtualenv</li>
+<li>After: curl or a browser</li>
+</ul>
+<h2 id="pyinstaller">Pyinstaller</h2>
+<p>We are now packaging the CLI using <a href="http://www.pyinstaller.org/">pyinstaller</a>. This is an open source project that allows us to easily create a single executable. The only caveat is that the new single bundles are platform dependent, so for each release we publish separate binaries for Windows, OS X, and Linux.</p>
+<h2 id="continuous-integration-process">Continuous Integration Process</h2>
+<p>We now use continuous integration (CI) for our pull requests. Before we merge pull requests, we make sure that the binary for each platform is tested on each change. To accomplish this this, we created three new CIs to create the platform dependent bundles and run the tests on that bundle (OS X, Linux, and Windows).</p>
+<h2 id="subcommands">Subcommands</h2>
+<p>The CLI can be extended with packages from third party developers through Mesosphere’s Universe. In previous CLI versions, these subcommands had to be written in Python and were installable from the CLI using pip. We’ve now extended the Universe spec to allow developers to also specify their CLIs as binaries. This lets developers write their CLI in any language! It also removes the CLI requirements that were necessary for installing the Python subcommands. Details of the new spec are <a href="https://github.com/mesosphere/universe#cli-resources">here</a>.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Now that there is no more barrier to entry, try out the DC/OS CLI and let us know what you think!</p>
+]]></description><link>https://dcos.io/blog/2016/dc-os-cli-installation-made-simple/index.html</link><guid isPermaLink="true">https://dcos.io/blog/2016/dc-os-cli-installation-made-simple/index.html</guid><dc:creator><![CDATA[Tamar Ben-Shachar, Mesosphere]]></dc:creator><pubDate>Mon, 19 Dec 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Join the DC/OS Packaging Working Group]]></title><description><![CDATA[<h1 id="scope">Scope</h1>
+<ul>
+<li><p>Improve the experience of creating and contributing packages for DC/OS</p>
+</li>
+<li><p>Discuss and demo packaging features and areas of improvement</p>
+</li>
+<li><p>Help people get involved with the DC/OS community</p>
+</li>
+</ul>
+<h1 id="our-next-working-group-meeting-january-6th">Our Next Working Group Meeting—January 6th</h1>
+<p><strong>When</strong>: January 6th at 08:30 am PT</p>
+<p><strong>Where</strong>: <a href="https://t.co/tKTRE6xDzs">Zoom</a></p>
+<p><strong>Proposed Agenda</strong>:</p>
+<ul>
+<li><p>Charter for this working group</p>
+</li>
+<li><p>Current status of the packaging work</p>
+</li>
+<li><p>DC/OS 1.9 preview: features that are coming and how to help test and validate</p>
+</li>
+<li><p>DC/OS 1.10 roadmap exploration</p>
+</li>
+<li><p>Proposed meeting schedule for Jan and Feb</p>
+</li>
+<li><p>Q&amp;A</p>
+</li>
+</ul>
+<h1 id="join-us-">Join Us!</h1>
+<ol>
+<li><p>Join the <a href="https://groups.google.com/a/dcos.io/forum/#!forum/packaging-wg">mailing list</a> where we will share longer-form content and make announcements about the working group.</p>
+</li>
+<li><p>Join the #packaging-wg channel in the <a href="http://chat.dcos.io/">DC/OS Slack community</a> to ask questions and share shorter-form ideas.</p>
+</li>
+<li><p>We look forward to seeing you on <a href="https://t.co/tKTRE6xDzs">Zoom</a> on January 6th at 08:30 am PT.</p>
+</li>
+</ol>
+<h1 id="working-group-leaders">Working Group Leaders</h1>
+<p><img src="/assets/images/blog/2016-12-15_jose.png" size="100"/></p>
+<p>José Armando García Sancio: <a href="mailto:jose@mesosphere.io">email</a> | <a href="https://twitter.com/jagsancio">Twitter</a> | <a href="https://github.com/jsancio">GitHub</a></p>
+<p><img src="/assets/images/blog/2016-12-15_ravi.png" size="100"/></p>
+<p>Ravi Yadav: <a href="mailto:ryadav@mesosphere.io">email</a> | <a href="https://twitter.com/RaaveYadav">Twitter</a> | <a href="https://github.com/ryadav88">GitHub</a></p>
+]]></description><link>https://dcos.io/blog/2016/join-the-dc-os-packaging-working-group/index.html</link><guid isPermaLink="true">https://dcos.io/blog/2016/join-the-dc-os-packaging-working-group/index.html</guid><dc:creator><![CDATA[Ravi Yadav, Mesosphere]]></dc:creator><pubDate>Thu, 15 Dec 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Financial Transaction Processing]]></title><description><![CDATA[<p>Would you like to learn how to do stream processing with Apache Kafka on DC/OS? If so, read on!</p>
+<p>We put together a demo around <a href="https://github.com/dcos/demos/tree/master/1.8/fintrans#fast-data-financial-transaction-processing">financial transaction processing demo</a> where we show how to process and visualize a stream of high-volume financial transactions in real time. We show how to aggregate data about recent transactions from multiple locations as well as being able to spot fraudulent transactions, such as money laundering.</p>
+<p><img src="/assets/images/blog/2016-12-13-fintrans-architecture.png" alt="System architecture." /> <em>System architecture.</em></p>
+<p>In our demo, <a href="https://kafka.apache.org">Kafka</a> plays the central role: it is used as message queue that retains all the financial transactions, ready to be consumed downstream. There are three stateless components, all microservices written in Go:</p>
+<ul>
+<li>The <a href="https://github.com/dcos/demos/tree/master/1.8/fintrans/generator">generator</a> continuously produces (random) financial transactions in (simulated) five different cities (organized in Kafka topics) and pushes them into Kafka.</li>
+<li>One <a href="https://github.com/dcos/demos/tree/master/1.8/fintrans/influx-ingest/">consumer</a> reads the most recent transactions out of Kafka and ingests it into InfluxDB which is further connected to Grafana, showing a breakdown of average and total transaction volume per city for the past hour. </li>
+<li>Another consumer of the transactions stored in Kafka is the <a href="https://github.com/dcos/demos/tree/master/1.8/fintrans/laundering-detector/">money laundering detector</a>, a command line tool that alerts when the aggregate transaction volume from a source to a target account exceeds a configurable treshold. The idea behind this is to highlight potential money laundering attempts to a human operator who then has to verify manually if a fraudulent transaction has been taken place.</li>
+</ul>
+<p>There is a <a href="https://github.com/dcos/demos/tree/master/1.8/fintrans#single-command">single command</a> option available that allows you to set up the whole demo in less than 10 min as well as a manual install method, if you want to learn more about how to install Kafka, InfluxDB and Grafana with DC/OS. After completed installation, the following services will be running in your DC/OS cluster, using overall 6 CPU cores and 6 GB of RAM:</p>
+<p><img src="/assets/images/blog/2016-12-13-fintrans-all-services.png" alt="All fintrans services installed and running." /> <em>All fintrans services installed and running.</em></p>
+<p>Once set up you can view (and toy around with) the transactions in Grafana:</p>
+<p><img src="/assets/images/blog/2016-12-13-grafana-dashboard.png" alt="Most recent transaction aggregates in Grafana." /> <em>Most recent transaction aggregates in Grafana.</em></p>
+<p>Further you can monitor (potential) money laundering activities via the laundering detector command line tool:</p>
+<pre><code class="lang-bash">$ dcos task log --follow fintrans_laundering-detector.5e97c906-bd5e-11e6-be40-fecdab8d68a1
+POTENTIAL MONEY LAUNDERING: 516 -&gt; 482 totalling 8644 now
+POTENTIAL MONEY LAUNDERING: 246 -&gt; 308 totalling 9336 now
+POTENTIAL MONEY LAUNDERING: 856 -&gt; 804 totalling 8994 now
+POTENTIAL MONEY LAUNDERING: 233 -&gt; 954 totalling 8710 now
+POTENTIAL MONEY LAUNDERING: 318 -&gt; 273 totalling 8883 now
+POTENTIAL MONEY LAUNDERING: 303 -&gt; 24 totalling 8431 now
+^CUser interrupted command with Ctrl-C
+</code></pre>
+<p>In this demo we used Kafka to handle the storage and routing of the financial transactions and provided two exemplary consumers. While the consumers are deliberately kept simple, you can use them as a basis for a real world implementation. Modulo service health checking and monitoring, the setup is production-ready: Kafka takes care of the scaling issues around data capturing and ingestion and the System Marathon the generator and the two consumers are supervised and can be scaled as needed.</p>
+<p>If you want to try out the demo for yourself now, all you need is a DC/OS cluster and then head over to <a href="https://github.com/dcos/demos/tree/master/1.8/fintrans">GitHub</a> and follow the instructions there.</p>
+]]></description><link>https://dcos.io/blog/2016/financial-transaction-processing/index.html</link><guid isPermaLink="true">https://dcos.io/blog/2016/financial-transaction-processing/index.html</guid><dc:creator><![CDATA[Michael Hausenblas, Mesosphere]]></dc:creator><pubDate>Tue, 13 Dec 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[DC/OS PMC Meeting on December 9, 2016]]></title><description><![CDATA[<h1 id="recording">Recording</h1>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/41EKH0XJEFQ" frameborder="0" allowfullscreen></iframe>
+
+<h1 id="agenda">Agenda</h1>
+<ul>
+<li><p>Latest Community Stats</p>
+</li>
+<li><p>Working Group Updates</p>
+<ul>
+<li>Networking, Day 2 Ops, SDK</li>
+</ul>
+</li>
+<li><p>Proposed New Working Groups</p>
+<ul>
+<li>Packaging, UX</li>
+</ul>
+</li>
+<li><p>Contribution Acceptance Guidelines</p>
+</li>
+<li><p>Recruitment for the PMC</p>
+</li>
+</ul>
+<h1 id="pmc-members-all-present-">PMC Members (all present)</h1>
+<p> <strong>Thomas Rampelberg (chair)</strong></p>
+<p><img src="/assets/images/blog/2016-12-12_Thomas.png" width="100"/>
+<a href="https://twitter.com/grampelberg"> <img src="/assets/images/blog/2016-12-12_Twitter.png" width="25"/> </a>
+<a href="https://github.com/pyronicide"> <img src="/assets/images/blog/2016-12-12_GitHub.png" width="25"/> </a></p>
+<p><strong>Sebastien Pahl</strong></p>
+<p><img src="/assets/images/blog/2016-12-12_Seb.png" width="100"/>
+<a href="https://twitter.com/sebp"> <img src="/assets/images/blog/2016-12-12_Twitter.png" width="25"/> </a>
+<a href="https://github.com/spahl"> <img src="/assets/images/blog/2016-12-12_GitHub.png" width="25"/> </a></p>
+<p><strong>Aaron Williams</strong></p>
+<p><img src="/assets/images/blog/2016-12-12_Aaron.png" width="100"/>
+<a href="https://twitter.com/_arw_"> <img src="/assets/images/blog/2016-12-12_Twitter.png" width="25"/> </a>
+<a href="https://github.com/williamsaaron"> <img src="/assets/images/blog/2016-12-12_GitHub.png" width="25"/> </a></p>
+<p><strong>Tal Broda</strong></p>
+<p><img src="/assets/images/blog/2016-12-12_Tal.png" width="100"/>
+<a href="https://twitter.com/talbroda"> <img src="/assets/images/blog/2016-12-12_Twitter.png" width="25"/> </a></p>
+<p><strong>Ben Hindman</strong></p>
+<p><img src="/assets/images/blog/2016-12-12_Ben.png" width="100"/>
+<a href="https://twitter.com/benh"> <img src="/assets/images/blog/2016-12-12_Twitter.png" width="25"/> </a>
+<a href="https://github.com/benh"> <img src="/assets/images/blog/2016-12-12_GitHub.png" width="25"/> </a></p>
+<p><strong>Vinod Kone</strong></p>
+<p><img src="/assets/images/blog/2016-12-12_Vinod.png" width="100"/>
+<a href="https://twitter.com/vinodkone"> <img src="/assets/images/blog/2016-12-12_Twitter.png" width="25"/> </a>
+<a href="https://github.com/vinodkone"> <img src="/assets/images/blog/2016-12-12_GitHub.png" width="25"/> </a></p>
+<h1 id="notes-and-action-items">Notes and Action Items</h1>
+<p><a href="https://drive.google.com/file/d/0B-6u32LXT61pSERJSTYyX3owOFE/view?usp=sharing">Download</a> the notes and action items from the meeting.</p>
+]]></description><link>https://dcos.io/blog/2016/dc-os-pmc-meeting-on-december-9-2016/index.html</link><guid isPermaLink="true">https://dcos.io/blog/2016/dc-os-pmc-meeting-on-december-9-2016/index.html</guid><dc:creator><![CDATA[Aaron Williams, Mesosphere]]></dc:creator><pubDate>Mon, 12 Dec 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Join the DC/OS Networking Working Group]]></title><description><![CDATA[<h1 id="scope">Scope</h1>
+<p>The Networking Working Group is responsible for all networking functionality across DC/OS, and is currently focused on supporting the following functionality in the DC/OS network stack:</p>
+<ul>
+<li>CNI support for UCR (Universal Container Runtime).</li>
+<li>CNM support for Docker Containerizer.</li>
+<li>East-west load-balancing for DC/OS services.</li>
+<li>North-south load-balancing for DC/OS services.</li>
+<li>Service discovery and IP/Container Solutions.</li>
+</ul>
+<h1 id="our-next-working-group-meeting-december-19">Our Next Working Group Meeting—December 19</h1>
+<p><strong>When</strong>: December 19th at 10:30 am PT</p>
+<p><strong>Where</strong>: <a href="https://t.co/tKTRE6xDzs">Zoom</a></p>
+<p><strong>Proposed Agenda:</strong></p>
+<ul>
+<li>Charter for this working group and where we currently stand with the existing work</li>
+<li>DC/OS 1.9 preview: features that are coming and how to help test and validate</li>
+<li>DC/OS 1.10 roadmap exploration</li>
+<li>Proposed meeting schedule for Jan and Feb</li>
+<li>Q&amp;A</li>
+</ul>
+<h1 id="join-us-">Join Us!</h1>
+<ol>
+<li>Join the <a href="https://groups.google.com/a/dcos.io/forum/#!forum/networking-wg">mailing list</a>. It is where we will share longer-form content and make announcements about the working group.</li>
+<li>Join the #networking-wg channel in the <a href="http://chat.dcos.io/">DC/OS Slack community</a>. It is where to ask questions and share shorter-form ideas.</li>
+<li>We look forward to seeing you on <a href="https://t.co/tKTRE6xDzs">Zoom</a> on December 19th at 10:30 am PT.</li>
+</ol>
+<h1 id="working-group-leaders">Working Group Leaders</h1>
+<p><img src="/assets/images/blog/2016-12-12_somik.png" width="225" /></p>
+<p>Somik Behera : <a href="mailto:somik@mesosphere.io">email</a> | <a href="https://twitter.com/strikesme">Twitter</a> | <a href="https://github.com/somikbehera">GitHub</a></p>
+<p><img src="/assets/images/blog/2016-12-12_sargun.png" width="225"/>  </p>
+<p>Sargun Dhillon : <a href="mailto:sargun@mesosphere.io">email</a> | <a href="https://twitter.com/sargun">Twitter</a> | <a href="https://github.com/sargun">GitHub</a></p>
+<p><img src="/assets/images/blog/2016-12-12_avinash.png" width="225"/>  </p>
+<p>Avinash Sridharan : <a href="mailto:avinash@mesosphere.io">email</a> | <a href="https://twitter.com/av1nash_s">Twitter</a> | <a href="https://github.com/asridharan">GitHub</a></p>
+<p><img src="/assets/images/blog/2016-12-12_jie.png" width="300"/>  </p>
+<p>Jie Yu : <a href="mailto:jie@mesosphere.io">email</a> | <a href="https://twitter.com/jie_yu">Twitter</a> | <a href="https://github.com/jieyu">GitHub</a></p>
+]]></description><link>https://dcos.io/blog/2016/join-the-dc-os-networking-working-group/index.html</link><guid isPermaLink="true">https://dcos.io/blog/2016/join-the-dc-os-networking-working-group/index.html</guid><dc:creator><![CDATA[Aaron Williams, Mesosphere]]></dc:creator><pubDate>Mon, 12 Dec 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Join the DC/OS Day 2 Operations Working Group]]></title><description><![CDATA[<h1 id="what-is-day-2-ops-">What is Day 2 Ops?</h1>
+<p>In his <a href="http://technoblogic.io/blog/2016/09/19/day2-logging/">blog post</a> on the subject, Jeff Malnick (the leader of the Day 2 Operations working group) describes Day 2 Ops in the following way:</p>
+<p>“It takes more to run an application in production than installing some software and starting applications. For the operator, their job truly begins on day 2—maintaining, upgrading, debugging a running cluster without downtime.</p>
+<p>Since DC/OS is an operating system, we have the perfect platform to build the APIs and functionality required for operators to be successful and efficient at their jobs. Some of the first pieces of this functionality that we are focused on here is logging, metrics and debugging.”</p>
+<h1 id="scope">Scope</h1>
+<p>The Day 2 Operations working group is focused on topics that relate to operations: specifically logging, monitoring, and debugging to start. (We may eventually, as a group, choose to break the Day 2 Operations working group out into several, more specialized groups. But we’ll see if that makes sense once the group gets off the ground.)</p>
+<h1 id="our-next-working-group-meeting">Our Next Working Group Meeting</h1>
+<p><strong>When</strong>: January 6th at 10:30 am PT</p>
+<p><strong>Where</strong>: <a href="https://t.co/tKTRE6xDzs">Zoom</a></p>
+<p><strong>Proposed Agenda</strong>:</p>
+<ul>
+<li>Charter for this working group and where we currently stand with the CNI work</li>
+<li>DC/OS 1.9 preview: features that are coming and how to help test and validate</li>
+<li>Proposed meeting schedule for Jan and Feb</li>
+<li>Q&amp;A</li>
+</ul>
+<h1 id="join-us-">Join Us!</h1>
+<ol>
+<li><p>Join the <a href="https://groups.google.com/a/dcos.io/forum/#!forum/day-2-ops-wg">mailing list</a>. It is where we will share longer-form content and make announcements about the working group.</p>
+</li>
+<li><p>Join the #day-2-ops-wg channel in the <a href="http://chat.dcos.io/">DC/OS Slack community</a>. It is where to ask questions and share shorter-form ideas.</p>
+</li>
+<li><p>We look forward to seeing you on <a href="https://t.co/tKTRE6xDzs">Zoom</a> on January 6th at 10:30 am PT.</p>
+</li>
+</ol>
+<h1 id="working-group-leader">Working Group Leader</h1>
+<p><img src="/assets/images/blog/2016-12-12_Jeff.png" size="150"/>  </p>
+<p><strong>Jeff Malnick</strong> : <a href="mailto:jeff@mesosphere.io">email</a> | <a href="https://twitter.com/malnick">Twitter</a> | <a href="https://github.com/malnick">GitHub</a></p>
+]]></description><link>https://dcos.io/blog/2016/join-the-dc-os-day-2-operations-working-group/index.html</link><guid isPermaLink="true">https://dcos.io/blog/2016/join-the-dc-os-day-2-operations-working-group/index.html</guid><dc:creator><![CDATA[Aaron Williams, Mesosphere]]></dc:creator><pubDate>Mon, 12 Dec 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[A Developer’s Guide to the Universe]]></title><description><![CDATA[<p>The <a href="https://github.com/mesosphere/universe">Universe</a> is a DC/OS package repository that contains services like Spark, Cassandra, Jenkins, and many others. It allows users to install these services with a single click from the DC/OS UI or by a simple <code>dcos package install package_name</code> command from the <a href="https://dcos.io/docs/1.8/usage/cli">DC/OS CLI</a>. Many community members have already submitted their own packages to the Universe, and we encourage anyone interested to get involved with package development! It is a great way of contributing to the DC/OS ecosystem and allows users to easily get started with your favorite package. This blog series will provide details on doing so. Pack your <a href="https://en.wikipedia.org/wiki/Technology_in_The_Hitchhiker%27s_Guide_to_the_Galaxy#Towels">towel</a> and let’s get started!</p>
+<h1 id="series-overview">Series Overview</h1>
+<div style="padding: 25px 50px; color: #666; background-color: #f5f5f5; font-style:italic;  margin: 0 0 30px 0;">
+
+  <p>A <a href="https://en.wikipedia.org/wiki/The_Hitchhiker&#39;s_Guide_to_the_Galaxy">single book</a> could never cover all the aspects of the Universe (let alone a single blog post) so we decided to divide the content into a series of posts (watch here for the following parts):</p> <br>
+
+  <ul>
+    <li>In this first part, <a href="https://dcos.io/blog/2016/a-developer-s-guide-to-the-universe/index.html"><strong><em>“A Developer’s Guide to the Universe”</em></strong></a> we will develop a simple package that deploys just one container and make it available via a local Universe in our DC/OS cluster.</li>
+
+
+    <li>In the second part, <strong><em>“Add Another Thing…”</em></strong>, we will explore a more complex multi container service and show how we can utilize DC/OS features for connecting these containers. We will also discuss what it takes to contribute a package to the official Universe.</li>
+
+
+    <li>In the third part, <strong><em>“Frameworks, the Universe and Everything Else”</em></strong> we will take a look at the Mesos concept of a 2-level scheduler, which allows us to encode logic beyond a simple container for our services. As part of this, we will develop a simple stateless Mesos framework.</li>
+
+
+    <li>The fourth part, <strong><em>“Stateful, and Thanks for the SDK”</em></strong> will enter the complex world of stateful services and explore the DC/OS SDK, which relieves us of much of the complexity involved in writing frameworks.</li>
+
+
+    <li>The fifth part, <strong><em>“Well, it works but wouldn’t it be better if… (mostly testing)”</em></strong> will explore different options for testing your service.</li>
+
+
+    <li>The sixth part, <strong><em>“The CLI at the End of the Universe”</em></strong> will demonstrate how to add a custom CLI for your package.</li>
+  </ul>
+</div>
+
+
+<h1 id="table-of-contents-">Table of Contents:</h1>
+<ul>
+<li><a href="#warning-and-prerequisites">Warning and Prerequisites</a></li>
+<li><a href="#first-package">First Package</a></li>
+<li><a href="#clone-the-universe">Clone the universe</a></li>
+<li>Create the universe package<ul>
+<li><a href="#create-the-folder-structure">Folder structure</a></li>
+<li><a href="#create-the-marathon.json.mustache-and-config.json"><code>marathon.json.mustache</code> and <code>config.json</code></a></li>
+<li><a href="#resourcesjson"><code>resources.json</code></a></li>
+<li><a href="#packagejson"><code>package.json</code></a></li>
+<li><a href="#adding-webui">Webui</a></li>
+</ul>
+</li>
+<li><a href="#build-and-deploy-a-local-universe-server">Build and deploy a local Universe Server</a><ul>
+<li><a href="#validate-and-build-the-universe">Validate and build the Universe</a></li>
+<li><a href="#build-the-universe-server-docker-image">Build the Universe server Docker image</a><ul>
+<li><a href="#deploy-the-universe-server-on-your-cluster">Deploy the universe server on your cluster</a></li>
+<li><a href="#install-neo4j-package">Install Neo4j package</a></li>
+<li><a href="#pitfalls-with-neo4j-dashboard">Pitfalls with Neo4j Dashboard</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#so-long-and-thanks-for-all-the-introduction">So Long, and Thanks for All the Introduction</a></li>
+</ul>
+<h1 id="warning-and-prerequisites">Warning and Prerequisites</h1>
+<p><em>Note</em>: This being your first package, we’re keeping things simple and developing a service being backed by a single container which is not meant for production usage!</p>
+<p>In order to get started you should have:</p>
+<ul>
+<li>A running DC/OS 1.8+ cluster.</li>
+<li><a href="https://dcos.io/docs/1.8/usage/cli/install/">DC/OS CLI</a> installed and configured.</li>
+<li>Your <a href="https://en.wikipedia.org/wiki/Technology_in_The_Hitchhiker%27s_Guide_to_the_Galaxy#Towels">towel</a> close by.</li>
+</ul>
+<h2 id="first-package">First Package</h2>
+<p>Arthur currently uses a graph database to map out all the places he has visited in the universe. He has deployed a single <a href="https://neo4j.com">Neo4j</a> container on his interstellar DC/OS cluster with</p>
+<pre><code>dcos marathon app add https://raw.githubusercontent.com/joerg84/developers-guide-to-the-universe/master/neo4j-app.json
+</code></pre><p>The challenges of such cross-galaxy DC/OS clusters will be discussed in a future blog post.</p>
+<p>After seeing this, all his friends want to use the same database. In order to allow them to install Neo4J with a single click, Arthur decides to make it available in the <a href="https://github.com/joerg84/universe/tree/neo4j-demo/repo/packages/N/neo4j_tutorial/">Universe package repository</a>. This repo can also be used if you don’t want to create all the files by yourself and want to jump to the deploy step directly.</p>
+<h2 id="clone-the-universe">Clone the universe</h2>
+<p>To work with the universe it is helpful to have a copy available . You can fork and then clone the github repository here <a href="https://github.com/mesosphere/universe">https://github.com/mesosphere/universe</a>.</p>
+<h2 id="create-the-folder-structure">Create the folder structure</h2>
+<p>Looking at the package folder structure below, we see that the package structure is actually quite simple.</p>
+<p><img style="margin-left: 87px;" width="450" height="210" src="/assets/images/blog/2016-12-10_universe_folder_structure.png" alt="package structure"/></p>
+<p>Each package has a its own folder (inside the subfolder with the first letter of the package name). As each package can have multiple versions, each version has a numbered subfolder. For example the files for the first version of Arthur’s neo4j package would be located in: <a href="https://github.com/joerg84/universe/tree/neo4j-demo/repo/packages/N/neo4j_tutorial/0">repo/packages/N/neo4j/0</a>.</p>
+<h3 id="create-the-marathon-json-mustache-and-config-json">Create the marathon.json.mustache and config.json</h3>
+<p>We need a total of four different files in the directory, but let us start by creating the <a href="https://github.com/joerg84/universe/blob/neo4j-demo/repo/packages/N/neo4j_tutorial/0/marathon.json.mustache">marathon.json.mustache</a> and <a href="https://github.com/joerg84/universe/blob/neo4j-demo/repo/packages/N/neo4j_tutorial/0/config.json">config.json</a> files.</p>
+<p>The two key parts of a Universe package are a templated Marathon app definition in a file called <code>marathon.json.mustache</code>, and the parameters used to render this template in a <code>config.json</code>. These parameters can be altered by DC/OS users at install time via the UI (using ”Advanced Install”) or CLI.</p>
+<p>The purpose of <code>marathon.json.mustache</code> is to ultimately create a <code>marathon.json</code>. It uses the <a href="http://mustache.github.io/">Mustache</a> templating language to configure options. These configurations come out of resources used in <code>resources.json</code> and options specified in <code>config.json</code> file.</p>
+<p>Let us have a look at Arthur’s original <a href="https://raw.githubusercontent.com/joerg84/developers-guide-to-the-universe/master/neo4j-app.json">app definition</a> and identify potential settings which are likely to vary between different instances. The following settings are probably good candidates for parameters:</p>
+<ul>
+<li><code>id</code>: the id needs to be unique, making it configurable allows users to install multiple instances of the app on the same cluster.</li>
+<li><code>cpu</code> and <code>mem</code>: making resource parameters like CPU shares and memory allocation configurable allows users to change these at install time depending on their needs.</li>
+</ul>
+<p>After adding these template parameters, our modified marathon app definition starts as follows:</p>
+<pre><code>&quot;id&quot;: &quot;{{service.name}}&quot;,
+
+&quot;instances&quot;: 1,
+
+&quot;cpus&quot;: {{neo4j.cpus}},
+
+&quot;mem&quot;: {{neo4j.mem}},
+</code></pre><p>The corresponding <a href="">config.json</a> specifies these template parameters in the following way:</p>
+<pre><code>{
+  &quot;type&quot;: &quot;object&quot;,
+  &quot;properties&quot;: {
+    &quot;service&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;description&quot;: &quot;DC/OS service configuration properties&quot;,
+      &quot;properties&quot;: {
+        &quot;name&quot;: {
+          &quot;description&quot;: &quot;Name of this service instance.&quot;,
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;default&quot;: &quot;neo4j&quot;
+        }
+      }
+    },
+    &quot;neo4j&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;description&quot;: &quot;Neo4J instance configuration properties&quot;,
+      &quot;properties&quot;: {
+        &quot;cpus&quot;: {
+          &quot;description&quot;: &quot;CPU shares to allocate to the Neo4J instance.&quot;,
+          &quot;type&quot;: &quot;number&quot;,
+          &quot;default&quot;: 2,
+          &quot;minimum&quot;: 1
+        },
+        &quot;mem&quot;: {
+          &quot;description&quot;: &quot;Memory to allocate to the Neo4J instance.&quot;,
+          &quot;type&quot;: &quot;number&quot;,
+          &quot;default&quot;: 2048,
+          &quot;minimum&quot;: 2048
+        }
+      },
+      &quot;required&quot;: [
+        &quot;cpus&quot;,
+        &quot;mem&quot;
+      ]
+    }
+  }
+}
+</code></pre><h3 id="resources-json">resources.json</h3>
+<p>There is one more template parameter in our <a href="https://github.com/joerg84/universe/blob/neo4j-demo/repo/packages/N/neo4j_tutorial/0/marathon.json.mustache">marathon.json.mustache</a>: the Docker image.</p>
+<pre><code>&quot;docker&quot;:{
+  &quot;image&quot;:&quot;{{resource.assets.container.docker.neo4j}}&quot;,
+</code></pre><p>In order to allow installation in cluster which are not directly connected to the internet, we collect all external resources in the <a href="https://github.com/joerg84/universe/blob/neo4j-demo/repo/packages/N/neo4j_tutorial/0/resource.json">resource.json</a> and not directly in the marathon.json.mustache.</p>
+<pre><code>&quot;assets&quot;: {
+  &quot;container&quot;: {
+    &quot;docker&quot;: {
+      &quot;neo4j&quot;: &quot;mesosphere/neo4j:3.1.1-RC1&quot;
+    }
+  }
+}
+</code></pre><p>The resource.json also specifies the icons used by the UI (<strong>Note</strong>: It is good practice to store these images in a highly available location):</p>
+<pre><code>&quot;images&quot;: {
+   &quot;icon-small&quot;: &quot;https://s3.amazonaws.com/downloads.mesosphere.io/universe/assets/icon-service-neo4j-small.png&quot;,
+   &quot;icon-medium&quot;: &quot;https://s3.amazonaws.com/downloads.mesosphere.io/universe/assets/icon-service-neo4j-medium.png&quot;,
+   &quot;icon-large&quot;: &quot;https://s3.amazonaws.com/downloads.mesosphere.io/universe/assets/icon-service-neo4j-large.png&quot;
+ }
+</code></pre><h3 id="package-json">package.json</h3>
+<p>Last, but not least there is the <a href="https://github.com/joerg84/universe/blob/neo4j-demo/repo/packages/N/neo4j_tutorial/0/package.json">package.json</a> file with metadata about the package and additional information for users.</p>
+<pre><code>{
+  &quot;packagingVersion&quot;: &quot;3.0&quot;,
+  &quot;name&quot;: &quot;neo4j&quot;,
+  &quot;version&quot;: &quot;3.1-0.0.1&quot;,
+  &quot;maintainer&quot;: &quot;joerg@mesosphere.io&quot;,
+  &quot;description&quot;: &quot;This is a single Neo4j container, which is not suited for HA setups. Neo4J is a popular graph database. See documentation for details: https://github.com/dcos/examples/tree/master/1.8/neo4j&quot;,
+  &quot;website&quot;: &quot;http://www.neo4j.com&quot;,
+  &quot;framework&quot;: false,
+  &quot;tags&quot;: [
+    &quot;mesosphere&quot;,
+    &quot;service&quot;,
+    &quot;neo4j&quot;,
+    &quot;storage&quot;
+  ],
+  &quot;licenses&quot;: [
+    {
+      &quot;name&quot;: &quot;GPL v3 license or Neo4j Commercial/Evaluation/Education License&quot;,
+      &quot;url&quot;: &quot;https://neo4j.com/licensing/&quot;
+    }
+  ],
+  &quot;postInstallNotes&quot;: &quot;Neo4J installed!&quot;,
+  &quot;preInstallNotes&quot;: &quot;This DC/OS Service is currently EXPERIMENTAL. There may be bugs, incomplete features, incorrect documentation, or other discrepancies. Neo4J requires a single node with 2GB of RAM and 1 CPU. &quot;,
+  &quot;postUninstallNotes&quot;: &quot;Thank you for using Redis&quot;
+}
+</code></pre><h2 id="adding-webui">Adding Webui</h2>
+<p>DC/OS allows users to automatically create a link from the DC/OS UI to the framework web UI. In order to create this link, we add the following labels to our <a href="https://github.com/joerg84/universe/blob/neo4j-demo/repo/packages/N/neo4j_tutorial/0/marathon.json.mustache">marathon.json.mustache</a> file. Note that the <code>DCOS_SERVICE_PORT_INDEX</code> label assumes the user has bound the interface to the first port.</p>
+<pre><code>&quot;labels&quot;: {
+  &quot;DCOS_SERVICE_NAME&quot;: &quot;{{service.name}}&quot;,
+  &quot;DCOS_SERVICE_PORT_INDEX&quot;: &quot;0&quot;,
+  &quot;DCOS_SERVICE_SCHEME&quot;: &quot;http&quot;
+}
+</code></pre><h1 id="build-and-deploy-a-local-universe-server">Build and deploy a local Universe Server</h1>
+<p>Now we are ready to test our new package. To do so we deploy local dev-universe server. This can be done following the steps below. More detailed instructions can be found in the <a href="https://github.com/mesosphere/universe#repository-consumption">Universe documentation</a>.</p>
+<h2 id="validate-and-build-the-universe">Validate and build the Universe</h2>
+<p>From the root directory of your Universe repo, run <code>scripts/build.sh</code> and check that it builds successfully.</p>
+<h2 id="build-the-universe-server-docker-image">Build the Universe server Docker image</h2>
+<p>You can create a Docker image <code>universe-server:your_name-neo4jtutorial</code> on your local machine with the following command (<em>Note</em>: Please consider choosing different tags in order to identify your image) :</p>
+<pre><code>DOCKER_TAG=&quot;your_name-neo4jtutorial-1&quot; docker/server/build.bash
+</code></pre><p>If that step is successful, you can publish the image:</p>
+<pre><code>DOCKER_TAG=&quot;your_name-neo4jtutorial-1&quot; docker/server/build.bash publish
+</code></pre><h3 id="deploy-the-universe-server-on-your-cluster">Deploy the universe server on your cluster</h3>
+<p>The above steps created the Marathon app definition you will use to deploy the universe server. It can be found as docker/server/target/marathon.json on your local machine.</p>
+<p>Use this CLI command to deploy the Universe, which might take some time.</p>
+<pre><code>dcos marathon app add docker/server/target/marathon.json
+</code></pre><p>You can check if the deployment has finished with</p>
+<pre><code>dcos marathon app list
+</code></pre><p>Once the deployment has finished, add the new package repo:</p>
+<pre><code>dcos package repo add --index=0 dev-universe http://universe.marathon.mesos:8085/repo
+</code></pre><h3 id="install-neo4j-package">Install Neo4j package</h3>
+<p>Let us check the package is available by searching for it:</p>
+<pre><code>dcos package search neo4j
+</code></pre><p>Now we can install neo4j and check that it is running from the UI.</p>
+<pre><code>dcos package install neo4j
+</code></pre><p>For more details on how to use neo4j check the <a href="https://github.com/dcos/examples/tree/master/1.8/neo4j">official neo4j package documentation</a>.
+Note the pitfalls listed below and use neo4j/dcos to login.</p>
+<h3 id="pitfalls-with-neo4j-dashboard">Pitfalls with Neo4j Dashboard</h3>
+<p>Since our local package is just a prototype, your instance of the Neo4J UI has some limitations. The official neo4j universe package does not have these issues.</p>
+<p><code>Service UI</code>: Even though we can get the Neo4J from the DC/OS Services page, the links don’t work (because they redirect to /page while DC/OS works with /service/neo4j/page). This can be circumvented by accessing the UI via <a href="https://dcos.io/docs/1.8/usage/service-discovery/marathon-lb/">marathon-lb</a>.</p>
+<p><code>The bolt connection</code>: Bolt is Neo4J default connection method. You should disable bolt as shown in the screenshot below.</p>
+<p><img style="margin-left: 87px;" width="500" height="300" src="/assets/images/blog/2016-12-10_universe_neo4j_ui.png" alt="package structure"/></p>
+<h1 id="so-long-and-thanks-for-all-the-introduction">So Long, and Thanks for All the Introduction</h1>
+<p>Congratulations, you just created and installed your first universe package!
+In the next posts in this series we will go into more depth, and create more sophisticated packages!</p>
+<p><strong>Note</strong>: We are currently working on a new packaging format, <a href="https://dcos.io/blog/2016/packaging-in-dc-os/index.html"><code>package.dcos</code></a>, which will be formally introduced in the 1.10 release. We’ll update this guide at that point.</p>
+]]></description><link>https://dcos.io/blog/2016/a-developer-s-guide-to-the-universe/index.html</link><guid isPermaLink="true">https://dcos.io/blog/2016/a-developer-s-guide-to-the-universe/index.html</guid><dc:creator><![CDATA[Ravi Yadav (Mesosphere), Jörg Schad (Mesosphere)]]></dc:creator><pubDate>Sat, 10 Dec 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Monitor containers on DC/OS with Operations Management Suite Container Solution]]></title><description><![CDATA[<h1 id="monitor-containers-on-dc-os-with-microsoft-s-operations-management-suite-container-solution">Monitor containers on DC/OS with Microsoft’s Operations Management Suite Container Solution</h1>
+<p>Monitoring Docker containers can be challenging because containers can be created or destroyed at any time. The more containers you have, the more challenging monitoring becomes. Microsoft’s <a href="https://docs.microsoft.com/en-us/azure/log-analytics/log-analytics-containers">Operations Management Suite (OMS) Container Solution</a> helps users view their container inventory, performance, and logs, and to troubleshoot their containers. OMS Container Solution has been so well-received that Microsoft is making its monitoring capabilities available for DC/OS clusters (regardless of the provider), as part of the Mesosphere Universe.</p>
+<p>OMS Container Solution allows users to monitor all their Docker containers through a web interface, providing them with container performance metrics, log analysis, container image inventories, and events.</p>
+<p><img src="/assets/images/blog/2016-12-08-image_1.png" alt="Packages in the DC/OS Universe" /></p>
+<p>OMS Container Solution is easy to install on DC/OS. Just choose the “msoms” package from the DC/OS web interface.</p>
+<p><img src="/assets/images/blog/2016-12-08-image_2.png" alt="Packages in the DC/OS Universe" /></p>
+<p>When you install msoms, a containerized instance of OMS Agent for Linux gets installed on every private and public agent. This OMS instance scales with your DC/OS environment and sends monitoring data to the OMS Container Solutions web interface.</p>
+<h2 id="oms-container-solution-features">OMS Container Solution features</h2>
+<ul>
+<li>Centralize and correlate millions of logs from Docker containers at scale using journald</li>
+<li>See real-time information about container status, image, image tag, and affinity<ul>
+<li>Container Lifecycle view, which shows container creation, start, and finish</li>
+</ul>
+</li>
+<li>Quickly diagnose “noisy neighbor” containers that can cause problems on container hosts</li>
+<li>Retrieve, visualize, and monitor CPU, memory, storage, and network usage with 10-second real-time performance metrics<ul>
+<li>Container Computer and Memory Usage view</li>
+</ul>
+</li>
+<li>View detailed and secure audit trail of all Docker actions on Container hosts</li>
+</ul>
+<p><img src="/assets/images/blog/2016-12-08-image_3.png" alt="Packages in the DC/OS Universe" /></p>
+<p><img src="/assets/images/blog/2016-12-08-image_4.png" alt="Packages in the DC/OS Universe" /></p>
+<p>Microsoft will continue to enhance OMS Container Solution and is open to feedback. For more information, read through the <a href="https://docs.microsoft.com/en-us/azure/log-analytics/log-analytics-containers">Container Solution documentation</a> and <a href="https://github.com/Microsoft/OMS-docker/blob/master/ReleaseNote.md">Release Notes</a>.</p>
+<h2 id="how-do-i-try-this-">How do I try this?</h2>
+<p>You can use your own Azure subscription or try a <a href="https://azure.microsoft.com/en-us/free/">free subscription for Microsoft Azure</a>, which you can use to set up your DC/OS cluster and OMS workspace with Container Solution. For specific documentation on how to set up OMS Container Solution on DC/OS, see <a href="https://docs.microsoft.com/en-us/azure/container-service/container-service-monitoring-oms">Using OMS to monitor container applications on ACS DC/OS</a>.</p>
+<h2 id="how-can-i-give-microsoft-feedback-">How can I give Microsoft feedback?</h2>
+<p>There are a few different routes to give feedback:</p>
+<ul>
+<li><strong>UserVoic</strong>: Post ideas for new OMS features to work on. Visit the <a href="https://feedback.azure.com/forums/267889-azure-operational-insights">OMS UserVoice page</a>.</li>
+<li><strong>OMS Forums</strong>: Good general discussion of OMS. Visit the <a href="https://social.msdn.microsoft.com/Forums/azure/en-US/home?forum=opinsights">OMS Forums</a>.</li>
+<li><strong>Email</strong>: OMScontainers@microsoft.com Tell us whatever is on your mind.</li>
+<li><strong>Survey</strong>: <a href="https://www.surveymonkey.com/r/6G6RCBG">Take a survey</a>.</li>
+</ul>
+<p>Your feedback is important. If you see any features you would like that are not here, please let us know. I invite you to follow me on <a href="https://twitter.com/scriptingguys">Twitter</a> and the <a href="https://www.facebook.com/groups/MicrosoftOMS/">Microsoft OMS Facebook site</a>. If you want to learn more about Container Solution and OMS, visit the <a href="http://blogs.technet.com/b/heyscriptingguy/">Hey, Scripting Guy! Blog</a>.</p>
+]]></description><link>https://dcos.io/blog/2016/monitor-containers-on-dc-os-with-operations-management-suite-container-solution/index.html</link><guid isPermaLink="true">https://dcos.io/blog/2016/monitor-containers-on-dc-os-with-operations-management-suite-container-solution/index.html</guid><dc:creator><![CDATA[Keiko Harada (Microsoft)]]></dc:creator><pubDate>Thu, 08 Dec 2016 00:00:00 GMT</pubDate></item></channel></rss>

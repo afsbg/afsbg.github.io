@@ -1,0 +1,229 @@
+<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="../../styles/index-v=1490984623561.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta charset="UTF-8"/>
+    <link rel="shortcut icon" type="image/x-icon" href="../../assets/images/icons/favicon/favicon.ico"/>
+    <link rel="apple-touch-icon" href="../../assets/images/icons/favicon/favicon-apple-57x57.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="../../assets/images/icons/favicon/favicon-apple-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="../../assets/images/icons/favicon/favicon-apple-114x114.png"/>
+    <link rel="apple-touch-icon" sizes="144x144" href="../../assets/images/icons/favicon/favicon-apple-144x144.png"/>
+    <link rel="apple-touch-icon-precomposed" href="../../assets/images/icons/favicon/favicon-apple-57x57.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../../assets/images/icons/favicon/favicon-apple-72x72.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../../assets/images/icons/favicon/favicon-apple-114x114.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../../assets/images/icons/favicon/favicon-apple-144x144.png"/>
+    <link rel="apple-touch-icon" sizes="60x60" href="../../assets/images/icons/favicon/favicon-apple-60x60.png"/>
+    <link rel="apple-touch-icon" sizes="76x76" href="../../assets/images/icons/favicon/favicon-apple-76x76.png"/>
+    <link rel="apple-touch-icon" sizes="120x120" href="../../assets/images/icons/favicon/favicon-apple-120x120.png"/>
+    <link rel="apple-touch-icon" sizes="152x152" href="../../assets/images/icons/favicon/favicon-apple-152x152.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="60x60" href="../../assets/images/icons/favicon/favicon-apple-60x60.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="76x76" href="../../assets/images/icons/favicon/favicon-apple-76x76.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="120x120" href="../../assets/images/icons/favicon/favicon-apple-120x120.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../../assets/images/icons/favicon/favicon-apple-152x152.png"/>
+    <title>DC/OS 1.9.0</title>
+  </head>
+  <body>
+    <div class="container container--dark-background">
+      <nav class="navigation">
+        <div class="mobile-nav-container"><a id="nav-icon" href="index.html#"><span></span><span></span><span></span><span></span></a>
+          <div class="nav-logo-container"><a href="../../index.html" class="nav-logo">
+              <div class="logo"></div></a></div>
+        </div>
+        <ul class="menu-mobile">
+          <li class="menu-item"><a href="../../why-dcos/index.html">Who&nbsp;We&nbsp;Are!</a>
+          </li>
+          <li class="menu-item"><a href="../../install/index.html">Install</a>
+          </li>
+          <li class="menu-item"><a href="../../docs/1.9/index.html">Docs</a></li>
+          <li class="menu-item"><a href="../../community/index.html">Community</a>
+          </li>
+          <li class="menu-item"><a href="../../blog/index.html">Blog</a>
+          </li>
+          <li class="menu-item"><a href="https://github.com/dcos/dcos" target="_blank">GitHub</a></li>
+          <li class="menu-item"><a href="../../get-started/index.html">Get Started</a></li>
+        </ul>
+        <ul class="menu">
+          <li class="menu-item"><a href="../../why-dcos/index.html">Who&nbsp;We&nbsp;Are!</a>
+          </li>
+          <li class="menu-item"><a href="../../install/index.html">Install</a>
+          </li>
+          <li class="menu-item"><a href="../../docs/1.9/index.html">Docs</a></li>
+          <li class="menu-item"><a href="../../community/index.html">Community</a>
+          </li>
+          <li class="menu-item"><a href="../../blog/index.html">Blog</a>
+          </li>
+          <li class="menu-item">
+            <div class="menu-item__github-button"><a href="https://github.com/dcos/dcos" data-count-href="/dcos/dcos/stargazers" data-count-api="/repos/dcos/dcos#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star dcos/dcos on GitHub" class="github-button">Star</a></div>
+          </li>
+          <li class="menu-item"><a href="../../get-started/index.html" class="cta cta--button button--secondary">Get&nbsp;Started</a>
+          </li>
+        </ul>
+      </nav>
+      <div class="container__content">
+        <h1>DC/OS 1.9.0</h1>
+        <p class="hero-subtitle"><a href="https://downloads.dcos.io/dcos/stable/commit/0ce03387884523f02624d3fb56c7fbe2e06e181b/dcos_generate_config.sh" class="cta cta--button">Download</a><a href="../../docs/1.9/index.html" class="cta cta--text">View Documentation &rarr;</a></p>
+      </div>
+    </div>
+    <div class="container">
+      <div class="container__content">
+        <div class="container__content--release-notes docs-layout__docs-content"><p>DC/OS 1.9 includes many new capabilities for Operators, and expands the collection of Data and Developer Services with a focus on:</p>
+<ul>
+<li>Tools for Production Operations - Monitoring and troubleshooting for distributed apps.</li>
+<li>Broader Workload Support - From traditional apps to machine learning.</li>
+<li>New data and developer services. <!-- NEED A LINK --></li>
+</ul>
+<h3 id="contents">Contents</h3>
+<ul>
+<li><a href="index.html#whats-new">What&#39;s New</a></li>
+<li><a href="index.html#known-issues">Known Issues and Limitations</a></li>
+<li><a href="index.html#fixed-issues">Fixed Issues</a></li>
+</ul>
+<h1 id="-a-name-whats-new-a-what-s-new"><a name="whats-new"></a>What&#39;s New</h1>
+<h3 id="apache-mesos-1-2-and-marathon-1-4-integrated">Apache Mesos 1.2 and Marathon 1.4 integrated</h3>
+<ul>
+<li>Apache Mesos 1.2 <a href="https://github.com/apache/mesos/blob/1.2.x/CHANGELOG">CHANGELOG</a>.</li>
+<li>Marathon 1.4 <a href="https://github.com/mesosphere/marathon/releases">release notes</a>.</li>
+</ul>
+<h2 id="container-orchestration">Container Orchestration</h2>
+<p>Added support for pods, GPUs, and made significant scalability improvements.</p>
+<h4 id="pods">Pods</h4>
+<p>Multiple co-located containers per instance, scheduled on the same host. For more information, see the <a href="../../docs/1.9/usage/pods/index.html">documentation</a>.</p>
+<h4 id="gpu">GPU</h4>
+<ul>
+<li>Leverage GPUs to run novel algorithms.</li>
+<li>Because DC/OS GPU support is compatible with nvidia-docker, you can test locally with nvidia-docker and then deploy to production with DC/OS.</li>
+<li>Allocate GPUs on a per container basis, including isolation guarantees</li>
+</ul>
+<p>For more information, see the <a href="../../docs/1.9/usage/gpu/index.html">documentation</a>.</p>
+<h2 id="-a-name-monitoring-and-operations-a-dc-os-monitoring-and-operations"><a name="monitoring-and-operations"></a>DC/OS Monitoring and Operations</h2>
+<h3 id="remote-process-injection-for-debugging">Remote Process Injection for Debugging</h3>
+<p>The new <code>dcos task exec</code> command allows you to remotely execute a process inside the container of a deployed Mesos task, providing the following features.</p>
+<ul>
+<li>An optional <code>--interactive</code> flag for interactive sessions.</li>
+<li>Attach to a remote pseudoterminal (aka PTY) inside a container via the optional <code>--tty</code> flag.</li>
+<li>Combine the <code>--interactive</code> and <code>--tty</code> flags to launch an interactive bash session or to run <code>top</code> and see the resource usage of your container in real time.</li>
+</ul>
+<p>For more information, see the documentation for the debugging <a href="../../docs/1.9/usage/debugging/index.html">documentation</a>.</p>
+<h3 id="logging">Logging</h3>
+<p>Stream task and system logs to journald by setting the <code>mesos_container_log_sink</code> install-time parameter to <code>journald</code> or <code>journald+logrotate</code>. This allows you to:</p>
+<ul>
+<li>Include task metadata like container ID in your queries to more easily locate the logs that you want.</li>
+<li>Use new DC/OS CLI commands <code>dcos node log</code> and <code>dcos task log</code> DC/OS CLI commands to query the logs. You can also make requests directly against the new Logging API.</li>
+<li>Set up log aggregation solutions such as Logstash to get logs into their aggregated storage solutions.</li>
+</ul>
+<p>For more information, see the <a href="../../docs/1.9/administration/logging/index.html">documentation</a>.</p>
+<h3 id="metrics">Metrics</h3>
+<ul>
+<li>Node-level HTTP API that returns metrics from frameworks, cgroup allocations per container, and host level metrics such as load and memory allocation.</li>
+<li>StatsD endpoint in every container for forwarding metrics to the DC/OS metrics service. This service is what exposes the HTTP API.</li>
+<li>Any metric sent to STATSD_UDP_HOST/PORT is available in the HTTP API <code>/container/&lt;container_id&gt;/app</code> endpoint.</li>
+</ul>
+<p>For more information, see the <a href="../../docs/1.9/administration/monitoring/metrics/index.html">documentation</a>.</p>
+<h3 id="tool-for-troubleshooting-service-deployment-failures">Tool for Troubleshooting Service Deployment Failures</h3>
+<ul>
+<li><p>The new service deployment troubleshooting tool allows you to find out why your applications aren’t starting from the GUI and CLI.</p>
+<p><img src="../../assets/images/releases/dcos-offers.png" alt="Service deploy GUI"></p>
+</li>
+</ul>
+<h3 id="improved-gui">Improved GUI</h3>
+<ul>
+<li><p>New look and feel and improved navigation.</p>
+<p><img src="../../assets/images/releases/dcos-dash.png" alt="New GUI"></p>
+</li>
+<li><p>Usability improvements to the service create workflow.</p>
+<p><img src="../../assets/images/releases/dcos-create.png" alt="Improved GUI"></p>
+</li>
+</ul>
+<h2 id="-a-name-networking-services-a-networking-services"><a name="networking-services"></a>Networking Services</h2>
+<ul>
+<li>CNI support for 3rd party CNI plugins.</li>
+<li>Performance improvements across all networking features.</li>
+</ul>
+<h2 id="-a-name-other-improvements-a-other-improvements"><a name="other-improvements"></a>Other Improvements</h2>
+<h3 id="dc-os-internals">DC/OS Internals</h3>
+<ul>
+<li>Update DC/OS internal JDK to 8u112 for security <a href="http://www.oracle.com/technetwork/java/javase/2col/8u112-bugfixes-3124974.html">fixes</a>.</li>
+<li>Update DC/OS internal Python from 3.4 to 3.5.</li>
+<li>The <code>dcos_generate_config.sh --aws-cloudformation</code> command will now determine the region of the s3 bucket automatically, preventing region mistakes.</li>
+<li>Added the <code>dcos_add_user.py</code> script, which you can use to add or invites users to a DC/OS cluster from the command line. For more information, see the <a href="../../docs/1.9/administration/id-and-access-mgt/add-user-script/index.html">documentation</a>. <!-- OSS only --></li>
+<li>Added <code>dcos-shell</code> which activates the DC/OS environment for running other DC/OS command line tools.</li>
+</ul>
+<h3 id="expanded-os-support">Expanded OS Support</h3>
+<ul>
+<li>CentOS <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/7.3_Release_Notes/index.html">7.3</a> is the default version. If you install DC/OS 1.9 by using the <a href="../../docs/1.9/administration/installing/custom/gui/index.html">GUI</a> or <a href="../../docs/1.9/administration/installing/custom/cli/index.html">CLI</a> install methods, your system will be automatically upgraded to CentOS 7.3.</li>
+<li>CoreOS <a href="https://coreos.com/releases/#1235.12.0">1235.12.0</a>.</li>
+</ul>
+<h3 id="expanded-docker-engine-support">Expanded Docker Engine Support</h3>
+<ul>
+<li>Docker 1.12 and 1.13 are now <a href="../../docs/1.9/administration/installing/custom/system-requirements/index.html">supported</a>. Docker 1.13 is the default version.</li>
+</ul>
+<h3 id="upgrades">Upgrades</h3>
+<p>Improved upgrade tooling and experience for on-premise installations. Upgrades now use internal DC/OS APIs to ensure nodes can be upgraded with minimal disruption to running DC/OS services on a node. The upgrade procedure has also been simplified to improve user experience.</p>
+<p>For more information, see the <a href="../../docs/1.9/administration/upgrading/index.html">documentation</a>.</p>
+<h1 id="-a-name-known-issues-a-known-issues-and-limitations"><a name="known-issues"></a>Known Issues and Limitations</h1>
+<ul>
+<li>DCOS_OSS-691 - DNS becomes briefly unavailable during DC/OS version upgrades.</li>
+<li>DCOS-14005 - Marathon-LB does not support pods.</li>
+<li>DCOS-14021 - <a href="../../docs/1.9/administration/logging/index.html">Task logging to journald</a> disabled by default, so task logs will continue to be written to their sandboxes, and logrotated out. The <code>- DCOS task log</code> command will work as it did before.</li>
+<li>DCOS-14433 - The <a href="../../docs/1.9/usage/containerizers/index.html">Universal container runtime</a> does not support Azure cloud with Ubuntu.</li>
+<li>Marathon-7133 - Marathon application history is lost after Marathon restart.</li>
+</ul>
+<h1 id="-a-name-fixed-issues-a-issues-fixed-since-1-8"><a name="fixed-issues"></a>Issues Fixed since 1.8</h1>
+<ul>
+<li>CORE-735 - Large node count leads to failed overlay config and failed replog recovery.</li>
+<li>DCOS-9149 - Missing Timeout for Spartan fetching DNS Exhibitor data.</li>
+<li>DCOS-9754 - beam.smp consumes inordinate amount of CPU.</li>
+<li>DCOS-9776 - Race in DeploymentPlan.</li>
+<li>DCOS-10089 - Network tab in UI doesn&#39;t show the assigned IP.</li>
+<li>DCOS-13228 - Layer 4 load balancer is not working with Docker bridge mode.</li>
+<li>DCOS-13359 - Backends are not removed from VIP table when killed.</li>
+<li>DCOS-13367 - ZooKeeper logs grow unbounded and will cause master node disks to fill up.</li>
+<li>DCOS-13400 - Layer 4 load balancer cannot handle multiple protocols with the same VIP.</li>
+<li>DCOS-13448 - Missing explicit file descriptor limits for DC/OS services.</li>
+<li>DCOS-13672 - Mesos reports over allocated CPU during DC/OS upgrade.</li>
+<li>DCOS-14228 - Disabled schedules keep firing in jobs.</li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="container__content container__content--footer">
+        <div class="footer">
+          <ul class="footer-main">
+            <li class="footer-item"><a href="../../contribute/index.html">Contribute</a></li>
+            <li class="footer-item"><a href="../../tos/index.html">Terms&nbsp;of&nbsp;Service</a></li>
+            <li class="footer-item"><a href="../../privacy/index.html">Privacy&nbsp;Policy</a></li>
+            <li class="footer-item"><a href="../index.html">Releases</a></li>
+            <li class="footer-item"><a href="https://dcos.io/brand/">Press&nbsp;Kit</a></li>
+          </ul>
+          <ul class="footer-secondary">
+            <li class="footer-item"><a href="http://www.twitter.com/dcos"><img src="../../assets/images/icons/twitter-dark.svg" class="footer-item__icon twitter-icon"/><span>Twitter</span></a></li>
+            <li class="footer-item"><a href="http://chat.mesosphere.com"><img src="../../assets/images/icons/slack-dark.svg" class="footer-item__icon"/><span>Slack</span></a></li>
+            <li class="footer-item"><a href="https://github.com/dcos"><img src="../../assets/images/icons/github-dark.svg" class="footer-item__icon"/><span>GitHub</span></a></li>
+          </ul>
+        </div>
+      </div>
+      <!-- Google Tag Manager-->
+      <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MT2WX7" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+      </noscript>
+      <script>
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-MT2WX7');
+        
+      </script>
+      <script src="../../assets/javascript/picturefill/dist/picturefill.min.js"></script>
+      <script src="../../assets/javascript/jquery/dist/jquery.min.js"></script>
+      <script src="../../assets/javascript/sticky-kit.min.js"></script>
+      <script src="../../assets/javascript/lunr/lunr.min.js"></script>
+      <script src="../../assets/javascript/jquery.scrollNav.min.js"></script>
+      <script src="../../scripts/main.min.js"></script>
+      <script id="github-bjs" async="async" defer="defer" src="https://buttons.github.io/buttons.js"></script>
+    </div>
+  </body>
+</html>
